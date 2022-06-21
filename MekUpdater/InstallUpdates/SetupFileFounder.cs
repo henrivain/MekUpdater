@@ -62,12 +62,12 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         private void TryGetSetupPath()
         {
-            string folderName = GetSetupContainingFolderName(PathToExtractFolder);
+            string? folderName = GetSetupContainingFolderName(PathToExtractFolder);
 
             if (folderName is null) return;
             
             string setupFolderPath = Path.Combine(PathToExtractFolder, folderName);
-            string setupName = GetSetupFileName(setupFolderPath);
+            string? setupName = GetSetupFileName(setupFolderPath);
 
             if (setupName is null) return;
 
@@ -95,7 +95,7 @@ namespace MekUpdater.InstallUpdates
                 return null;
             }
 
-            foreach (string folder in GetFileNames(folders))
+            foreach (string folder in GetFileNames(folders) ?? Enumerable.Empty<string>())
             {
                 if (IsExtractedFolderMatch(folder)) return folder;
             }
@@ -123,7 +123,7 @@ namespace MekUpdater.InstallUpdates
                 return null;
             }
 
-            foreach (string file in GetFileNames(files))
+            foreach (string file in GetFileNames(files) ?? Enumerable.Empty<string>())
             {
                 if (IsSetupFile(file)) return file;
             }
@@ -140,7 +140,7 @@ namespace MekUpdater.InstallUpdates
         private static List<string>? GetFileNames(List<string> paths)
         {
             if (paths is null) return null;
-            return paths.Select(x => Path.GetFileName(x)).ToList<string>();
+            return paths.Select(x => Path.GetFileName(x)).ToList();
         }
 
         /// <summary>

@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using MekUpdater.ValueTypes;
 
 namespace MekUpdater
 {
@@ -34,7 +35,7 @@ namespace MekUpdater
             )
         {
             zipPath ??= FilePathHelper.GetAppDataTempZipPath(repoName);
-            extractionPath ??= FilePathHelper.RemoveFileName(zipPath);
+            extractionPath ??= new ZipPath(zipPath).FullPath;
             downloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
             zipPath = Validator.GetCorrectWindowsPath(zipPath);
             extractionPath = Validator.GetCorrectFolderPath(extractionPath);

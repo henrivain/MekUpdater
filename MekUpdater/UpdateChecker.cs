@@ -28,7 +28,8 @@ namespace MekUpdater
         /// <summary>
         /// Info from latest check
         /// </summary>
-        ParsedVersionData LatestInfo { get; set; }
+        ParsedVersionData? LatestInfo { get; set; }
+
         GithubApiClient Client { get; init; }
 
 
