@@ -35,7 +35,7 @@ public class FolderPath : LocalPath
             string path = FromString(value);
             if (string.IsNullOrWhiteSpace(path)) 
                 throw new ArgumentException($"Given path is not valid ; was given {value}");
-            base.FullPath = FromString(path);
+            base.FullPath = path;
         }
     }
 
@@ -69,6 +69,7 @@ public class FolderPath : LocalPath
     /// <returns>path to directory or string.Empty if path not valid</returns>
     private static string TryReadDirectoryPath(string path)
     {
+        if (path.Last() is '/' || path.Last() is '\\') return path; // path is already to folder
         try
         {
             return Path.GetDirectoryName(path) ?? string.Empty;

@@ -52,23 +52,6 @@ namespace MekUpdater.Helpers
             return Path.Combine(AppDataTemp, appName); 
         }
 
-        /// <summary>
-        /// Get path to directrory before last "\" in path
-        /// </summary>
-        /// <param name="zipPath"></param>
-        /// <returns>full path to directory or string.Empty if invalid path</returns>
-        internal static string RemoveFileName(string zipPath)
-        {
-            try
-            {
-                return new FolderPath(zipPath).FullPath;
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine(AppError.Text(ex.Message, 2, zipPath));
-                return string.Empty;
-            }
-        }
 
         /// <summary>
         /// Returns path to local user appdata folder

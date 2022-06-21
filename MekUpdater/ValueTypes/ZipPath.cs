@@ -10,8 +10,9 @@ public class ZipPath : LocalPath, IFilePath
     public ZipPath() { }
 
     /// <summary>
-    /// Initialize new ZipPath where given file is situated in 
-    /// given folder path. If has no extension or wrong extension, changes to or adds ".zip"
+    /// Initialize new ZipPath where given file is situated in given folder path. 
+    /// If has no extension or wrong extension, changes to or adds ".zip".
+    /// If ends in \ or / (directory separator) adds file.zip in the end.
     /// </summary>
     /// <param name="path"></param>
     /// <exception cref="ArgumentException"></exception>
@@ -20,14 +21,17 @@ public class ZipPath : LocalPath, IFilePath
         FullPath = path;
     }
 
-    public static string FileExtension { get; } = ".zip";
+    public static readonly string FileExtension = ".zip";
+
+    public static readonly string DefaultFileName = $"file{FileExtension}";
 
     public string FileName { get; private set; } = string.Empty;
 
     public FolderPath FolderPath { get; private set; } = new();
 
     /// <summary>
-    /// Validated full ".zip" path, if not valid throws ArgumentException
+    /// Validated full ".zip" path OR givenPath\file.zip if givenPath ends in directory separator
+    /// OR if not valid throws ArgumentException
     /// </summary>
     /// <exception cref="ArgumentException"></exception>
     public override string FullPath
@@ -38,7 +42,7 @@ public class ZipPath : LocalPath, IFilePath
             string path = FromString(value);
             if (string.IsNullOrWhiteSpace(path)) 
                 throw new ArgumentException($"Given path is not valid ; was given {value}");
-            base.FullPath = value;
+            base.FullPath = path;
 
             FileName = Path.GetFileNameWithoutExtension(path);
             FolderPath = new FolderPath(path);
@@ -53,8 +57,6 @@ public class ZipPath : LocalPath, IFilePath
     {
         return IsValidFilePath(this) && FullPath.Contains(FileExtension);
     }
-
-
 
     /// <summary>
     /// Get full path, add extension and validate path
@@ -74,6 +76,7 @@ public class ZipPath : LocalPath, IFilePath
     /// <returns>path with ".zip" extension valid, else string.Empty</returns>
     private static string AddZipExtension(string path)
     {
+        if (Path.EndsInDirectorySeparator(path)) return Path.Combine(path, DefaultFileName);
         return Path.ChangeExtension(path, FileExtension) ?? string.Empty;
     }
 }

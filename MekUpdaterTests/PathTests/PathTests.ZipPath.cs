@@ -22,10 +22,8 @@ namespace MekUpdater.Tests
         [TestMethod]
         public void ZipPath_Folder()
         {
-            Assert.ThrowsException<ArgumentException>(() =>
-            {
-                ILocalPath formedValue = new ZipPath(FolderPath);
-            });
+            ILocalPath formedValue = new ZipPath(FolderPath);
+            Assert.AreEqual(Path.Combine(FolderPath, "file.zip"), formedValue.ToString());
         }
 
         [TestMethod]

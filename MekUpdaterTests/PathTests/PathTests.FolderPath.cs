@@ -9,7 +9,7 @@ public partial class PathTests
     public void FolderPath_Normal()
     {
         string formedValue = new FolderPath(FolderPath).FullPath;
-        Assert.AreEqual(formedValue, FolderPath);
+        Assert.AreEqual(FolderPath, formedValue);
     }
 
     [TestMethod]
@@ -17,17 +17,14 @@ public partial class PathTests
     {
         string formedValue = new FolderPath(RelativeFolderPath).FullPath;
         // returns path to assemblyLocation\FooterItem
-        Assert.AreNotEqual(formedValue, RelativeFolderPath);
+        Assert.AreNotEqual(RelativeFolderPath, formedValue);
     }
 
     [TestMethod]
     public void FolderPath_BadFolderPath()
     {
-        Assert.ThrowsException<ArgumentException>(() =>
-        {
-            FolderPath path = new FolderPath(ZipPath);
-
-        });
+        FolderPath path = new FolderPath(ZipPath);
+        Assert.AreEqual(@"C:\Users\user\Downloads\temp", path.ToString());
     }
 
 

@@ -109,7 +109,6 @@ public class LocalPath : ILocalPath
 
 
 
-
     public override string ToString()
     {
         return FullPath.ToString();

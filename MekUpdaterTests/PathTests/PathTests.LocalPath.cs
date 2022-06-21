@@ -10,49 +10,49 @@ public partial class PathTests
     public void LocalPath_Zip()
     {
         string formedValue = new LocalPath(ZipPath).FullPath;
-        Assert.AreEqual(formedValue, ZipPath);
+        Assert.AreEqual(ZipPath, formedValue);
     }
 
     [TestMethod]
     public void LocalPath_Txt()
     {
         string formedValue = new LocalPath(TxtPath).FullPath;
-        Assert.AreEqual(formedValue, TxtPath);
+        Assert.AreEqual(TxtPath, formedValue);
     }
 
     [TestMethod]
     public void LocalPath_FileNameMid()
     {
         string formedValue = new LocalPath(FileNameMidPath).FullPath;
-        Assert.AreEqual(formedValue, TxtPath);
+        Assert.AreEqual(FileNameMidPath, formedValue);
     }
 
     [TestMethod]
     public void LocalPath_Folder()
     {
         string formedValue = new LocalPath(FolderPath).FullPath;
-        Assert.AreEqual(formedValue, FolderPath);
+        Assert.AreEqual(FolderPath, formedValue);
     }
 
     [TestMethod]
     public void LocalPath_NoDrive()
     {
         string formedValue = new LocalPath(NodrivePath).FullPath;
-        Assert.AreNotEqual(formedValue, NodrivePath);
+        Assert.AreNotEqual(NodrivePath, formedValue);
     }
 
     [TestMethod]
     public void LocalPath_Relative()
     {
         string formedValue = new LocalPath(RelativeFolderPath).FullPath;
-        Assert.AreNotEqual(formedValue, RelativeFolderPath);
+        Assert.AreNotEqual(RelativeFolderPath, formedValue);
     }
     
     [TestMethod]
     public void LocalPath_RelativeTxt()
     {
         string formedValue = new LocalPath(RelativeTxtPath).FullPath;
-        Assert.AreNotEqual(formedValue, RelativeTxtPath);
+        Assert.AreNotEqual(RelativeTxtPath, formedValue);
     }
     
     [TestMethod]
