@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using MekUpdater.ValueTypes;
+using MekUpdater.ValueTypes.PathValues;
 
 namespace MekUpdater
 {

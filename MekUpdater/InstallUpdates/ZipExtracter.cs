@@ -9,7 +9,7 @@ using System.IO.Compression;
 using MekUpdater.Helpers;
 using MekUpdater.Exceptions;
 using static MekUpdater.UpdateDownloadInfo;
-using MekUpdater.ValueTypes;
+using MekUpdater.ValueTypes.PathValues;
 
 namespace MekUpdater.InstallUpdates
 {

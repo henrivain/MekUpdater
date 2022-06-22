@@ -1,6 +1,6 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
-namespace MekUpdater.ValueTypes;
+namespace MekUpdater.ValueTypes.PathValues;
 
 public class FolderPath : LocalPath
 {

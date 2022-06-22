@@ -155,6 +155,14 @@ csharp_style_prefer_extended_property_pattern = true:suggestion
 
 # IDE0051: Remove unused private members
 dotnet_diagnostic.IDE0051.severity = none
+csharp_style_prefer_null_check_over_type_check = true:suggestion
+csharp_style_prefer_local_over_anonymous_function = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
+csharp_style_prefer_tuple_swap = true:suggestion
+csharp_style_unused_value_assignment_preference = discard_variable:suggestion
+csharp_style_unused_value_expression_statement_preference = discard_variable:silent
 
 [*.vb]
 # Modifier preferences

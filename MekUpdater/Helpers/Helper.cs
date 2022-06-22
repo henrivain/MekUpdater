@@ -1,14 +1,13 @@
-﻿
-using MekUpdater.ValueTypes;
-/// Copyright 2021 Henri Vainio 
+﻿/// Copyright 2021 Henri Vainio 
+using MekUpdater.ValueTypes.PathValues;
+
 namespace MekUpdater.Helpers
 {
-    internal static class Helper
+    public static class Helper
     {
-        private static readonly FolderPath _downloadsFolder = new (
-            Environment.GetEnvironmentVariable("USERPROFILE") + @"\Downloads"+ 
-                Path.DirectorySeparatorChar);
-        
+        private static readonly FolderPath _downloadsFolder = new(
+            Environment.GetEnvironmentVariable("USERPROFILE")?.ToString() + @"\Downloads" + Path.DirectorySeparatorChar);
+
         private static readonly FolderPath _appDataFolder = new (
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
                 Path.DirectorySeparatorChar);
@@ -19,16 +18,16 @@ namespace MekUpdater.Helpers
         /// <summary>
         /// Path to user's appdata folder (ending in path separator char)
         /// </summary>
-        internal static FolderPath AppDataFolder { get => _appDataFolder; }
+        public static FolderPath AppDataFolder { get => _appDataFolder; }
 
         /// <summary>
         /// Path to user's downloads folder (ending in path separator char)
         /// </summary>
-        internal static FolderPath DownloadsFolder { get => _downloadsFolder; }
+        public static FolderPath DownloadsFolder { get => _downloadsFolder; }
         
         /// <summary>
         /// Path to user's appdata/temp (ending in path separator char)
         /// </summary>
-        internal static FolderPath UserTempFolder { get => _userTempFolder; }
+        public static FolderPath UserTempFolder { get => _userTempFolder; }
     }
 }

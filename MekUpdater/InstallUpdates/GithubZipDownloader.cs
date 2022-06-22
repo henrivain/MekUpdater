@@ -1,7 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
 using MekUpdater.Helpers;
-using MekUpdater.ValueTypes;
+using MekUpdater.ValueTypes.PathValues;
 using static MekUpdater.UpdateDownloadInfo;
 
 namespace MekUpdater.InstallUpdates
@@ -74,11 +74,35 @@ namespace MekUpdater.InstallUpdates
         /// <exception cref="IOException"></exception>
         private async Task RunDownloadAsync()
         {
+
+
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("User-Agent", "request");
+            Info.Downloading();
 
-            using Stream stream = await DownloadZip(client);
-            await CopyStreamToFolder(stream);
+            
+
+            //using Stream stream = await DownloadZip(client);
+            using Stream stream = await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
+
+            CreateFolderInNeed();
+            using FileStream fileStream = new(Info.ZipFilePath.FullPath, FileMode.OpenOrCreate);
+            Info.Copying();
+            await stream.CopyToAsync(fileStream);
+
+
+            //Info.Copying();
+
+
+            //CreateFolderInNeed();
+            //using (FileStream fileStream = new(Info.ZipFilePath.ToString(), FileMode.OpenOrCreate))
+            //{
+            //    Info.Copying();
+            //    await fileStream.CopyToAsync(stream);
+            //}
+
+
+            //await CopyStreamToFolder(stream);
         }
 
         /// <summary>

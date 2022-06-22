@@ -1,7 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
 using MekUpdater.Helpers;
-using MekUpdater.ValueTypes;
+using MekUpdater.ValueTypes.PathValues;
 
 namespace MekUpdater.InstallUpdates
 {
@@ -43,16 +43,6 @@ namespace MekUpdater.InstallUpdates
         {
             FilePath validated = new(pathToSetup);
             return validated.ToString().Contains("setup") && validated.FileExtension == ".exe";
-
-            try
-            {
-                Validator.GetCorrectWindowsPath(pathToSetup);
-            }
-            catch (ArgumentException)
-            {
-                return false;
-            }
-            return IsSetupFile(Path.GetFileName(pathToSetup));
         }
 
         /// <summary>
@@ -64,7 +54,7 @@ namespace MekUpdater.InstallUpdates
 
             if (folderName is null) return;
             
-            FolderPath setupPath = new(Path.Combine(ExtractFolder.ToString(), folderName));
+            FolderPath setupPath = new(Path.Combine(ExtractFolder.ToString(), folderName + "\\"));
             string? setupName = GetSetupFileName(setupPath);
 
             if (setupName is null) return;
@@ -145,7 +135,8 @@ namespace MekUpdater.InstallUpdates
         /// <returns>true if is right format, else false</returns>
         private bool IsExtractedFolderMatch(string folderName)
         {
-            return folderName.Trim().StartsWith($"{RepoOwner}-{_repoName}-");
+            bool isTrue = folderName.Trim().StartsWith($"{RepoOwner}-{_repoName}-");
+            return isTrue;
         }
 
         /// <summary>

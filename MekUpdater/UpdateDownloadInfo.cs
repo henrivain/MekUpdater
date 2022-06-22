@@ -3,7 +3,7 @@ using MekUpdater.Helpers;
 using System.Collections.Generic;
 using System;
 using MekUpdater.Exceptions;
-using MekUpdater.ValueTypes;
+using MekUpdater.ValueTypes.PathValues;
 
 namespace MekUpdater
 {

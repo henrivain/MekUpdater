@@ -1,5 +1,6 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.ValueTypes;
+using MekUpdater.ValueTypes.PathValues;
 
 namespace MekUpdater.Tests
 {

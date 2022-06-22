@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MekUpdater.ValueTypes;
+namespace MekUpdater.ValueTypes.PathValues;
+
 
 public interface IFilePath : ILocalPath
 {

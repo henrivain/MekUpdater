@@ -1,5 +1,6 @@
-﻿/// Copyright 2021 Henri Vainio 
-
+﻿
+using MekUpdater.ValueTypes.PathValues;
+/// Copyright 2021 Henri Vainio 
 namespace MekUpdater.ValueTypes;
 
 public class LocalPath : ILocalPath
@@ -120,21 +121,33 @@ public class LocalPath : ILocalPath
         }
     }
 
+    public virtual bool PathExist => File.Exists(FullPath);
+
 
     public override string ToString()
     {
         return FullPath.ToString();
     }
+
     public override bool Equals(object? obj)
     {
         return obj is LocalPath path &&
                FullPath == path.FullPath;
     }
+
     public override int GetHashCode()
     {
         return HashCode.Combine(FullPath);
     }
 
 
-    public virtual bool PathExist => File.Exists(FullPath);
+    public static bool operator ==(LocalPath? left, LocalPath? right)
+    {
+        return EqualityComparer<LocalPath>.Default.Equals(left, right);
+    }
+
+    public static bool operator !=(LocalPath? left, LocalPath? right)
+    {
+        return !(left == right);
+    }
 }
