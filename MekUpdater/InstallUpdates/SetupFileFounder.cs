@@ -1,12 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
 using MekUpdater.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MekUpdater.ValueTypes;
 
 namespace MekUpdater.InstallUpdates
 {
@@ -19,19 +14,19 @@ namespace MekUpdater.InstallUpdates
         /// Initialize new SetupFilePath by trying to take new path "extractPath/-RepoOwnerName-RepoName/setup.exe"
         /// Where file name must include "setup" and must be ".exe". 
         /// </summary>
-        /// <param name="pathToExtractFolder"></param>
-        /// <param name="repoOwnerName"></param>
+        /// <param name="extractFolder"></param>
+        /// <param name="repoOwner"></param>
         /// <param name="repoName"></param>
-        internal SetupFilePath(string pathToExtractFolder, string repoOwnerName, string repoName)
+        internal SetupFilePath(FolderPath extractFolder, string repoOwner, string repoName)
         {
-            PathToExtractFolder = pathToExtractFolder;
-            RepoOwnerName = repoOwnerName;
+            ExtractFolder = extractFolder;
+            RepoOwner = repoOwner;
             _repoName = repoName;
             TryGetSetupPath();
         }
 
-        private string PathToExtractFolder { get; set; }
-        private string RepoOwnerName { get; set; }
+        private FolderPath ExtractFolder { get; set; }
+        private string RepoOwner { get; set; }
         private string _repoName { get; set; }
 
 
@@ -62,32 +57,30 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         private void TryGetSetupPath()
         {
-            string? folderName = GetSetupContainingFolderName(PathToExtractFolder);
+            string? folderName = GetSetupContainingFolderName(ExtractFolder);
 
             if (folderName is null) return;
             
-            string setupFolderPath = Path.Combine(PathToExtractFolder, folderName);
-            string? setupName = GetSetupFileName(setupFolderPath);
+            FolderPath setupPath = new(Path.Combine(ExtractFolder.ToString(), folderName));
+            string? setupName = GetSetupFileName(setupPath);
 
             if (setupName is null) return;
 
-            SetupPath = Path.Combine(setupFolderPath, setupName);
+            SetupPath = Path.Combine(setupPath.ToString(), setupName);
             SetupFileName = setupName;
         }
 
         /// <summary>
         /// Get name of folder containing setup file
         /// </summary>
-        /// <param name="pathToExtractFolder"></param>
+        /// <param name="ExtractPath"></param>
         /// <returns>Name of folder containing setup file or null if not found</returns>
-        public string? GetSetupContainingFolderName(string pathToExtractFolder)
+        public string? GetSetupContainingFolderName(FolderPath ExtractPath)
         {
-            //string folderPath = Validator.GetCorrectFolderPath(pathToExtractedFolder);
-            List<string> folders = new();
-
+            List<string> folders;
             try
             {
-                folders = Directory.EnumerateDirectories(pathToExtractFolder).ToList<string>();
+                folders = Directory.EnumerateDirectories(ExtractPath.ToString()).ToList();
             }
             catch (Exception ex)
             {
@@ -100,22 +93,21 @@ namespace MekUpdater.InstallUpdates
                 if (IsExtractedFolderMatch(folder)) return folder;
             }
 
-            ErrorMessage = AppError.Text("Could not find matching folder from given path", PathToExtractFolder);
+            ErrorMessage = AppError.Text("Could not find matching folder from given path", ExtractFolder.ToString());
             return null;
         }
 
         /// <summary>
         /// Get name of setup file
         /// </summary>
-        /// <param name="pathToSetupFolder"></param>
+        /// <param name="SetupPath"></param>
         /// <returns>Name of setup file or null if not found</returns>
-        private string? GetSetupFileName(string pathToSetupFolder)
+        private string? GetSetupFileName(FolderPath SetupPath)
         {
             List<string> files;
-
             try
             {
-                files = Directory.EnumerateFiles(pathToSetupFolder).ToList<string>();
+                files = Directory.EnumerateFiles(SetupPath.ToString()).ToList();
             }
             catch (Exception ex)
             {
@@ -128,7 +120,7 @@ namespace MekUpdater.InstallUpdates
                 if (IsSetupFile(file)) return file;
             }
 
-            ErrorMessage = AppError.Text($"Could not find setup file from {Path.Combine(pathToSetupFolder)}");
+            ErrorMessage = AppError.Text($"Could not find setup file from {Path.Combine(SetupPath.ToString())}");
             return null;
         }
 
@@ -150,7 +142,7 @@ namespace MekUpdater.InstallUpdates
         /// <returns>true if is right format, else false</returns>
         private bool IsExtractedFolderMatch(string folderName)
         {
-            return folderName.Trim().StartsWith($"{RepoOwnerName}-{_repoName}-");
+            return folderName.Trim().StartsWith($"{RepoOwner}-{_repoName}-");
         }
 
         /// <summary>

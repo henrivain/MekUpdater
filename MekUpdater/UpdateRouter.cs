@@ -26,32 +26,25 @@ namespace MekUpdater
         /// <param name="zipPath"></param>
         /// <param name="extractionPath"></param>
         /// <exception cref="ArgumentException"></exception>
-        public UpdateRouter(
-            string downloadUrl,
-            string repoOwner,
-            string repoName,
-            string? zipPath = null,
-            string? extractionPath = null
-            )
+        public UpdateRouter(RepositoryInfo repoInfo, ZipPath zipPath, FolderPath extractionPath)
         {
-            zipPath ??= FilePathHelper.GetAppDataTempZipPath(repoName);
-            extractionPath ??= new ZipPath(zipPath).FullPath;
-            downloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
-            zipPath = Validator.GetCorrectWindowsPath(zipPath);
-            extractionPath = Validator.GetCorrectFolderPath(extractionPath);
-          
-            if (zipPath.Contains(".zip") is false) Path.Combine(zipPath, "update.zip");
+            if (zipPath.HasValue is false)
+            {
+                zipPath = new(
+                    Path.Combine(Helper.UserTempFolder.ToString(), "MekUpdater\\update.zip")
+                    );
+            }
+
+            if (extractionPath.HasValue is false)
+            {
+                extractionPath = zipPath.FolderPath;
+            }
 
             Info = new UpdateDownloadInfo()
             {
-                ZipFilePath = downloadUrl,
+                ZipFilePath = zipPath,
                 ExtractPath = extractionPath,
-                RepoInfo = new()
-                {
-                    DownloadUrl = downloadUrl,
-                    RepoOwner = repoOwner,
-                    RepoName = repoName
-                }
+                RepoInfo = repoInfo
             };
         }
 

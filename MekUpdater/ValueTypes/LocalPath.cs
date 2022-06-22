@@ -54,10 +54,7 @@ public class LocalPath : ILocalPath
     /// Check weather instance of object has path value
     /// </summary>
     /// <returns>true if has value (value not string.Empty), else false</returns>
-    public virtual bool HasValue()
-    {
-        return string.IsNullOrEmpty(FullPath) is false;
-    }
+    public virtual bool HasValue => string.IsNullOrEmpty(FullPath) is false;
 
     /// <summary>
     /// Check weather path.FullPath is valid in windows
@@ -142,8 +139,6 @@ public class LocalPath : ILocalPath
             return string.Empty;
         }
     }
-
-
 
     public bool PathExist()
     {

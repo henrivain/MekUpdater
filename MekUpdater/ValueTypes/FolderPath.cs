@@ -13,7 +13,7 @@ public class FolderPath : LocalPath
     public FolderPath() { }
 
     /// <summary>
-    /// Create path to folder/directory by removing filename from given path
+    /// Create path to path/To/directory/ by removing filename from given path (ending in 
     /// </summary>
     /// <param name="path"></param>
     /// <exception cref="ArgumentException"></exception>
@@ -21,9 +21,6 @@ public class FolderPath : LocalPath
     {
         FullPath = path;
     }
-
-
-
 
 
 
@@ -58,6 +55,10 @@ public class FolderPath : LocalPath
     private static string FromString(string path)
     {
         string full = GetFullPath(TryReadDirectoryPath(path));
+        if (Path.EndsInDirectorySeparator(full) is false)
+        {
+            full += Path.DirectorySeparatorChar;
+        }
         return (string.IsNullOrWhiteSpace(full)) ? string.Empty : full;
     }
 

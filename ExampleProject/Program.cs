@@ -1,12 +1,11 @@
 ﻿using MekUpdater;
 using MekUpdater.ValueTypes;
+using MekUpdater.Helpers;
 using System.IO;
 
-ILocalPath localPath = new FolderPath(@"C:\Users\user\Downloads\temp\update.zip");
-
-Console.WriteLine(localPath);
 
 
-
+ILocalPath path = new FolderPath("C:gg\\yy");
+Console.WriteLine(path);
 
 Console.ReadKey();

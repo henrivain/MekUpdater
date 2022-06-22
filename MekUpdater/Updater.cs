@@ -1,15 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using MekUpdater.Helpers;
-using System.IO.Compression;
 using MekUpdater.Exceptions;
+using MekUpdater.Helpers;
+using MekUpdater.ValueTypes;
 
 namespace MekUpdater
 {
@@ -24,12 +16,17 @@ namespace MekUpdater
         /// <para/>Local paths will be handled automatically to appData/appName/temp
         /// THESE NAMES MUST BE RIGHT FOR UPDATER TO WORK
         /// </summary>
+        /// <exception cref="ArgumentException">Thrown if any of the arguments is null or empty</exception>
         public AppUpdater(string repoOwner, string repoName)
         {
+            ZipPath zipPath = new(
+                    Path.Combine(Helper.UserTempFolder.ToString(), $"{repoName}\\update.zip")
+                    );
+
             Info = new()
             {
-                ZipFilePath = FilePathHelper.GetAppDataTempZipPath(repoName),
-                ExtractPath = FilePathHelper.GetAppDataTempFolder(repoName),
+                ZipFilePath = zipPath,
+                ExtractPath = zipPath.FolderPath,
                 RepoInfo = new()
                 {
                     RepoOwner = repoOwner,
@@ -39,13 +36,44 @@ namespace MekUpdater
         }
 
         /// <summary>
-        /// Initialize new AppUpdater with information about where to place downloaded zip file and extracted files, 
-        /// github repository author name and repository name
-        /// <para/>Pass parameters in format AppUpdater("MyLoginName", "MyCoolRepository", "C:path/to/file.zip", "C:path/to") 
+        /// Initialize new AppUpdater with information about github repository author name and repository name and
+        /// where to place downloaded zip file. Unknown properties will be added automatically
+        /// <para/>Pass parameters in format AppUpdater("MyLoginName", "MyCoolRepository", "C:path/to/file.zip")
+        /// <para/>Extraction path will be routed to folder containing downloaded zip file
         /// THESE NAMES MUST BE RIGHT FOR UPDATER TO WORK
         /// </summary>
-        public AppUpdater(string repoOwner, string repoName, string zipPath, string extractionPath)
+        /// <exception cref="ArgumentException">Will be thrown if zipPath 
+        /// does not have value or any of other arg does not have value</exception>
+        public AppUpdater(string repoOwner, string repoName, ZipPath zipPath)
         {
+            if (zipPath.HasValue is false) throw new ArgumentException($"{nameof(zipPath)}.FullPath can't be empty");
+
+            Info = new()
+            {
+                ZipFilePath = zipPath,
+                ExtractPath = zipPath.FolderPath,
+                RepoInfo = new()
+                {
+                    RepoOwner = repoOwner,
+                    RepoName = repoName
+                }
+            };
+        }
+
+        /// <summary>
+        /// Initialize new AppUpdater with information about github repository 
+        /// author name and repository name and where to place downloaded zip file 
+        /// and extracted files.
+        /// <para/>Pass parameters in format AppUpdater("MyLoginName", "MyCoolRepository", "C:path/to/file.zip", "C:path/to") 
+        /// REPOSITORY NAMES MUST BE RIGHT FOR UPDATER TO WORK
+        /// </summary>
+        /// <exception cref="ArgumentException">Will be thrown if zipPath or extractionPath does
+        /// not have value or any of other arg does not have value</exception>
+        public AppUpdater(string repoOwner, string repoName, ZipPath zipPath, FolderPath extractionPath)
+        {
+            if (zipPath.HasValue is false) throw new ArgumentException($"{nameof(zipPath)}.FullPath can't be empty");
+            if (extractionPath.HasValue is false) throw new ArgumentException($"{nameof(extractionPath)}.FullPath can't be empty");
+
             Info = new()
             {
                 ZipFilePath = zipPath,
@@ -57,6 +85,7 @@ namespace MekUpdater
                 }
             };
         }
+
 
 
 
@@ -100,7 +129,6 @@ namespace MekUpdater
             return await UpdateChecker.CheckForUpdates();
         }
 
-
         /// <summary>
         /// Download update files from Github, extract and launch setup.exe
         /// <para/>call only if CheckForUpdates() is run before
@@ -133,8 +161,6 @@ namespace MekUpdater
             Info.RepoInfo.DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
             await RunUpdate();
         }
-
-
 
         private async Task RunUpdate()
         {

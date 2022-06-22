@@ -9,6 +9,7 @@ using System.IO.Compression;
 using MekUpdater.Helpers;
 using MekUpdater.Exceptions;
 using static MekUpdater.UpdateDownloadInfo;
+using MekUpdater.ValueTypes;
 
 namespace MekUpdater.InstallUpdates
 {
@@ -21,9 +22,9 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         /// <param name="path"></param>
         /// <exception cref="ArgumentException"></exception>
-        internal ZipExtracter(string path)
+        internal ZipExtracter(ZipPath path)
         {
-            Info.ZipFilePath = Validator.GetCorrectZipPath(Validator.GetCorrectWindowsPath(path));
+            Info.ZipFilePath = path;
         }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace MekUpdater.InstallUpdates
             {
                 await Task.Run(() =>
                 {
-                    ZipFile.ExtractToDirectory(Info.ZipFilePath, Info.ExtractPath, true);
+                    ZipFile.ExtractToDirectory(Info.ZipFilePath.ToString(), Info.ExtractPath.ToString(), true);
                 }); 
                 Info.ExtractionCompleted();
             }
@@ -69,7 +70,7 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         /// <param name="ex"></param>
         /// <returns>ErroMsg with case matching error code or ErroMsg.Other if Exception not found</returns>
-        private ErrorMsg GetExceptionReason(Exception ex)
+        private static ErrorMsg GetExceptionReason(Exception ex)
         {
             return ex switch
             {

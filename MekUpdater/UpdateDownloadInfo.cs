@@ -3,6 +3,7 @@ using MekUpdater.Helpers;
 using System.Collections.Generic;
 using System;
 using MekUpdater.Exceptions;
+using MekUpdater.ValueTypes;
 
 namespace MekUpdater
 {
@@ -20,54 +21,46 @@ namespace MekUpdater
         /// Initialize new UpdateDownloadInfo with filepath, extractPath, and RepoInfo
         /// throws argument exception if any of them are invalid
         /// </summary>
-        /// <param name="downloadUrl"></param>
         /// <param name="filePath"></param>
         /// <param name="extractPath"></param>
+        /// <param name="repoInfo"></param>
         /// <exception cref="ArgumentException"></exception>
-        public UpdateDownloadInfo(string filePath, string extractPath, RepositoryInfo repoInfo) 
+        public UpdateDownloadInfo(ZipPath filePath, FolderPath extractPath, RepositoryInfo repoInfo) 
         {
             ZipFilePath = filePath;
             ExtractPath = extractPath;
             RepoInfo = repoInfo;
         }
 
+        ZipPath _zipFilePath = new();
+        FolderPath _extractPath = new();
+
         /// <summary>
-        /// Initialize new UpdateDownloadInfo with known downloadUrl, filepath, extractPath, repoOwner, repoName
-        /// throws argument exception if any of them are invalid
+        /// Path to downloaded zip file
         /// </summary>
-        /// <param name="downloadUrl"></param>
-        /// <param name="filePath"></param>
-        /// <param name="extractPath"></param>
         /// <exception cref="ArgumentException"></exception>
-        public UpdateDownloadInfo(string downloadUrl, string filePath, 
-            string extractPath, string repoOwner, string repoName)
+        public ZipPath ZipFilePath
         {
-            ZipFilePath = filePath;
-            ExtractPath = extractPath;
-            RepoInfo = new(repoOwner, repoName, downloadUrl);
-        }
-
-        string _zipFilePath = string.Empty;
-        string _extractPath = string.Empty;
-
-        /// <summary>
-        /// Place where file will be placed (with file extension .zip)
-        /// </summary>
-        /// <exception cref="ArgumentException"></exception>
-        public string ZipFilePath 
-        { 
-            get => _zipFilePath; 
-            set => _zipFilePath = Validator.GetCorrectZipPath(value); 
+            get => _zipFilePath;
+            set
+            {
+                _zipFilePath = value.HasValue ? 
+                    value : throw new ArgumentException($"Given {nameof(ZipFilePath)} is invalid");
+            }
         }
 
         /// <summary>
-        /// Place where file will be extracted (must be path to folder)
+        /// Folder where zip file will be extracted
         /// </summary>
         /// <exception cref="ArgumentException"></exception>
-        public string ExtractPath
+        public FolderPath ExtractPath
         {
             get => _extractPath;
-            set => _extractPath = Validator.GetCorrectFolderPath(value);
+            set
+            {
+                _extractPath = value.HasValue ? 
+                    value : throw new ArgumentException($"Given {nameof(ZipFilePath)} is invalid");
+            }
         }
 
         /// <summary>

@@ -19,11 +19,10 @@ namespace MekUpdater.InstallUpdates
         /// <param name="downloadUrl"></param>
         /// <param name="filePath"></param>
         /// <exception cref="ArgumentException"></exception>
-        internal GithubZipDownloader(string downloadUrl, string filePath)
+        internal GithubZipDownloader(string downloadUrl, string zipPath)
         {
-            if (filePath.Contains(".zip") is false) Path.Combine(filePath, "update.zip");
             Info.RepoInfo.DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
-            Info.ZipFilePath = Validator.GetCorrectWindowsPath(filePath);
+            Info.ZipFilePath = new(zipPath);
         }
 
         /// <summary>
@@ -77,16 +76,59 @@ namespace MekUpdater.InstallUpdates
         {
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("User-Agent", "request");
-            Info.Downloading();
 
-            using Stream stream = await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
+            using Stream stream = await DownloadZip(client);
+            await CopyStreamToFolder(stream);
+        }
 
-
-            CreateFolderInNeed();
-            Console.WriteLine($"[UpdateStatus] Downloading zip to {new FolderPath(Info.ZipFilePath).FullPath}");
-            using FileStream fileStream = new(Info.ZipFilePath, FileMode.OpenOrCreate);
+        /// <summary>
+        /// Copy given stream to folder using path from Info.ZipFilePath
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns>awaitable task</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        /// <exception cref="TaskCanceledException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="System.Security.SecurityException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="IOException"></exception>
+        private async Task CopyStreamToFolder(Stream stream)
+        {
             Info.Copying();
-            await stream.CopyToAsync(fileStream);
+            CreateFolderInNeed();
+            await stream.CopyToAsync(GetZipFileStream());
+        }
+
+        /// <summary>
+        /// Download zip from githup as Stream
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns>Stream zip</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        /// <exception cref="TaskCanceledException"></exception>
+        private async Task<Stream> DownloadZip(HttpClient client)
+        {
+            Info.Downloading();
+            return await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
+        }
+
+        /// <summary>
+        /// Open or create FileStream with ".zip" extension for zip file
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="System.Security.SecurityException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="IOException"></exception>
+        private FileStream GetZipFileStream()
+        {
+            return new(Info.ZipFilePath.ToString(), FileMode.OpenOrCreate);
         }
 
         /// <summary>
@@ -94,9 +136,10 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         private void CreateFolderInNeed()
         {
-            string folder = new FolderPath(Info.ZipFilePath).FullPath;
+            string folder = new FolderPath(Info.ZipFilePath.ToString()).FullPath;
             if (folder == string.Empty) return;
             Directory.CreateDirectory(folder);
+            Console.WriteLine($"[UpdateStatus] Downloading zip to folder: {folder}");
         }
 
         /// <summary>
