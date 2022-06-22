@@ -23,7 +23,7 @@ namespace MekUpdater.ValueTypes
         public override string FullPath 
         { 
             get => base.FullPath; 
-            set 
+            protected set 
             {
                 string path = FromString(value);
                 if (string.IsNullOrWhiteSpace(path))
@@ -35,17 +35,24 @@ namespace MekUpdater.ValueTypes
             }
         }
 
-
         /// <summary>
         /// Default file extension for this type of file
         /// </summary>
-        public virtual string FileExtension => ".";
+        public virtual string FileExtension { get; private set; } = ".";
 
         /// <summary>
         /// File name that is used, if path ends in directory
         /// </summary>
         public string DefaultFileName => $"file{FileExtension}";
 
+        /// <summary>
+        /// Checks weather current inctance is valid folder path
+        /// </summary>
+        /// <returns>true if is valid, else false</returns>
+        public override bool IsValid()
+        {
+            return IsValidFilePath(this) && FullPath.Contains(FileExtension);
+        }
 
         /// <summary>
         /// Get full path, add extension and validate path
@@ -54,10 +61,15 @@ namespace MekUpdater.ValueTypes
         /// <returns>valid path or string.Empty if not valid</returns>
         protected string FromString(string path)
         {
+            // Check if extension is not already defined by child class
+            if (FileExtension is ".")
+            {
+                SetFileExtensionProperty(path);
+                return path;
+            }
             string full = AddExtension(GetFullPath(path));
             return (string.IsNullOrWhiteSpace(full)) ? string.Empty : full;
         }
-
 
         /// <summary>
         /// Add extension to file if needed
@@ -71,12 +83,16 @@ namespace MekUpdater.ValueTypes
         }
 
         /// <summary>
-        /// Checks weather current inctance is valid folder path
+        /// Set FileExtension property or add "." in the end of path to 
         /// </summary>
-        /// <returns>true if is valid, else false</returns>
-        public override bool IsValid()
+        /// <param name="path"></param>
+        /// <exception cref="ArgumentException">thrown when path does not end in file extension</exception>
+        private void SetFileExtensionProperty(string path)
         {
-            return IsValidFilePath(this) && FullPath.Contains(FileExtension);
+            string fileExtension = Path.GetExtension(path) ?? string.Empty;
+            if (string.IsNullOrEmpty(fileExtension)) 
+                throw new ArgumentException($"{nameof(FilePath)} must end in file extension ; was given {path}");
+            FileExtension = fileExtension;
         }
     }
 }

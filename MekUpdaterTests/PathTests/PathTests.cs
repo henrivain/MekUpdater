@@ -7,6 +7,7 @@ public partial class PathTests
 {
     const string ZipPath = @"C:\Users\user\Downloads\temp\update.zip";
     const string TxtPath = @"C:\Users\user\Downloads\temp\update.txt";
+    const string ExePath = @"C:\Users\user\Downloads\temp\update.exe";
     const string FolderPath = @"C:\Users\user\Downloads\temp\";
     
     const string FileNameMidPath = @"C:\temp\text.txt\gg.txt";

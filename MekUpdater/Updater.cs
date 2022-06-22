@@ -134,7 +134,7 @@ namespace MekUpdater
         /// <para/>call only if CheckForUpdates() is run before
         /// </summary>
         /// <returns>awaitable Task</returns>
-        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task DownloadUpdateAsync()
         {
             try

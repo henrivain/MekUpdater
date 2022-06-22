@@ -66,48 +66,7 @@ namespace MekUpdater.Helpers
             return url;
         }
 
-        /// <summary>
-        /// Check if path ends with .zip file extension
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns>path if valid, else throws ArgumentException</returns>
-        /// <exception cref="ArgumentException"></exception>
-        internal static string GetCorrectZipPath(string path)
-        {
-            PathInfo info = ValidateAndGetWindowsPath(path);
-            if (info.IsPath is false)
-            {
-                throw new ArgumentException(AppError.Text(info.Msg, 2, info.Path));
-            }
-            if (Path.GetExtension(info.Path) is not ".zip")
-            {
-                throw new ArgumentException(AppError.Text("Zip path must have .zip in the end", 2, info.Path));
-            }
-            return info.Path;
-        }
 
-        /// <summary>
-        /// Turn given path to full path and validate it, validate that it ends with Path.DirectorySeparatorChar
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns>valid path, or throws ArgumentException</returns>
-        /// <exception cref="ArgumentException"></exception>
-        internal static string GetCorrectFolderPath(string path)
-        {
-            PathInfo info = ValidateAndGetWindowsPath(path);
-
-            if (info.IsPath is false)
-            {
-                throw new ArgumentException(AppError.Text(info.Msg, 2, info.Path));
-            }
-
-            if (info.Path.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
-            {
-                return info.Path + Path.DirectorySeparatorChar;
-            }
-
-            return info.Path;
-        }
 
         /// <summary>
         /// Validates, that path is valid windows path

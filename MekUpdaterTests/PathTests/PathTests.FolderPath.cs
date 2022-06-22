@@ -21,12 +21,10 @@ public partial class PathTests
     }
 
     [TestMethod]
-    public void FolderPath_BadFolderPath()
+    public void FolderPath_RemoFileName()
     {
+        // Also checks at the same time that ends in "\" -symbol
         FolderPath path = new FolderPath(ZipPath);
-        Assert.AreEqual(@"C:\Users\user\Downloads\temp", path.ToString());
+        Assert.AreEqual(@"C:\Users\user\Downloads\temp\", path.ToString());
     }
-
-
-
 }

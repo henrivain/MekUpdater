@@ -1,6 +1,4 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using System;
-using System.IO;
 
 namespace MekUpdater.ValueTypes;
 
@@ -23,8 +21,6 @@ public class LocalPath : ILocalPath
 
     string _fullPath = string.Empty;
 
-
-
     /// <summary>
     /// Validated full path, if no valid, throws ArgumentException
     /// </summary>
@@ -32,7 +28,7 @@ public class LocalPath : ILocalPath
     public virtual string FullPath 
     { 
         get => _fullPath; 
-        set 
+        protected set 
         {
             _fullPath = GetFullPath(value);
             if (IsValidWindowsPath(this) is false) 
@@ -104,6 +100,25 @@ public class LocalPath : ILocalPath
         return (path.IndexOfAny(invalidChars) != -1);
     }
 
+    /// <summary>
+    /// Get full path from relative, if bad path, returns string.empty. 
+    /// If given path is full path, returns it unchanced.
+    /// Writes all exceptions in console.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns>full path if given path valid or valid relative path, else string.Empty</returns>
+    protected static string GetFullPath(string path)
+    {
+        try
+        {
+            return Path.GetFullPath(path) ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex.Message}\n{path}");
+            return string.Empty;
+        }
+    }
 
 
     public override string ToString()
@@ -120,28 +135,6 @@ public class LocalPath : ILocalPath
         return HashCode.Combine(FullPath);
     }
 
-    /// <summary>
-    /// Get full path from relative, if bad path, returns string.empty. 
-    /// If given path is full path, returns it unchanced.
-    /// Writes all exceptions in console.
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns>full path if given path valid or valid relative path, else string.Empty</returns>
-    public static string GetFullPath(string path)
-    {
-        try
-        {
-            return Path.GetFullPath(path) ?? string.Empty;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"{ex.Message}\n{path}");
-            return string.Empty;
-        }
-    }
 
-    public bool PathExist()
-    {
-        throw new NotImplementedException();
-    }
+    public virtual bool PathExist => File.Exists(FullPath);
 }

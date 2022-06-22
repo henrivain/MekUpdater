@@ -27,6 +27,6 @@ public class ZipPath : FilePath
     /// <exception cref="ArgumentException"></exception>
     public override string FullPath
     {
-        get => base.FullPath; set => base.FullPath = value;
+        get => base.FullPath; protected set => base.FullPath = value;
     }
 }

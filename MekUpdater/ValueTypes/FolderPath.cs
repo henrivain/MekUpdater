@@ -1,6 +1,4 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using System;
-using System.IO;
 
 namespace MekUpdater.ValueTypes;
 
@@ -27,7 +25,7 @@ public class FolderPath : LocalPath
     public override string FullPath
     {
         get => base.FullPath;
-        set
+        protected set
         {
             string path = FromString(value);
             if (string.IsNullOrWhiteSpace(path)) 
@@ -81,4 +79,11 @@ public class FolderPath : LocalPath
             return string.Empty;
         }
     }
+
+    /// <summary>
+    /// Check weather defined path exist or not (folder must be also rigth file type: f.zip named folder != f.zip named file)
+    /// </summary>
+    /// <returns>true if path exist, else false (false also in case that user has no permission regardless of path existence)</returns>
+    public override bool PathExist => Directory.Exists(FullPath);
+
 }

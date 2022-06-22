@@ -41,6 +41,9 @@ namespace MekUpdater.InstallUpdates
         /// <returns>true if is setup file, else false</returns>
         internal static bool IsCorrectSetupPath(string pathToSetup)
         {
+            FilePath validated = new(pathToSetup);
+            return validated.ToString().Contains("setup") && validated.FileExtension == ".exe";
+
             try
             {
                 Validator.GetCorrectWindowsPath(pathToSetup);
