@@ -1,9 +1,9 @@
 ﻿/// Copyright 2021 Henri Vainio 
+using MekPathLibrary;
 using MekUpdater.Exceptions;
 using MekUpdater.Fluent.Interfaces;
 using MekUpdater.Helpers;
 using MekUpdater.ValueTypes;
-using MekUpdater.ValueTypes.PathValues;
 
 namespace MekUpdater.Fluent
 {
@@ -15,7 +15,6 @@ namespace MekUpdater.Fluent
                 Path.Combine(Helper.DownloadsFolder.ToString(), $"temp\\{repoName}\\update.zip"));
             Console.WriteLine(zipPath);
             
-            // Helper.UserTempFolder.ToString()
             Info = new()
             {
                 IsUpdating = true,

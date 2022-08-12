@@ -1,13 +1,40 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>1.0.1.0</Version>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>MekUpdater</PackageId>
+    <Title>MekUpdater</Title>
+    <PackageOutputPath>C:\Nugets</PackageOutputPath>
+    <Description>Way to update your applications from github</Description>
+    <PackageProjectUrl>https://github.com/matikkaeditorinkaantaja/MekUpdater</PackageProjectUrl>
+    <PackageIcon>logo v2.1 128x128.png</PackageIcon>
+    <Authors>Henri Vainio</Authors>
+    <Company>Matikkaeditorinkääntäjä</Company>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MekPathLibrary" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\MekUpdaterStandard\Resources\logo v2.1 128x128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

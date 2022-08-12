@@ -1,13 +1,9 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
+using MekPathLibrary;
 using MekUpdater.Exceptions;
 using MekUpdater.Helpers;
 using MekUpdater.InstallUpdates;
-using System;
-using System.IO;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using MekUpdater.ValueTypes.PathValues;
 
 namespace MekUpdater
 {

@@ -11,7 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MekUpdater\MekUpdater.csproj" />
+    <PackageReference Include="MekPathLibrary" Version="1.0.0" />
+    <PackageReference Include="MekUpdater" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MekUpdaterStandard\MekUpdaterStandard.csproj" />
   </ItemGroup>
 
 </Project>

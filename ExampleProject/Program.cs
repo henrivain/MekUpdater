@@ -1,8 +1,6 @@
-﻿using MekUpdater.ValueTypes;
-using MekUpdater.Fluent;
-using ExampleProject;
-using MekUpdater.ValueTypes.PathValues;
+﻿using MekPathLibrary;
 using MekUpdater.Helpers;
+using MekUpdater.ValueTypes;
 
 VersionTag tag = VersionTag.GetEntryAssemblyVersion();
 
@@ -16,12 +14,12 @@ Console.WriteLine(shit2);
 Console.WriteLine(new FolderPath(shit).ToString());
 Console.WriteLine();
 
+
 Console.WriteLine(shit);
 ZipPath zipPath = new(
                 Path.Combine(Helper.DownloadsFolder.ToString(), $"\\temp\\update.zip"));
 
 Console.WriteLine(zipPath.ToString());
-UpdateHandler.Run();
 
 
 Console.ReadKey();

@@ -1,6 +1,6 @@
-﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.ValueTypes;
-
+﻿
+using MekPathLibrary;
+/// Copyright 2021 Henri Vainio 
 namespace MekUpdater.Tests;
 
 public partial class PathTests

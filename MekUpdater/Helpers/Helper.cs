@@ -1,5 +1,5 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.ValueTypes.PathValues;
+using MekPathLibrary;
 
 namespace MekUpdater.Helpers
 {

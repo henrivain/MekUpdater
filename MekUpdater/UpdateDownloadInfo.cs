@@ -1,10 +1,6 @@
-﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Helpers;
-using System.Collections.Generic;
-using System;
-using MekUpdater.Exceptions;
-using MekUpdater.ValueTypes.PathValues;
-
+﻿
+using MekPathLibrary;
+/// Copyright 2021 Henri Vainio 
 namespace MekUpdater
 {
     /// <summary>
