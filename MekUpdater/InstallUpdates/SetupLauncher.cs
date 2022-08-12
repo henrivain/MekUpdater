@@ -1,7 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Exceptions;
-using System;
+
 using System.Diagnostics;
+using MekUpdater.Exceptions;
 using static MekUpdater.UpdateDownloadInfo;
 
 namespace MekUpdater.InstallUpdates
@@ -9,17 +9,17 @@ namespace MekUpdater.InstallUpdates
     /// <summary>
     /// Tool for starting setup.exe from subfolder of Info.ExtractPath
     /// </summary>
-    public class SetupLauncher
+    internal class SetupLauncher
     {
         /// <summary>
         /// Initialize new SetupLauncher to start setup.exe from extracted folder
         /// </summary>
-        public SetupLauncher(UpdateDownloadInfo info)
+        internal SetupLauncher(UpdateDownloadInfo info)
         {
             Info = info;
         }
 
-        UpdateDownloadInfo Info = new();
+        readonly UpdateDownloadInfo Info = new();
 
         /// <summary>
         /// Start setup.exe from given path OR calculated path from Info.ExtractPath
@@ -78,7 +78,7 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         /// <param name="ex"></param>
         /// <returns>(FailState.Launching, ExceptionReason) or if exception not known (FailState.Launching, ErrorMsg.Unknown)</returns>
-        private (FailState state, ErrorMsg msg) GetTryLaunchExceptionReason(Exception ex)
+        private static (FailState state, ErrorMsg msg) GetTryLaunchExceptionReason(Exception ex)
         {
             return ex switch
             {

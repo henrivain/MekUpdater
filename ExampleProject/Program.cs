@@ -22,4 +22,5 @@ ZipPath zipPath = new(
 Console.WriteLine(zipPath.ToString());
 
 
+Console.WriteLine(Path.Combine(Helper.UserTempFolder.ToString(), "g\\update.zip"));
 Console.ReadKey();

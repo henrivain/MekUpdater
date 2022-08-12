@@ -1,7 +1,6 @@
-﻿
-using System.Reflection;
-/// Copyright 2021 Henri Vainio 
-namespace MekUpdater.ValueTypes;
+﻿using System.Reflection;
+/// Copyright 2022 Henri Vainio 
+namespace MekUpdater.Helpers;
 
 public class VersionTag
 {
@@ -40,7 +39,7 @@ public class VersionTag
     /// First number in version string
     /// </summary>
     public uint Major { get; private set; } = 1;
-    
+
     /// <summary>
     /// Second number in version string
     /// </summary>
@@ -82,22 +81,24 @@ public class VersionTag
     /// <exception cref="InvalidOperationException"></exception>
     public static VersionTag GetEntryAssemblyVersion()
     {
-        Assembly? entryAssembly = Assembly.GetEntryAssembly();
+        var entryAssembly = Assembly.GetEntryAssembly();
         if (entryAssembly is null)
         {
             throw new InvalidOperationException(
                 $"can't find {nameof(entryAssembly)}");
         }
-        
-        string? version = entryAssembly.GetName().Version?.ToString();
+
+        var version = entryAssembly.GetName().Version?.ToString();
         if (version is null)
         {
             throw new InvalidOperationException(
                 $"can't find {nameof(version)}");
         }
-        
+
         return new($"v{version}");
     }
+
+    public static VersionTag Min => new("v0.0.0-alpha");
 
     public override bool Equals(object? obj)
     {
@@ -133,7 +134,7 @@ public class VersionTag
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns>true if left side is bigger or right null, else false</returns>
-    public static bool operator > (VersionTag? left, VersionTag? right)
+    public static bool operator >(VersionTag? left, VersionTag? right)
     {
         if (left is null) return false;
         if (right is null) return true;
@@ -146,7 +147,7 @@ public class VersionTag
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns>true if right side is bigger or left null, else false</returns>
-    public static bool operator < (VersionTag? left, VersionTag? right)
+    public static bool operator <(VersionTag? left, VersionTag? right)
     {
         return !(left > right);
     }
@@ -157,7 +158,7 @@ public class VersionTag
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns>true if right side is bigger or left null or both are same, else false</returns>
-    public static bool operator <= (VersionTag? left, VersionTag? right)
+    public static bool operator <=(VersionTag? left, VersionTag? right)
     {
         if (right is null && left is null) return true;
         if (left is null) return false;
@@ -171,7 +172,7 @@ public class VersionTag
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns>true if left side is bigger or right null or both are same, else false</returns>
-    public static bool operator >= (VersionTag? left, VersionTag? right)
+    public static bool operator >=(VersionTag? left, VersionTag? right)
     {
         return !(left <= right);
     }
@@ -194,10 +195,10 @@ public class VersionTag
 
         (versionString, VersionId) = CheckAndRemoveSpecialIds(versionString);
 
-        string[] versionNumbers = versionString.Split(".");
-        uint[] result = new uint[] { 0, 0, 0 };
+        var versionNumbers = versionString.Split(".");
+        var result = new uint[] { 0, 0, 0 };
 
-        for (int i = 0; i <= 2; i++)
+        for (var i = 0; i <= 2; i++)
         {
             try
             {
@@ -221,9 +222,9 @@ public class VersionTag
     /// <returns>trimmed version string and fitting SpecialId</returns>
     private static (string versionString, SpecialId id) CheckAndRemoveSpecialIds(string versionString)
     {
-        string[] ids = Enum.GetNames(typeof(SpecialId));
+        var ids = Enum.GetNames(typeof(SpecialId));
         ids = ids.Select(s => s.ToLower()).ToArray();
-        
+
         return (RemoveSpecialIds(versionString, ids), GetIdFromString(versionString, ids));
     }
 
@@ -235,7 +236,7 @@ public class VersionTag
     /// <returns>input with Special id names and "-" removed</returns>
     private static string RemoveSpecialIds(string versionString, string[] ids)
     {
-        foreach (string id in ids)
+        foreach (var id in ids)
         {
             versionString = versionString.Replace(id, "");
         }
@@ -276,9 +277,9 @@ public class VersionTag
 
     private static bool AreVersionsSame(VersionTag tag, VersionTag reference)
     {
-        bool MajorsSame = (tag.Major == reference.Major);
-        bool MinorSame = (tag.Minor == reference.Minor);
-        bool BuildSame = (tag.Build == reference.Build);
+        var MajorsSame = tag.Major == reference.Major;
+        var MinorSame = tag.Minor == reference.Minor;
+        var BuildSame = tag.Build == reference.Build;
         return MajorsSame && MinorSame && BuildSame;
     }
 }

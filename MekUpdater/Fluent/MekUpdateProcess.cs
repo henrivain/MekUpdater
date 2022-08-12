@@ -3,7 +3,6 @@ using MekPathLibrary;
 using MekUpdater.Exceptions;
 using MekUpdater.Fluent.Interfaces;
 using MekUpdater.Helpers;
-using MekUpdater.ValueTypes;
 
 namespace MekUpdater.Fluent
 {

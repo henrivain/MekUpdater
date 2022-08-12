@@ -1,4 +1,5 @@
 ﻿/// Copyright 2021 Henri Vainio 
+using System.Reflection;
 using MekPathLibrary;
 
 namespace MekUpdater.Helpers
@@ -29,5 +30,33 @@ namespace MekUpdater.Helpers
         /// Path to user's appdata/temp (ending in path separator char)
         /// </summary>
         public static FolderPath UserTempFolder { get => _userTempFolder; }
+
+        /// <summary>
+        /// Gets entry assembly name
+        /// </summary>
+        /// <returns>entry assembly name or "MekUpdater" if entry assembly name null</returns>
+        public static string GetHostAppName()
+        {
+            return Assembly.GetEntryAssembly()?.GetName()?.Name ?? "MekUpdater";
+        }
+
+        /// <summary>
+        /// Downloads/updates
+        /// </summary>
+        public static FolderPath DefaultFluentUpdaterDestinationFolder { get; } = new(GetDefaultUpdateFolder());
+
+        /// <summary>
+        /// Downloads/updates/[hostAppName]Setup.zip
+        /// </summary>
+        public static ZipPath DefaultFluentUpdaterZipFolder { get; } = new(Path.Combine(GetDefaultUpdateFolder(), $"{GetHostAppName()}Setup.zip"));
+
+        /// <summary>
+        /// Get default destination folder path for fluent mek updater
+        /// </summary>
+        /// <returns>full path to "Downloads/updates"</returns>
+        private static string GetDefaultUpdateFolder()
+        {
+            return Path.Combine(DownloadsFolder.ToString(), "updates");
+        }
     }
 }

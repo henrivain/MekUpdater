@@ -1,9 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
 using MekUpdater.Helpers;
-using System;
 
-namespace MekUpdater
+namespace MekUpdater.Check
 {
     /// <summary>
     /// RepositoryInfo stores data about your repository 
@@ -19,7 +18,7 @@ namespace MekUpdater
         /// <param name="downloadUrl"></param>
         /// <exception cref="ArgumentException"/>
         public RepositoryInfo(string owner, string name, string downloadUrl)
-        { 
+        {
             RepoOwner = owner;
             RepoName = name;
             DownloadUrl = downloadUrl;
@@ -40,10 +39,7 @@ namespace MekUpdater
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException(
-                        AppError.Text(
-                            $"{nameof(RepoOwner)} can't be null, empty or whitspace"
-                            ));
+                    throw new ArgumentException(AppError.Text($"{nameof(RepoOwner)} can't empty"));
                 }
                 _repoOwner = value;
             }
@@ -60,10 +56,7 @@ namespace MekUpdater
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException(
-                        AppError.Text(
-                            $"{nameof(RepoName)} can't be null, empty or whitspace"
-                            ));
+                    throw new ArgumentException(AppError.Text($"{nameof(RepoName)} can't be empty"));
                 }
                 _repoName = value;
             }

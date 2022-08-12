@@ -1,5 +1,5 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.CheckUpdates;
+using MekUpdater.Check;
 using MekUpdater.Exceptions;
 using MekUpdater.Helpers;
 using System;

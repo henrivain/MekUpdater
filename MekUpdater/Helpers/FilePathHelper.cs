@@ -1,8 +1,4 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Exceptions;
-using MekUpdater.ValueTypes;
-using System;
-using System.IO;
 
 namespace MekUpdater.Helpers
 {

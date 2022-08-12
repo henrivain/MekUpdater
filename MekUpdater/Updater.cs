@@ -1,7 +1,4 @@
-﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibrary;
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
+﻿/// Copyright 2022 Henri Vainio 
 
 namespace MekUpdater;
 
@@ -120,10 +117,7 @@ public class AppUpdater
     /// <exception cref="DataParseException"></exception>
     public async Task<UpdateChecker> CheckForUpdates()
     {
-        if (UpdateChecker is null)
-        {
-            UpdateChecker = new(Info.RepoInfo.RepoOwner, Info.RepoInfo.RepoName);
-        }
+        UpdateChecker ??= new(Info.RepoInfo.RepoOwner, Info.RepoInfo.RepoName);
         return await UpdateChecker.CheckForUpdates();
     }
 
@@ -159,7 +153,7 @@ public class AppUpdater
         Info.RepoInfo.DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
         await RunUpdate();
     }
-
+    
     private async Task RunUpdate()
     {
         Info.IsUpdating = true;

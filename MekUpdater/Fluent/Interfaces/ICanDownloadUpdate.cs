@@ -1,4 +1,4 @@
-﻿using MekUpdater.ValueTypes;
+﻿using MekUpdater.Helpers;
 
 namespace MekUpdater.Fluent.Interfaces;
 

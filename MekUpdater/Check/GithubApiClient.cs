@@ -1,13 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using static MekUpdater.UpdateDownloadInfo;
 
 
-namespace MekUpdater.CheckUpdates
+namespace MekUpdater.Check
 {
     /// <summary>
     /// App version data handler for github api
@@ -40,7 +35,7 @@ namespace MekUpdater.CheckUpdates
 
 
 
-        private static HttpClientHandler _clientHandler = new HttpClientHandler()
+        private static readonly HttpClientHandler _clientHandler = new()
         {
             UseDefaultCredentials = true,
             UseProxy = false
