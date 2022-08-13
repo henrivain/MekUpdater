@@ -15,7 +15,7 @@ namespace MekPathLibraryTests
     public class UpdateRouter
     {
         /// <summary>
-        /// Handles Update downloading and zip extraction with Download() and Extract
+        /// Handles Update downloading and zip extraction with Download() and ExtractAsync
         /// </summary>
         /// <param name="downloadUrl"></param>
         /// <param name="repoOwner"></param>
@@ -46,7 +46,7 @@ namespace MekPathLibraryTests
         }
 
         /// <summary>
-        /// Handles Update downloading and zip extraction with Download() and Extract
+        /// Handles Update downloading and zip extraction with Download() and ExtractAsync
         /// </summary>
         public UpdateRouter(UpdateDownloadInfo info)
         {
@@ -63,7 +63,7 @@ namespace MekPathLibraryTests
         /// <summary>
         /// Download .zip file from github and copy it to given file path async
         /// </summary>
-        /// <returns>Task of UpdateDownloadInfo</returns>
+        /// <returns>Task of ResetDownloadInfo</returns>
         /// <exception cref="UpdateDownloadFailedException"></exception>
         public async Task<UpdateRouter> DownloadAsync()
         {
@@ -81,10 +81,10 @@ namespace MekPathLibraryTests
         }
 
         /// <summary>
-        /// Extract downloaded zip file to folder defined in (UpdateDownloadInfo) Info.ExtractionPath
+        /// ExtractAsync downloaded zip file to folder defined in (ResetDownloadInfo) Info.ExtractionPath
         /// </summary>
         /// <param name="forceExtract"></param>
-        /// <returns>async Task and UpdateDownloadInfo with all current info about update</returns>
+        /// <returns>async Task and ResetDownloadInfo with all current info about update</returns>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ZipExtractionException"></exception>
         public async Task<UpdateRouter> ExtractZipAsync(bool forceExtract = false)
@@ -100,7 +100,7 @@ namespace MekPathLibraryTests
                     "and process is not forced"));
             }
 
-            await unZipper.Extract();
+            await unZipper.ExtractAsync();
 
             if (Info.Status is UpdateDownloadInfo.CompletionStatus.ExtractionFailed)
             {

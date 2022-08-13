@@ -8,7 +8,7 @@ internal interface IUpdater
 
     Task<UpdateCheckResult> CheckForUpdatesAsync();
 
-    Task<DownloadUpdateFilesResult> UpdateAndExtractAsync();
+    Task<GetSetupResult> DownloadAndExtractAsync();
 
     Task<bool> RunSetup();
 

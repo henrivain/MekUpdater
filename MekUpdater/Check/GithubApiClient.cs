@@ -1,4 +1,5 @@
 ﻿/// Copyright 2021 Henri Vainio 
+using MekPathLibraryTests.UpdateRunner;
 using static MekPathLibraryTests.UpdateDownloadInfo;
 
 
@@ -25,80 +26,57 @@ namespace MekPathLibraryTests.Check
         private string VersionUrl { get; }
 
         /// <summary>
-        /// Parsed version of some of the data from github api
-        /// </summary>
-        internal ParsedVersionData? ParsedData { get; private set; } = null;
-        /// <summary>
-        /// Was last check successful
-        /// </summary>
-        internal bool IsSuccess { get; private set; } = false;
-
-
-
-        private static readonly HttpClientHandler _clientHandler = new()
-        {
-            UseDefaultCredentials = true,
-            UseProxy = false
-        };
-
-
-
-        /// <summary>
         /// Get repository version data from github using api route
         /// <para/>For example: "https://api.github.com/repos/matikkaeditorinkaantaja/Matikkaeditorinkaantaja/releases/latest"
         /// </summary>
         /// <returns>awaitable async Task</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        internal async Task GetVersionData()
+        internal async Task<UpdateCheckResult> GetVersionData()
         {
+            string message = string.Empty;
+            ParsedVersionData? data = null;
             try
             {
-                HttpClient client = new HttpClient(_clientHandler);
-                client.DefaultRequestHeaders.Add("User-Agent", "request");
-                HttpResponseMessage response = await client.GetAsync(VersionUrl);
-                await HandleReturn(response);
+                data = await GetAndParseData();
             }
             catch (Exception ex)
             {
-                IsSuccess = false;
-                throw new InvalidOperationException(AppError.Text(
-                    $"Failed to get version data because of error {GetExceptionReason(ex)}. Path: \"{VersionUrl}\""
-                    ));
+                message = $"Get version data failed because of {ExceptionToErrorMsg(ex)}: {ex.Message}";
             }
+            return new(data is not null)
+            {
+                UsedUrl = VersionUrl,
+                Message = message,
+                VersionData = data,
+                
+            };
         }
 
-        /// <summary>
-        /// Parse data and return values
-        /// </summary>
-        /// <param name="response"></param>
-        /// <returns></returns>
-        private async Task HandleReturn(HttpResponseMessage response)
+        private async Task<ParsedVersionData?> GetAndParseData()
         {
+            using HttpClient client = new HttpClient(new HttpClientHandler()
+            {
+                UseDefaultCredentials = true,
+                UseProxy = false
+            });
+            client.DefaultRequestHeaders.Add("User-Agent", "request");
+            HttpResponseMessage response = await client.GetAsync(VersionUrl);
+
             if (response.IsSuccessStatusCode)
             {
-                ParsedData = new GithubApiDataParser(
-                    await response.Content.ReadAsStringAsync())
-                        .Data;
-
-                IsSuccess = true;
-                return;
+                return new GithubApiDataParser(await response.Content.ReadAsStringAsync()).Data;
             }
-            IsSuccess = false;
-            return;
+            return null;
         }
 
-        /// <summary>
-        /// Get reason for exception thrown in GetVersionData
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <returns>fitting ErrorMsg or ErrorMsg.Unknown if exception not known</returns>
-        private static ErrorMsg GetExceptionReason(Exception ex)
+        private static ErrorMsg ExceptionToErrorMsg(Exception ex)
         {
             return ex switch
             {
                 InvalidOperationException => ErrorMsg.BadUrl,
                 HttpRequestException => ErrorMsg.NetworkError,
                 TaskCanceledException => ErrorMsg.ServerTimeout,
+                DataParseException => ErrorMsg.UnSupportedDataType,
                 _ => ErrorMsg.Unknown
             };
         }

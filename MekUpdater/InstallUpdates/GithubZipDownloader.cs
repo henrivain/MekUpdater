@@ -19,14 +19,15 @@ namespace MekPathLibraryTests.InstallUpdates
         /// <param name="downloadUrl"></param>
         /// <param name="filePath"></param>
         /// <exception cref="ArgumentException"></exception>
-        internal GithubZipDownloader(string downloadUrl, string zipPath)
+        internal GithubZipDownloader(string downloadUrl, ZipPath zipPath, FolderPath extractPath)
         {
             Info.RepoInfo.DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
-            Info.ZipFilePath = new(zipPath);
+            Info.ZipFilePath = zipPath;
+            Info.ExtractPath = extractPath;
         }
 
         /// <summary>
-        /// Initialize new GithubZipDownloader with UpdateDownloadInfo already formed. 
+        /// Initialize new GithubZipDownloader with ResetDownloadInfo already formed. 
         /// Ref<> will make update Info updateable during process
         /// </summary>
         /// <param name="info"></param>
@@ -44,18 +45,24 @@ namespace MekPathLibraryTests.InstallUpdates
         /// Download zip file from given url to github api and bring it to given path 
         /// </summary>
         /// <returns>awaitable Task</returns>
-        internal async Task DownloadAsync()
+        internal async Task<DownloadUpdateFilesResult> DownloadAsync()
         {
             try
             {
                 await RunDownloadAsync();
                 Info.DownloadCompleted();
+                return new(true);
             }
             catch (Exception ex)
             {
                 ErrorMsg msg = GetExceptionReason(ex);
                 Info.Error = (FailState.Download, msg);
                 Info.DownloadFailed();
+                return new(false)
+                {
+                    ErrorMsg = msg,
+                    Message = $"Downloading zip file from github failed, because of {msg}: {ex.Message}"
+                };
             }
         }
 
@@ -74,35 +81,16 @@ namespace MekPathLibraryTests.InstallUpdates
         /// <exception cref="IOException"></exception>
         private async Task RunDownloadAsync()
         {
-
-
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("User-Agent", "request");
             Info.Downloading();
 
-            
-
-            //using Stream stream = await DownloadZip(client);
             using Stream stream = await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
 
             CreateFolderInNeed();
             using FileStream fileStream = new(Info.ZipFilePath.FullPath, FileMode.OpenOrCreate);
             Info.Copying();
             await stream.CopyToAsync(fileStream);
-
-
-            //Info.Copying();
-
-
-            //CreateFolderInNeed();
-            //using (FileStream fileStream = new(Info.ZipFilePath.ToString(), FileMode.OpenOrCreate))
-            //{
-            //    Info.Copying();
-            //    await fileStream.CopyToAsync(stream);
-            //}
-
-
-            //await CopyStreamToFolder(stream);
         }
 
         /// <summary>

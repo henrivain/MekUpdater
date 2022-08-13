@@ -1,6 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
+using System.Diagnostics;
 using System.IO.Compression;
 using MekPathLibrary;
+using MekUpdater.InstallUpdates;
 using static MekPathLibraryTests.UpdateDownloadInfo;
 
 namespace MekPathLibraryTests.InstallUpdates
@@ -20,7 +22,7 @@ namespace MekPathLibraryTests.InstallUpdates
         }
 
         /// <summary>
-        /// Initializes new ZipExtracter using information from given UpdateDownloadInfo
+        /// Initializes new ZipExtracter using information from given ResetDownloadInfo
         /// <para/> 
         /// </summary>
         /// <param name="path"></param>
@@ -35,11 +37,7 @@ namespace MekPathLibraryTests.InstallUpdates
         /// </summary>
         internal UpdateDownloadInfo Info = new();
 
-        /// <summary>
-        /// Extract zipfile to path given in UpdateDownloadInfo Info
-        /// </summary>
-        /// <returns>awaitable Task</returns>
-        internal async Task Extract()
+        internal async Task<ZipExtractionResult> ExtractAsync()
         {
             Info.Extracting();
             try
@@ -49,11 +47,24 @@ namespace MekPathLibraryTests.InstallUpdates
                     ZipFile.ExtractToDirectory(Info.ZipFilePath.ToString(), Info.ExtractPath.ToString(), true);
                 }); 
                 Info.ExtractionCompleted();
+                return new(true);
             }
             catch (Exception ex)
             {
-                Info.Error = (FailState.Extracting, GetExceptionReason(ex));
+                ErrorMsg msg = GetExceptionReason(ex);
+
+                Info.Error = (FailState.Extracting, msg);
                 Info.ExtractionFailed();
+                return new(false)
+                {
+                    Message = "Extracting zip" +
+                              $"\n\tfrom {Info.ZipFilePath.FullPath}" +
+                              $"\n\tto {Info.ExtractPath.FullPath}" +
+                              $"\n\tfailed because of {msg}: {ex.Message}",
+                    ErrorMsg = msg,
+                    StackTrace = ex.StackTrace
+                };
+                
             }
         }
 

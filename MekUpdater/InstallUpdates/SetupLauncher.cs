@@ -25,7 +25,7 @@ namespace MekPathLibraryTests.InstallUpdates
         /// Start setup.exe from given path OR calculated path from Info.ExtractPath
         /// </summary>
         /// <param name="pathToSetup"></param>
-        /// <returns>UpdateDownloadInfo with updated information</returns>
+        /// <returns>ResetDownloadInfo with updated information</returns>
         internal UpdateDownloadInfo StartSetup(string? pathToSetup = null)
         {
             pathToSetup = ValidateOrCreateSetupPath(pathToSetup);

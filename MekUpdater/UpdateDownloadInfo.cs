@@ -5,17 +5,17 @@ using MekPathLibraryTests.Check;
 namespace MekPathLibraryTests
 {
     /// <summary>
-    /// UpdateDownloadInfo for handling update information during and after update
+    /// ResetDownloadInfo for handling update information during and after update
     /// </summary>
     public class UpdateDownloadInfo
     {
         /// <summary>
-        /// Initialize new UpdateDownloadInfo for handling update information during and after update
+        /// Initialize new ResetDownloadInfo for handling update information during and after update
         /// </summary>
         public UpdateDownloadInfo() { }
 
         /// <summary>
-        /// Initialize new UpdateDownloadInfo with filepath, extractPath, and RepoInfo
+        /// Initialize new ResetDownloadInfo with filepath, extractPath, and RepoInfo
         /// throws argument exception if any of them are invalid
         /// </summary>
         /// <param name="filePath"></param>
@@ -80,7 +80,7 @@ namespace MekPathLibraryTests
         /// </summary>
         public enum ErrorMsg
         {
-            Unknown, BadUrl, PathNotOpen, FileReadOnly, FileNotFound,
+            None, Unknown, BadUrl, PathNotOpen, FileReadOnly, FileNotFound,
             PathTooLong, NoDirectory, NoPermission, OutsideMachine,
             ServerTimeout, NetworkError, Other, UnSupportedDataType,
             InvalidPathChars, FileAlreadyExistOrBadName, BadPathFormat,

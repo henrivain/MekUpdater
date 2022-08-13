@@ -7,11 +7,7 @@ namespace MekPathLibrary
 {
     public class SetupExePath : FilePathWithNameFormat
     {
-        public SetupExePath()
-        {
-
-        }
-
+        public SetupExePath() { }
         public SetupExePath(string setupPath) : base(setupPath) { }
 
         public override string FileExtension  => ".exe";
@@ -22,6 +18,12 @@ namespace MekPathLibrary
         {
             get => base.FullPath;
             protected set => base.FullPath = value;
+        }
+
+
+        public static SetupExePath? TryFindSetup(FolderPath setupFolder)
+        {
+            throw new NotImplementedException();
         }
     }
 }

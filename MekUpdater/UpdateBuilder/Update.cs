@@ -22,9 +22,13 @@ public class Update
     {
         IUpdater updater = new DefaultGithubUpdater(this);
 
+        UpdateResult result;
 
+        result = await updater.CheckForUpdatesAsync();
+        if (result.Success is false) return result;
 
-        //await updater.
+        result = await updater.DownloadAndExtractAsync();
+        if (result.Success is false) return result;
 
 
 
