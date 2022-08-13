@@ -2,7 +2,7 @@
 using System.Reflection;
 using MekPathLibrary;
 
-namespace MekUpdater.Helpers
+namespace MekPathLibraryTests.Helpers
 {
     public static class Helper
     {

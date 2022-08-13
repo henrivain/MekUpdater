@@ -1,8 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using static MekUpdater.UpdateDownloadInfo;
+using static MekPathLibraryTests.UpdateDownloadInfo;
 
 
-namespace MekUpdater.Check
+namespace MekPathLibraryTests.Check
 {
     /// <summary>
     /// App version data handler for github api

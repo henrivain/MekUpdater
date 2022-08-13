@@ -1,6 +1,6 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
-namespace MekUpdater.Helpers
+namespace MekPathLibraryTests.Helpers
 {
     internal static class FilePathHelper
     {

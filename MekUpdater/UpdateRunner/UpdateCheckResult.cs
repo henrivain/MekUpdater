@@ -1,6 +1,6 @@
-﻿namespace MekUpdater.UpdateRunner;
+﻿namespace MekPathLibraryTests.UpdateRunner;
 
-internal class UpdateCheckResult
+public class UpdateCheckResult
 {
 
 

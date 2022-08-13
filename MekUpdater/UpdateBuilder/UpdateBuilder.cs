@@ -1,6 +1,6 @@
-﻿using MekUpdater.UpdateBuilder.Interfaces;
+﻿using MekPathLibraryTests.UpdateBuilder.Interfaces;
 
-namespace MekUpdater.UpdateBuilder;
+namespace MekPathLibraryTests.UpdateBuilder;
 
 public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanBuild
 {

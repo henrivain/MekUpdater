@@ -1,7 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using System;
 
-namespace MekUpdater.Exceptions
+namespace MekPathLibraryTests.Exceptions
 {
     /// <summary>
     /// The exception that is thrown when updater was not able to  

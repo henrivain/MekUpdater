@@ -1,8 +1,8 @@
 ﻿
 using MekPathLibrary;
-using MekUpdater.Check;
+using MekPathLibraryTests.Check;
 /// Copyright 2021 Henri Vainio 
-namespace MekUpdater
+namespace MekPathLibraryTests
 {
     /// <summary>
     /// UpdateDownloadInfo for handling update information during and after update

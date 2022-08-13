@@ -1,6 +1,6 @@
-﻿using MekUpdater.Helpers;
+﻿using MekPathLibraryTests.Helpers;
 
-namespace MekUpdater.Fluent.Interfaces;
+namespace MekPathLibraryTests.Fluent.Interfaces;
 
 public interface ICanCheckUpdates
 {

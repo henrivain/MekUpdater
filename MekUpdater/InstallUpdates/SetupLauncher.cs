@@ -1,10 +1,10 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
 using System.Diagnostics;
-using MekUpdater.Exceptions;
-using static MekUpdater.UpdateDownloadInfo;
+using MekPathLibraryTests.Exceptions;
+using static MekPathLibraryTests.UpdateDownloadInfo;
 
-namespace MekUpdater.InstallUpdates
+namespace MekPathLibraryTests.InstallUpdates
 {
     /// <summary>
     /// Tool for starting setup.exe from subfolder of Info.ExtractPath
@@ -69,7 +69,6 @@ namespace MekUpdater.InstallUpdates
                 }
                 pathToSetup = setupFilePath.SetupPath;
             }
-
             return pathToSetup;
         }
 

@@ -2,7 +2,7 @@
 using System;
 
 
-namespace MekUpdater.Check
+namespace MekPathLibraryTests.Check
 {
     // everything on this class must be public
     // otherwise json can't be converted to this type of object

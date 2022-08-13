@@ -1,12 +1,12 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Exceptions;
+using MekPathLibraryTests.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
-namespace MekUpdater.Helpers
+namespace MekPathLibraryTests.Helpers
 {
     internal class Validator
     {

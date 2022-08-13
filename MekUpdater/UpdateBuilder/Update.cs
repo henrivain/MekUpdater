@@ -1,6 +1,6 @@
-﻿using MekUpdater.UpdateRunner;
+﻿using MekPathLibraryTests.UpdateRunner;
 
-namespace MekUpdater.UpdateBuilder;
+namespace MekPathLibraryTests.UpdateBuilder;
 
 public class Update
 {
@@ -18,10 +18,13 @@ public class Update
     internal bool TidyUpWhenFinishing { get; set; } = true;
 
 
-    public async Task<UpdateResult> RunAsync()
+    public virtual async Task<UpdateResult> RunDefaultUpdaterAsync()
     {
-        FluentUpdater updater = new(this);
+        IUpdater updater = new DefaultGithubUpdater(this);
 
+
+
+        //await updater.
 
 
 

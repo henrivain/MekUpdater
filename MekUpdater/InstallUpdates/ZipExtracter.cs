@@ -1,9 +1,9 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using System.IO.Compression;
 using MekPathLibrary;
-using static MekUpdater.UpdateDownloadInfo;
+using static MekPathLibraryTests.UpdateDownloadInfo;
 
-namespace MekUpdater.InstallUpdates
+namespace MekPathLibraryTests.InstallUpdates
 {
     internal class ZipExtracter
     {

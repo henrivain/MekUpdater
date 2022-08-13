@@ -1,11 +1,11 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Check;
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
+using MekPathLibraryTests.Check;
+using MekPathLibraryTests.Exceptions;
+using MekPathLibraryTests.Helpers;
 using System;
 using System.Threading.Tasks;
 
-namespace MekUpdater
+namespace MekPathLibraryTests
 {
     /// <summary>
     /// Get information about repository version from github api

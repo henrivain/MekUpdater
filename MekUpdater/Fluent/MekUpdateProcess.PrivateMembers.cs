@@ -1,9 +1,9 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Fluent.Interfaces;
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
+using MekPathLibraryTests.Fluent.Interfaces;
+using MekPathLibraryTests.Exceptions;
+using MekPathLibraryTests.Helpers;
 
-namespace MekUpdater.Fluent
+namespace MekPathLibraryTests.Fluent
 {
     public partial class MekUpdateProcess
     {

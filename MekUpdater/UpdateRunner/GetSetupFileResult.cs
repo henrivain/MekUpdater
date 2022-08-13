@@ -1,6 +1,5 @@
-﻿namespace MekUpdater.UpdateRunner
+﻿namespace MekPathLibraryTests.UpdateRunner;
+
+public class DownloadUpdateFilesResult
 {
-    internal class GetSetupFileResult
-    {
-    }
 }

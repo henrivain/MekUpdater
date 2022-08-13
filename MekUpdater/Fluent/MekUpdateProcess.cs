@@ -1,10 +1,10 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekPathLibrary;
-using MekUpdater.Exceptions;
-using MekUpdater.Fluent.Interfaces;
-using MekUpdater.Helpers;
+using MekPathLibraryTests.Exceptions;
+using MekPathLibraryTests.Fluent.Interfaces;
+using MekPathLibraryTests.Helpers;
 
-namespace MekUpdater.Fluent
+namespace MekPathLibraryTests.Fluent
 {
     public partial class MekUpdateProcess : ICanCheckUpdates, ICanDownloadUpdate, ICanStartSetup, ICanFinishUpdate
     {

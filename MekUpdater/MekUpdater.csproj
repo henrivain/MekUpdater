@@ -12,13 +12,24 @@
     <PackageOutputPath>C:\Nugets</PackageOutputPath>
     <Description>Way to update your applications from github</Description>
     <PackageProjectUrl>https://github.com/matikkaeditorinkaantaja/MekUpdater</PackageProjectUrl>
-    <PackageIcon>logo v2.1 128x128.png</PackageIcon>
+    <PackageIcon>logo_128x128_black_white.png</PackageIcon>
     <Authors>Henri Vainio</Authors>
     <Company>Matikkaeditorinkääntäjä</Company>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MekPathLibrary" Version="1.0.0" />
+    <None Remove="Resources\logo_128x128_black_white.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\logo_128x128_black_white.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MekPathLibrary" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.3.0">
       <PrivateAssets>all</PrivateAssets>
@@ -28,7 +39,6 @@
 
   <ItemGroup>
     <Folder Include="Structs\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

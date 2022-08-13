@@ -1,12 +1,12 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
 using MekPathLibrary;
-using MekUpdater.Check;
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
-using MekUpdater.InstallUpdates;
+using MekPathLibraryTests.Check;
+using MekPathLibraryTests.Exceptions;
+using MekPathLibraryTests.Helpers;
+using MekPathLibraryTests.InstallUpdates;
 
-namespace MekUpdater
+namespace MekPathLibraryTests
 {
     /// <summary>
     /// Class to handle update process from github api

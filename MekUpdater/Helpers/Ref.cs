@@ -2,7 +2,7 @@
 
 // NOT USED CURRENTLY, BUT MIGHT BE USEFUL AT SOME POINT
 
-namespace MekUpdater.Helpers
+namespace MekPathLibraryTests.Helpers
 {
     /// <summary>
     /// Object that can be passed as ref also in async methods 

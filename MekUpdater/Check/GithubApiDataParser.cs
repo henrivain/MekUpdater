@@ -1,7 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using Newtonsoft.Json;
 
-namespace MekUpdater.Check
+namespace MekPathLibraryTests.Check
 {
     /// <summary>
     /// Parse version info from github api. Get data with .Data

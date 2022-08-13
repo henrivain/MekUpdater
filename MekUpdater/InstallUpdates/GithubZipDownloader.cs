@@ -1,10 +1,10 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
-using static MekUpdater.UpdateDownloadInfo;
+using MekPathLibraryTests.Exceptions;
+using MekPathLibraryTests.Helpers;
+using static MekPathLibraryTests.UpdateDownloadInfo;
 using MekPathLibrary;
 
-namespace MekUpdater.InstallUpdates
+namespace MekPathLibraryTests.InstallUpdates
 {
 
     /// <summary>

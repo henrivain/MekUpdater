@@ -1,8 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekPathLibrary;
-using MekUpdater.Exceptions;
+using MekPathLibraryTests.Exceptions;
 
-namespace MekUpdater.InstallUpdates
+namespace MekPathLibraryTests.InstallUpdates
 {
     /// <summary>
     /// Get path to your applications setup file

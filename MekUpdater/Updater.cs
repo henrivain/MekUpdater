@@ -1,6 +1,6 @@
 ﻿/// Copyright 2022 Henri Vainio 
 
-namespace MekUpdater;
+namespace MekPathLibraryTests;
 
 /// <summary>
 /// Check and run updates on your application

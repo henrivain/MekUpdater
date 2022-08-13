@@ -1,4 +1,4 @@
-﻿namespace MekUpdater.Fluent.Interfaces;
+﻿namespace MekPathLibraryTests.Fluent.Interfaces;
 
 public interface ICanFinishUpdate
 {

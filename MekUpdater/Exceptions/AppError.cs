@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace MekUpdater.Exceptions
+namespace MekPathLibraryTests.Exceptions
 {
     public static class AppError
     {
