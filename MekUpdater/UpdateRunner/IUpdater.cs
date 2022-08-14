@@ -1,4 +1,4 @@
-﻿using MekPathLibraryTests.UpdateBuilder;
+﻿using MekUpdater.UpdateBuilder;
 
 namespace MekUpdater.UpdateRunner;
 
@@ -10,7 +10,7 @@ internal interface IUpdater
 
     Task<GetSetupResult> DownloadAndExtractAsync();
 
-    Task<StartSetupResult> RunSetup();
+    Task<StartSetupResult> RunSetupAsync();
 
     Task<FinishCleanUpResult> TidyUpAsync();
 }

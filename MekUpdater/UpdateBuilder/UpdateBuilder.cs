@@ -1,8 +1,6 @@
-﻿using MekUpdater.Helpers;
-using MekUpdater.UpdateBuilder;
-using MekUpdater.UpdateBuilder.Interfaces;
+﻿using MekUpdater.UpdateBuilder.Interfaces;
 
-namespace MekPathLibraryTests.UpdateBuilder;
+namespace MekUpdater.UpdateBuilder;
 
 public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanBuild
 {
@@ -23,7 +21,7 @@ public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanB
         Update.ZipPath = zipPath;
         return this;
     }
-    
+
     public ICanAddPath Where(FolderPath setupDestinationFolder)
     {
         Update.ExtractionFolder = setupDestinationFolder;
@@ -44,9 +42,15 @@ public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanB
         return this;
     }
 
-    public ICanFinishUpdate StartsSetup(bool startSetup = true)
+    public ICanFinishUpdate StartsSetupIsTrue()
     {
-        Update.StartSetup = startSetup;
+        Update.StartSetup = true;
+        return this;
+    }
+
+    public ICanBuild StartsSetupIsFalse()
+    {
+        Update.StartSetup = false;
         return this;
     }
 

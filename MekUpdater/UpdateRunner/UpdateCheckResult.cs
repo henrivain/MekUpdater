@@ -1,5 +1,5 @@
-﻿using MekPathLibraryTests.UpdateBuilder;
-using MekUpdater.Helpers;
+﻿using MekUpdater.Helpers;
+using MekUpdater.UpdateBuilder;
 
 namespace MekUpdater.UpdateRunner;
 

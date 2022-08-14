@@ -1,15 +1,13 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
 using System.Diagnostics;
-using MekUpdater.Exceptions;
 using MekUpdater.UpdateRunner;
-using static MekUpdater.UpdateDownloadInfo;
 
 namespace MekUpdater.InstallUpdates
 {
-     
+
     /// <summary>
-    /// Tool for starting setup.exe from subfolder of Info.ExtractPath
+    /// Tool for starting setup.exe from subfolder of ExtractPath
     /// </summary>
     internal class SetupLauncher
     {
@@ -30,7 +28,7 @@ namespace MekUpdater.InstallUpdates
             }
             catch (Exception ex)
             {
-                UpdateMsg msg = GetExceptionReason(ex).msg;
+                UpdateMsg msg = GetExceptionReason(ex);
                 return new(false)
                 {
                     UpdateMsg = msg,
@@ -38,26 +36,23 @@ namespace MekUpdater.InstallUpdates
                 };
             }
         }
-      
 
         /// <summary>
         /// Get reason while exception was thrown
         /// </summary>
         /// <param name="ex"></param>
         /// <returns>(FailState.Launching, ExceptionReason) or if exception not known (FailState.Launching, SetupPathMsg.Unknown)</returns>
-        private static (FailState state, UpdateMsg msg) GetExceptionReason(Exception ex)
+        private static UpdateMsg GetExceptionReason(Exception ex)
         {
             return ex switch
             {
-                ObjectDisposedException => (FailState.Launching, UpdateMsg.ObjectDisposed),
-                InvalidOperationException => (FailState.Launching, UpdateMsg.NoFileName),
-                System.ComponentModel.Win32Exception => (FailState.Launching, UpdateMsg.ErrorWhileOpening),
-                PlatformNotSupportedException => (FailState.Launching, UpdateMsg.NoShellSupport),
-                _ => (FailState.Launching, UpdateMsg.Unknown)
+                ObjectDisposedException => UpdateMsg.ObjectDisposed,
+                InvalidOperationException => UpdateMsg.NoFileName,
+                System.ComponentModel.Win32Exception => UpdateMsg.ErrorWhileOpening,
+                PlatformNotSupportedException => UpdateMsg.NoShellSupport,
+                _ => UpdateMsg.Unknown
             };
         }
-
-       
 
         /// <summary>
         /// Try launch application from specified path

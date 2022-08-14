@@ -16,11 +16,5 @@ namespace MekPathLibrary
             get => base.FullPath;
             protected set => base.FullPath = value;
         }
-
-
-        public static SetupExePath? TryFindSetup(FolderPath setupFolder)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

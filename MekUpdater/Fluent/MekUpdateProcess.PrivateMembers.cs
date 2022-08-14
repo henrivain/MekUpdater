@@ -1,7 +1,6 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
 using MekUpdater.Fluent.Interfaces;
-using MekUpdater.Helpers;
 
 namespace MekUpdater.Fluent
 {

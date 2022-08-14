@@ -1,11 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibraryTests.Helpers;
 using MekUpdater.Check;
 using MekUpdater.Exceptions;
-using System;
-using System.Threading.Tasks;
 
-namespace MekPathLibraryTests
+namespace MekUpdater
 {
     /// <summary>
     /// Get information about repository version from github api
@@ -20,7 +17,7 @@ namespace MekPathLibraryTests
         public UpdateChecker(string repoOwner, string repoName)
         {
             // Also validates repoUrl when initialising client
-            Client = new($"https://api.github.com/repos/{repoOwner}/{repoName}/releases/latest"); 
+            Client = new($"https://api.github.com/repos/{repoOwner}/{repoName}/releases/latest");
         }
 
 

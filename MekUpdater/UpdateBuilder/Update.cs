@@ -1,7 +1,4 @@
-﻿using MekPathLibraryTests.UpdateBuilder;
-using MekUpdater.Helpers;
-using MekUpdater.UpdateRunner;
-using static MekUpdater.UpdateDownloadInfo;
+﻿using MekUpdater.UpdateRunner;
 using static MekUpdater.Helpers.VersionTag.SpecialId;
 
 namespace MekUpdater.UpdateBuilder;
@@ -32,7 +29,6 @@ public class Update
         IUpdater updater = new DefaultGithubUpdater(this);
         UpdateResult result;
 
-
         var updateCheckResult = await updater.CheckForUpdatesAsync();
         if (updateCheckResult.Success is false) return updateCheckResult;
         if (CurrentVersion >= updateCheckResult.AvailableVersion)
@@ -49,31 +45,37 @@ public class Update
         {
             return new(true)
             {
-                UpdateMsg = UpdateMsg.CantInstallPreview,
-                Message = $"Can't install {updateCheckResult.AvailableVersion} " +
-                $"because can install preview is false. " +
-                $"Meaning process was successfull!"
+                Message = $"Success, can't install version '{updateCheckResult.AvailableVersion}' " +
+                $"because preview installation is false.",
+                UpdateMsg = UpdateMsg.Completed,
             };
         }
 
         result = await updater.DownloadAndExtractAsync();
         if (result.Success is false) return result;
+        
         if (StartSetup is false)
         {
             return new(true)
             {
-                
+                Message = $"Doesn't start setup, because {nameof(StartSetup)} is false. " +
+                $"Ending update as successful",
+                UpdateMsg = UpdateMsg.Completed
             };
         }
 
+        result = await updater.RunSetupAsync();
+        if (result.Success is false) return result;
 
-
-
-        return updater.Result;
-    }
-
-    private bool IsCurrentVersionSameOrBiggerThan(string? tag_name)
-    {
-        throw new NotImplementedException();
+        if (TidyUpWhenFinishing is false)
+        {
+            return new(true)
+            {
+                Message = $"{nameof(TidyUpWhenFinishing)} is false, end update as successfull",
+                UpdateMsg = UpdateMsg.Completed
+            };
+        }
+        result = await updater.TidyUpAsync();
+        return result;
     }
 }

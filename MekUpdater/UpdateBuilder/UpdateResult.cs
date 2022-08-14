@@ -1,4 +1,4 @@
-﻿namespace MekPathLibraryTests.UpdateBuilder;
+﻿namespace MekUpdater.UpdateBuilder;
 
 public class UpdateResult
 {

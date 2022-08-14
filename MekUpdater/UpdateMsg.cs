@@ -7,6 +7,7 @@ public enum UpdateMsg
 {
     None, 
     Unknown, 
+
     BadUrl, 
     PathNotOpen, 
     FileReadOnly, 
@@ -17,7 +18,6 @@ public enum UpdateMsg
     OutsideMachine,
     ServerTimeout, 
     NetworkError, 
-    Other, 
     UnSupportedDataType,
     InvalidPathChars, 
     FileAlreadyExistOrBadName, 
@@ -28,6 +28,8 @@ public enum UpdateMsg
     NoShellSupport,
     PathNullOrEmpty, 
     UpdateAlreadyInstalled,
-    CantInstallPreview,
-    SetupNotFound
+    SetupNotFound,
+
+    Completed,
+    DeleteFileFailed
 }

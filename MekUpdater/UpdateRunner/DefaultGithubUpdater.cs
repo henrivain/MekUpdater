@@ -1,5 +1,4 @@
-﻿using MekPathLibraryTests.UpdateBuilder;
-using MekUpdater.Check;
+﻿using MekUpdater.Check;
 using MekUpdater.InstallUpdates;
 using MekUpdater.UpdateBuilder;
 
@@ -88,9 +87,15 @@ public class DefaultGithubUpdater : IUpdater
         return await extracter.ExtractAsync();
     }
 
-    public Task<StartSetupResult> RunSetup()
+    /// <summary>
+    /// Get setup file path from ExtractFolderPath/Extracted/setup.zip. Then run if setup was found
+    /// </summary>
+    /// <returns>
+    /// StartSetupResult with 'Success' property indicating weather process was successfull or not.
+    /// If action fails also fills other data about why so
+    /// </returns>
+    public Task<StartSetupResult> RunSetupAsync()
     {
-        //SetupExePath path = SetupExePath.TryFindSetup(Update.ExtractionFolder);
         SetupPathFinder finder = new(new(Update.ExtractionFolder, Update.RepoOwner, Update.RepoName));
         var setupFindResult = finder.TryFindPath();
         if (setupFindResult.Success is false) return Task.FromResult(new StartSetupResult(false)
@@ -102,10 +107,53 @@ public class DefaultGithubUpdater : IUpdater
         return Task.FromResult(launcher.StartSetup());
     }
 
+    /// <summary>
+    /// Gets list of temporary update files like downloaded zip file and deletes them from file system
+    /// </summary>
+    /// <returns>
+    /// FinishCleanUpResult with 'Success' property indicating weather process was successfull or not.
+    /// If action fails also fills other data about why so
+    /// </returns>
     public async Task<FinishCleanUpResult> TidyUpAsync()
     {
-        FinishCleanUpResult result = new();
+        List<string> filesToDelete = new()
+        {
+            // Can't really delete setup.exe, because it might not be run to end by user
+            Update.ZipPath.FullPath    
+        };
+        foreach (var file in filesToDelete)
+        {
+            FinishCleanUpResult? result = await TryDeleteFile(file);
+            if (result is not null) return result;
+        }
+        return new(true);
+    }
 
-        return result;
+    /// <summary>
+    /// Delete file if it exist in filesystem using Task.Run
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns>null if success, else FinishCleanUpResult with info about fail</returns>
+    private static async Task<FinishCleanUpResult?> TryDeleteFile(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    File.Delete(filePath);
+                });
+            }
+            catch (Exception ex)
+            {
+                return new(false)
+                {
+                    Message = $"Failed to delete file {filePath} because of exception {ex}: {ex.Message}",
+                    UpdateMsg = UpdateMsg.DeleteFileFailed
+                };
+            }
+        }
+        return null;
     }
 }
