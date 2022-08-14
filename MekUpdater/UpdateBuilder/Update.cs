@@ -16,8 +16,8 @@ public class Update
     public string RepoOwner { get; }
     public string RepoName { get; }
     internal string RepoInfoUrl => $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
-    internal FolderPath ExtractionFolder { get; set; } = Helper.DefaultFluentUpdaterDestinationFolder;
-    internal ZipPath ZipPath { get; set; } = Helper.DefaultFluentUpdaterZipFolder;
+    internal FolderPath ExtractionFolder { get; set; } = Helper.DefaultUpdaterDestinationFolder;
+    internal ZipPath ZipPath { get; set; } = Helper.DefaultUpdaterZipFolder;
     internal VersionTag CurrentVersion { get; set; } = VersionTag.Min;
     internal bool CanUpdatePreviewVersion { get; set; } = true;
     internal bool StartSetup { get; set; } = true;
@@ -63,7 +63,6 @@ public class Update
                 UpdateMsg = UpdateMsg.Completed
             };
         }
-
         result = await updater.RunSetupAsync();
         if (result.Success is false) return result;
 

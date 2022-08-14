@@ -78,12 +78,12 @@ public class DefaultGithubUpdater : IUpdater
             throw new InvalidOperationException($"{nameof(DownloadUrl)} can't be empty or null");
         }
 
-        GithubZipDownloader downloader = new(DownloadUrl, Update.ZipPath, Update.ExtractionFolder);
+        GithubZipDownloader downloader = new(DownloadUrl, Update.ZipPath);
         DownloadUpdateFilesResult downloadResult = await downloader.DownloadAsync();
 
         if (downloadResult.Success is false) return downloadResult;
 
-        ZipExtracter extracter = new(Update.ZipPath);
+        ZipExtracter extracter = new(Update.ZipPath, Update.ExtractionFolder);
         return await extracter.ExtractAsync();
     }
 

@@ -42,12 +42,12 @@ namespace MekUpdater.Helpers
         /// <summary>
         /// Downloads/updates
         /// </summary>
-        public static FolderPath DefaultFluentUpdaterDestinationFolder { get; } = new(GetDefaultUpdateFolder());
+        public static FolderPath DefaultUpdaterDestinationFolder { get; } = new(GetDefaultUpdateFolder());
 
         /// <summary>
         /// Downloads/updates/[hostAppName]Setup.zip
         /// </summary>
-        public static ZipPath DefaultFluentUpdaterZipFolder { get; } = new(Path.Combine(GetDefaultUpdateFolder(), $"{GetHostAppName()}Setup.zip"));
+        public static ZipPath DefaultUpdaterZipFolder { get; } = new(Path.Combine(GetDefaultUpdateFolder(), $"{GetHostAppName()}Setup.zip"));
 
         /// <summary>
         /// Get default destination folder path for fluent mek updater

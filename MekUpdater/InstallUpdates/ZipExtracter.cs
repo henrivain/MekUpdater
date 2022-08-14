@@ -1,62 +1,37 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using System.IO.Compression;
-using static MekUpdater.UpdateDownloadInfo;
 
 namespace MekUpdater.InstallUpdates
 {
     internal class ZipExtracter
     {
-
-        /// <summary>
-        /// Initializes new ZipExtracter using given path
-        /// <para/>Give path to file with zip extension, else throws ArgumentException
-        /// </summary>
-        /// <param name="path"></param>
-        /// <exception cref="ArgumentException"></exception>
-        internal ZipExtracter(ZipPath path)
+        internal ZipExtracter(ZipPath zipPath, FolderPath extractPath)
         {
-            Info.ZipFilePath = path;
+            ZipPath = zipPath;
+            ExtractPath = extractPath;
         }
-
-        /// <summary>
-        /// Initializes new ZipExtracter using information from given ResetDownloadInfo
-        /// <para/> 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <exception cref="ArgumentException"></exception>
-        internal ZipExtracter(UpdateDownloadInfo info)
-        {
-            Info = info;
-        }
-
-        /// <summary>
-        /// Information about update progression
-        /// </summary>
-        internal UpdateDownloadInfo Info = new();
+        ZipPath ZipPath { get; }
+        FolderPath ExtractPath { get; }
 
         internal async Task<ZipExtractionResult> ExtractAsync()
         {
-            Info.Extracting();
             try
             {
                 await Task.Run(() =>
                 {
-                    ZipFile.ExtractToDirectory(Info.ZipFilePath.ToString(), Info.ExtractPath.ToString(), true);
+                    ZipFile.ExtractToDirectory(ZipPath.FullPath, ExtractPath.FullPath, true);
                 });
-                Info.ExtractionCompleted();
                 return new(true);
             }
             catch (Exception ex)
             {
                 var msg = GetExceptionReason(ex);
 
-                Info.Error = (FailState.Extracting, msg);
-                Info.ExtractionFailed();
                 return new(false)
                 {
                     Message = "Extracting zip" +
-                              $"\n\tfrom {Info.ZipFilePath.FullPath}" +
-                              $"\n\tto {Info.ExtractPath.FullPath}" +
+                              $"\n\tfrom {ZipPath}" +
+                              $"\n\tto {ExtractPath}" +
                               $"\n\tfailed because of {msg}: {ex.Message}",
                     UpdateMsg = msg,
                     StackTrace = ex.StackTrace
@@ -82,7 +57,7 @@ namespace MekUpdater.InstallUpdates
                 UnauthorizedAccessException => UpdateMsg.NoPermission,
                 NotSupportedException => UpdateMsg.BadPathFormat,
                 InvalidDataException => UpdateMsg.UnSupportedDataType,
-                _ => UpdateMsg.Other
+                _ => UpdateMsg.Unknown
             };
         }
     }

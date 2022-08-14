@@ -1,7 +1,4 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
-using static MekUpdater.UpdateDownloadInfo;
 
 namespace MekUpdater.InstallUpdates
 {
@@ -18,30 +15,17 @@ namespace MekUpdater.InstallUpdates
         /// <param name="downloadUrl"></param>
         /// <param name="filePath"></param>
         /// <exception cref="ArgumentException"></exception>
-        internal GithubZipDownloader(string downloadUrl, ZipPath zipPath, FolderPath extractPath)
+        internal GithubZipDownloader(string downloadUrl, ZipPath zipPath)
         {
-            Info.RepoInfo.DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
-            Info.ZipFilePath = zipPath;
-            Info.ExtractPath = extractPath;
+            DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
+            ZipPath = zipPath;
         }
 
-        /// <summary>
-        /// Initialize new GithubZipDownloader with ResetDownloadInfo already formed. 
-        /// Ref<> will make update Info updateable during process
-        /// </summary>
-        /// <param name="info"></param>
-        internal GithubZipDownloader(UpdateDownloadInfo info)
-        {
-            Info = info;
-        }
+        string DownloadUrl { get; }
+        ZipPath ZipPath { get; }
 
         /// <summary>
-        /// Information about update progression
-        /// </summary>
-        internal UpdateDownloadInfo Info = new();
-
-        /// <summary>
-        /// Download zip file from given url to github api and bring it to given path 
+        /// Download zip file from given github api using given url and bring it to given path 
         /// </summary>
         /// <returns>awaitable Task</returns>
         internal async Task<DownloadUpdateFilesResult> DownloadAsync()
@@ -49,14 +33,11 @@ namespace MekUpdater.InstallUpdates
             try
             {
                 await RunDownloadAsync();
-                Info.DownloadCompleted();
                 return new(true);
             }
             catch (Exception ex)
             {
                 var msg = GetExceptionReason(ex);
-                Info.Error = (FailState.Download, msg);
-                Info.DownloadFailed();
                 return new(false)
                 {
                     UpdateMsg = msg,
@@ -82,85 +63,22 @@ namespace MekUpdater.InstallUpdates
         {
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("User-Agent", "request");
-            Info.Downloading();
 
-            using var stream = await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
+            using Stream stream = await client.GetStreamAsync(DownloadUrl);
 
-            CreateFolderInNeed();
-            using FileStream fileStream = new(Info.ZipFilePath.FullPath, FileMode.OpenOrCreate);
-            Info.Copying();
+            Directory.CreateDirectory(ZipPath.FolderPath.FullPath);
+
+            using FileStream fileStream = new(ZipPath.FullPath, FileMode.OpenOrCreate);
             await stream.CopyToAsync(fileStream);
-        }
-
-        /// <summary>
-        /// Copy given stream to folder using path from Info.ZipFilePath
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <returns>awaitable task</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="TaskCanceledException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="NotSupportedException"></exception>
-        /// <exception cref="System.Security.SecurityException"></exception>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="UnauthorizedAccessException"></exception>
-        /// <exception cref="IOException"></exception>
-        private async Task CopyStreamToFolder(Stream stream)
-        {
-            Info.Copying();
-            CreateFolderInNeed();
-            await stream.CopyToAsync(GetZipFileStream());
-        }
-
-        /// <summary>
-        /// Download zip from githup as Stream
-        /// </summary>
-        /// <param name="client"></param>
-        /// <returns>Stream zip</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="TaskCanceledException"></exception>
-        private async Task<Stream> DownloadZip(HttpClient client)
-        {
-            Info.Downloading();
-            return await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
-        }
-
-        /// <summary>
-        /// Open or create FileStream with ".zip" extension for zip file
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="NotSupportedException"></exception>
-        /// <exception cref="System.Security.SecurityException"></exception>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="UnauthorizedAccessException"></exception>
-        /// <exception cref="IOException"></exception>
-        private FileStream GetZipFileStream()
-        {
-            return new(Info.ZipFilePath.ToString(), FileMode.OpenOrCreate);
-        }
-
-        /// <summary>
-        /// Check that directory exist and create if not
-        /// </summary>
-        private void CreateFolderInNeed()
-        {
-            var folder = new FolderPath(Info.ZipFilePath.ToString()).FullPath;
-            if (folder == string.Empty) return;
-            Directory.CreateDirectory(folder);
-            Console.WriteLine($"[UpdateStatus] Downloading zip to folder: {folder}");
         }
 
         /// <summary>
         /// Gets reason for exception thrown in RunDownloadAsync
         /// </summary>
         /// <param name="ex"></param>
-        /// <returns>fitting SetupPathMsg for ex or SetupPathMsg.Other if ex is not defined in switch</returns>
+        /// <returns>fitting UpdateMsg or UpdateMsg.Unknown if ex is not defined in switch</returns>
         private static UpdateMsg GetExceptionReason(Exception ex)
         {
-            AppError.Text(ex.Message, 3);
             return ex switch
             {
                 InvalidOperationException => UpdateMsg.BadUrl,
@@ -174,7 +92,7 @@ namespace MekUpdater.InstallUpdates
                 UnauthorizedAccessException => UpdateMsg.FileReadOnly,
                 IOException => UpdateMsg.PathNotOpen,
                 ArgumentException => UpdateMsg.PathNullOrEmpty,
-                _ => UpdateMsg.Other
+                _ => UpdateMsg.Unknown
             };
         }
     }
