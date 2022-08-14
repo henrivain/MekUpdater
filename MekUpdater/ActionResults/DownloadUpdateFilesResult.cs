@@ -1,6 +1,4 @@
-﻿using MekUpdater.UpdateRunner;
-
-namespace MekUpdater.InstallUpdates;
+﻿namespace MekUpdater.ActionResults;
 
 public class DownloadUpdateFilesResult : GetSetupResult
 {

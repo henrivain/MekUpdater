@@ -1,6 +1,4 @@
-﻿using MekUpdater.UpdateBuilder;
-
-namespace MekUpdater.UpdateRunner;
+﻿namespace MekUpdater.ActionResults;
 
 public class FinishCleanUpResult : UpdateResult
 {

@@ -1,5 +1,6 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using System.IO.Compression;
+using MekUpdater.UpdateRunner;
 
 namespace MekUpdater.InstallUpdates
 {

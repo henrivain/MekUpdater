@@ -1,6 +1,4 @@
-﻿using MekUpdater.UpdateBuilder;
-
-namespace MekUpdater.UpdateRunner;
+﻿namespace MekUpdater.UpdateRunner;
 
 internal interface IUpdater
 {

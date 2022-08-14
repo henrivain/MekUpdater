@@ -1,6 +1,5 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
 
 namespace MekUpdater.Check
 {
@@ -69,7 +68,7 @@ namespace MekUpdater.Check
         public string DownloadUrl
         {
             get => _downloadUrl;
-            set => _downloadUrl = Validator.IsDownloadUrlValid(value);
+            set => _downloadUrl = UrlValidator.IsDownloadUrlValid(value);
         }
     }
 }

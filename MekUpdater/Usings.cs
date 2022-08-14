@@ -1,3 +1,3 @@
-﻿global using MekUpdater;
+﻿global using MekPathLibrary;
+global using MekUpdater.ActionResults;
 global using MekUpdater.Helpers;
-global using MekPathLibrary;

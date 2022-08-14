@@ -1,4 +1,4 @@
-﻿namespace MekUpdater.Helpers;
+﻿namespace MekUpdater.ActionResults;
 
 public class SetupPathFinderResult
 {

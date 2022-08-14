@@ -1,9 +1,6 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
 using MekUpdater.UpdateRunner;
-using static MekUpdater.UpdateDownloadInfo;
-
 
 namespace MekUpdater.Check
 {
@@ -19,7 +16,7 @@ namespace MekUpdater.Check
         /// <exception cref="ArgumentException"></exception>
         internal GithubApiClient(string repositoryVersionUrl)
         {
-            VersionUrl = Validator.IsRepositoryUrlValid(repositoryVersionUrl);
+            VersionUrl = UrlValidator.IsRepositoryUrlValid(repositoryVersionUrl);
         }
 
         /// <summary>

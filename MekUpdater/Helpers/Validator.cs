@@ -3,7 +3,7 @@ using MekUpdater.Exceptions;
 /// Copyright 2021 Henri Vainio 
 namespace MekUpdater.Helpers;
 
-internal class Validator
+internal class UrlValidator
 {
     /// <summary>
     /// Validate url path is type "https://api.github.com/repos/{author}/{repo}/releases/latest"
@@ -34,8 +34,6 @@ internal class Validator
         }
         return url;
     }
-
-
 
     /// <summary>
     /// Validates github version download url

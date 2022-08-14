@@ -1,5 +1,5 @@
-﻿/// Copyright 2021 Henri Vainio 
-
+﻿using MekUpdater.UpdateRunner;
+/// Copyright 2021 Henri Vainio 
 namespace MekUpdater.InstallUpdates
 {
 
@@ -17,7 +17,7 @@ namespace MekUpdater.InstallUpdates
         /// <exception cref="ArgumentException"></exception>
         internal GithubZipDownloader(string downloadUrl, ZipPath zipPath)
         {
-            DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
+            DownloadUrl = UrlValidator.IsDownloadUrlValid(downloadUrl);
             ZipPath = zipPath;
         }
 

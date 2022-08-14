@@ -1,4 +1,6 @@
-﻿namespace MekUpdater.UpdateBuilder;
+﻿using MekUpdater.UpdateRunner;
+
+namespace MekUpdater.ActionResults;
 
 public class UpdateResult
 {
