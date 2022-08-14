@@ -26,7 +26,7 @@ public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanB
     
     public ICanAddPath Where(FolderPath setupDestinationFolder)
     {
-        Update.SetupDestinationFolder = setupDestinationFolder;
+        Update.ExtractionFolder = setupDestinationFolder;
         return this;
     }
 

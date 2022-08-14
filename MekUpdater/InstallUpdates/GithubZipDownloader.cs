@@ -59,7 +59,7 @@ namespace MekUpdater.InstallUpdates
                 Info.DownloadFailed();
                 return new(false)
                 {
-                    ErrorMsg = msg,
+                    UpdateMsg = msg,
                     Message = $"Downloading zip file from github failed, because of {msg}: {ex.Message}"
                 };
             }
@@ -157,24 +157,24 @@ namespace MekUpdater.InstallUpdates
         /// Gets reason for exception thrown in RunDownloadAsync
         /// </summary>
         /// <param name="ex"></param>
-        /// <returns>fitting ErrorMsg for ex or ErrorMsg.Other if ex is not defined in switch</returns>
-        private static ErrorMsg GetExceptionReason(Exception ex)
+        /// <returns>fitting SetupPathMsg for ex or SetupPathMsg.Other if ex is not defined in switch</returns>
+        private static UpdateMsg GetExceptionReason(Exception ex)
         {
             AppError.Text(ex.Message, 3);
             return ex switch
             {
-                InvalidOperationException => ErrorMsg.BadUrl,
-                HttpRequestException => ErrorMsg.NetworkError,
-                TaskCanceledException => ErrorMsg.ServerTimeout,
-                NotSupportedException => ErrorMsg.OutsideMachine,
-                System.Security.SecurityException => ErrorMsg.NoPermission,
-                DirectoryNotFoundException => ErrorMsg.NoPermission,
-                PathTooLongException => ErrorMsg.PathTooLong,
-                FileNotFoundException => ErrorMsg.FileNotFound,
-                UnauthorizedAccessException => ErrorMsg.FileReadOnly,
-                IOException => ErrorMsg.PathNotOpen,
-                ArgumentException => ErrorMsg.PathNullOrEmpty,
-                _ => ErrorMsg.Other
+                InvalidOperationException => UpdateMsg.BadUrl,
+                HttpRequestException => UpdateMsg.NetworkError,
+                TaskCanceledException => UpdateMsg.ServerTimeout,
+                NotSupportedException => UpdateMsg.OutsideMachine,
+                System.Security.SecurityException => UpdateMsg.NoPermission,
+                DirectoryNotFoundException => UpdateMsg.NoPermission,
+                PathTooLongException => UpdateMsg.PathTooLong,
+                FileNotFoundException => UpdateMsg.FileNotFound,
+                UnauthorizedAccessException => UpdateMsg.FileReadOnly,
+                IOException => UpdateMsg.PathNotOpen,
+                ArgumentException => UpdateMsg.PathNullOrEmpty,
+                _ => UpdateMsg.Other
             };
         }
     }

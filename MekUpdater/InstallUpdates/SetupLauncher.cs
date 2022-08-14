@@ -2,92 +2,62 @@
 
 using System.Diagnostics;
 using MekUpdater.Exceptions;
+using MekUpdater.UpdateRunner;
 using static MekUpdater.UpdateDownloadInfo;
 
 namespace MekUpdater.InstallUpdates
 {
+     
     /// <summary>
     /// Tool for starting setup.exe from subfolder of Info.ExtractPath
     /// </summary>
     internal class SetupLauncher
     {
-        /// <summary>
-        /// Initialize new SetupLauncher to start setup.exe from extracted folder
-        /// </summary>
-        internal SetupLauncher(UpdateDownloadInfo info)
+        internal SetupLauncher(SetupExePath setupPath)
         {
-            Info = info;
+            if (setupPath.HasValue is false) throw new ArgumentNullException(nameof(setupPath));
+            Info = setupPath;
         }
 
-        readonly UpdateDownloadInfo Info = new();
+        public SetupExePath Info { get; }
 
-        /// <summary>
-        /// Start setup.exe from given path OR calculated path from Info.ExtractPath
-        /// </summary>
-        /// <param name="pathToSetup"></param>
-        /// <returns>ResetDownloadInfo with updated information</returns>
-        internal UpdateDownloadInfo StartSetup(string? pathToSetup = null)
+        internal StartSetupResult StartSetup()
         {
-            pathToSetup = ValidateOrCreateSetupPath(pathToSetup);
-            TryLaunchSetup(pathToSetup);
-            return Info;
-        }
-
-        /// <summary>
-        /// Tries to launch setup installer and updates info status
-        /// </summary>
-        /// <param name="pathToSetup"></param>
-        private void TryLaunchSetup(string pathToSetup)
-        {
-            Info.Launching();
             try
             {
-                TryLaunchProcess(pathToSetup);
-                Info.LaunchingCompleted();
+                TryLaunchProcess(Info.FullPath);
+                return new(true);
             }
             catch (Exception ex)
             {
-                Info.Error = GetTryLaunchExceptionReason(ex);
-                Info.LaunchingFailed();
-            }
-        }
-
-        /// <summary>
-        /// Takes pathToSetup as parameter and validates it OR creates new path from extractPath
-        /// </summary>
-        /// <param name="pathToSetup"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        private string ValidateOrCreateSetupPath(string? pathToSetup)
-        {
-            if (pathToSetup is null || SetupFilePath.IsCorrectSetupPath(pathToSetup) is false)
-            {
-                SetupFilePath setupFilePath = new(Info.ExtractPath, Info.RepoInfo.RepoOwner, Info.RepoInfo.RepoName);
-                if (string.IsNullOrEmpty(setupFilePath.SetupPath))
+                UpdateMsg msg = GetExceptionReason(ex).msg;
+                return new(false)
                 {
-                    throw new ArgumentException(AppError.Text($"Was not able to find path to setup file ; {setupFilePath.ErrorMessage}"));
-                }
-                pathToSetup = setupFilePath.SetupPath;
+                    UpdateMsg = msg,
+                    Message = $"Launching setup.exe failed because of {msg}: {ex.Message}"
+                };
             }
-            return pathToSetup;
         }
+      
 
         /// <summary>
         /// Get reason while exception was thrown
         /// </summary>
         /// <param name="ex"></param>
-        /// <returns>(FailState.Launching, ExceptionReason) or if exception not known (FailState.Launching, ErrorMsg.Unknown)</returns>
-        private static (FailState state, ErrorMsg msg) GetTryLaunchExceptionReason(Exception ex)
+        /// <returns>(FailState.Launching, ExceptionReason) or if exception not known (FailState.Launching, SetupPathMsg.Unknown)</returns>
+        private static (FailState state, UpdateMsg msg) GetExceptionReason(Exception ex)
         {
             return ex switch
             {
-                ObjectDisposedException => (FailState.Launching, ErrorMsg.ObjectDisposed),
-                InvalidOperationException => (FailState.Launching, ErrorMsg.NoFileName),
-                System.ComponentModel.Win32Exception => (FailState.Launching, ErrorMsg.ErrorWhileOpening),
-                PlatformNotSupportedException => (FailState.Launching, ErrorMsg.NoShellSupport),
-                _ => (FailState.Launching, ErrorMsg.Unknown)
+                ObjectDisposedException => (FailState.Launching, UpdateMsg.ObjectDisposed),
+                InvalidOperationException => (FailState.Launching, UpdateMsg.NoFileName),
+                System.ComponentModel.Win32Exception => (FailState.Launching, UpdateMsg.ErrorWhileOpening),
+                PlatformNotSupportedException => (FailState.Launching, UpdateMsg.NoShellSupport),
+                _ => (FailState.Launching, UpdateMsg.Unknown)
             };
         }
+
+       
 
         /// <summary>
         /// Try launch application from specified path

@@ -119,7 +119,9 @@ namespace MekUpdater
         /// <returns></returns>
         public UpdateRouter StartSetup(UpdateDownloadInfo? info = null)
         {
-            SetupLauncher launcher = new(info ?? Info);
+            //info ?? Info
+
+            SetupLauncher launcher = new(new());
             launcher.StartSetup();
             return this;
         }

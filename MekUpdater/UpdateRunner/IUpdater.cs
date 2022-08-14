@@ -10,7 +10,7 @@ internal interface IUpdater
 
     Task<GetSetupResult> DownloadAndExtractAsync();
 
-    Task<bool> RunSetup();
+    Task<StartSetupResult> RunSetup();
 
     Task<FinishCleanUpResult> TidyUpAsync();
 }

@@ -49,7 +49,8 @@ namespace MekUpdater.Check
             {
                 UsedUrl = VersionUrl,
                 Message = message,
-                VersionData = data,
+                DownloadUrl = data?.zipball_url,
+                AvailableVersion = (data?.tag_name is null) ? VersionTag.Min : new(data!.tag_name)
 
             };
         }
@@ -71,15 +72,15 @@ namespace MekUpdater.Check
             return null;
         }
 
-        private static ErrorMsg ExceptionToErrorMsg(Exception ex)
+        private static UpdateMsg ExceptionToErrorMsg(Exception ex)
         {
             return ex switch
             {
-                InvalidOperationException => ErrorMsg.BadUrl,
-                HttpRequestException => ErrorMsg.NetworkError,
-                TaskCanceledException => ErrorMsg.ServerTimeout,
-                DataParseException => ErrorMsg.UnSupportedDataType,
-                _ => ErrorMsg.Unknown
+                InvalidOperationException => UpdateMsg.BadUrl,
+                HttpRequestException => UpdateMsg.NetworkError,
+                TaskCanceledException => UpdateMsg.ServerTimeout,
+                DataParseException => UpdateMsg.UnSupportedDataType,
+                _ => UpdateMsg.Unknown
             };
         }
     }

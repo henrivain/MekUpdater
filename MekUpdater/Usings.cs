@@ -1,4 +1,3 @@
-﻿global using MekPathLibraryTests;
+﻿global using MekUpdater;
+global using MekUpdater.Helpers;
 global using MekPathLibrary;
-global using MekPathLibraryTests.Exceptions;
-global using MekPathLibraryTests.Helpers;

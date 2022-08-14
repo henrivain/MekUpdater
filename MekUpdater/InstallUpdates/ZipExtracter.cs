@@ -58,7 +58,7 @@ namespace MekUpdater.InstallUpdates
                               $"\n\tfrom {Info.ZipFilePath.FullPath}" +
                               $"\n\tto {Info.ExtractPath.FullPath}" +
                               $"\n\tfailed because of {msg}: {ex.Message}",
-                    ErrorMsg = msg,
+                    UpdateMsg = msg,
                     StackTrace = ex.StackTrace
                 };
 
@@ -70,19 +70,19 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         /// <param name="ex"></param>
         /// <returns>ErroMsg with case matching error code or ErroMsg.Other if Exception not found</returns>
-        private static ErrorMsg GetExceptionReason(Exception ex)
+        private static UpdateMsg GetExceptionReason(Exception ex)
         {
             return ex switch
             {
-                ArgumentException => ErrorMsg.InvalidPathChars,
-                PathTooLongException => ErrorMsg.PathTooLong,
-                DirectoryNotFoundException => ErrorMsg.FileNotFound,
-                FileNotFoundException => ErrorMsg.FileNotFound,
-                IOException => ErrorMsg.FileAlreadyExistOrBadName,
-                UnauthorizedAccessException => ErrorMsg.NoPermission,
-                NotSupportedException => ErrorMsg.BadPathFormat,
-                InvalidDataException => ErrorMsg.UnSupportedDataType,
-                _ => ErrorMsg.Other
+                ArgumentException => UpdateMsg.InvalidPathChars,
+                PathTooLongException => UpdateMsg.PathTooLong,
+                DirectoryNotFoundException => UpdateMsg.FileNotFound,
+                FileNotFoundException => UpdateMsg.FileNotFound,
+                IOException => UpdateMsg.FileAlreadyExistOrBadName,
+                UnauthorizedAccessException => UpdateMsg.NoPermission,
+                NotSupportedException => UpdateMsg.BadPathFormat,
+                InvalidDataException => UpdateMsg.UnSupportedDataType,
+                _ => UpdateMsg.Other
             };
         }
     }

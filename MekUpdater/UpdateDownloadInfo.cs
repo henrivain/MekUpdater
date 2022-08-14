@@ -73,18 +73,7 @@ namespace MekUpdater
             Non, Download, Extracting, Launching
         }
 
-        /// <summary>
-        /// Reason for exception or other fail during update process
-        /// </summary>
-        public enum ErrorMsg
-        {
-            None, Unknown, BadUrl, PathNotOpen, FileReadOnly, FileNotFound,
-            PathTooLong, NoDirectory, NoPermission, OutsideMachine,
-            ServerTimeout, NetworkError, Other, UnSupportedDataType,
-            InvalidPathChars, FileAlreadyExistOrBadName, BadPathFormat,
-            ObjectDisposed, NoFileName, ErrorWhileOpening, NoShellSupport,
-            PathNullOrEmpty
-        }
+
 
         /// <summary>
         /// Possible statuses for updater to be on
@@ -121,7 +110,7 @@ namespace MekUpdater
         /// Contains information about where and what went wrong in case of fail
         /// <para/>default (Non, Unknown)
         /// </summary>
-        public (FailState state, ErrorMsg msg) Error { get; set; } = (FailState.Non, ErrorMsg.Unknown);
+        public (FailState state, UpdateMsg msg) Error { get; set; } = (FailState.Non, UpdateMsg.Unknown);
 
         /// <summary>
         /// Set status CompletionStatus.Copying
