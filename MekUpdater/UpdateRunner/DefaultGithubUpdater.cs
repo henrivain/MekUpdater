@@ -98,11 +98,12 @@ public class DefaultGithubUpdater : IUpdater
     {
         SetupPathFinder finder = new(new(Update.ExtractionFolder, Update.RepoOwner, Update.RepoName));
         var setupFindResult = finder.TryFindPath();
-        if (setupFindResult.Success is false) return Task.FromResult(new StartSetupResult(false)
-        {
-            Message = setupFindResult.Message,
-            UpdateMsg = UpdateMsg.SetupNotFound
-        });
+        if (setupFindResult.Success is false) return Task.FromResult(
+            new StartSetupResult(false)
+            {
+                Message = setupFindResult.Message,
+                UpdateMsg = UpdateMsg.SetupNotFound
+            });
         SetupLauncher launcher = new(setupFindResult.SetupPath!);
         return Task.FromResult(launcher.StartSetup());
     }

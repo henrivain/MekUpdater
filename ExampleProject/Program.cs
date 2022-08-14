@@ -1,17 +1,29 @@
 ﻿using MekPathLibrary;
+using MekUpdater.Helpers;
+using MekUpdater.UpdateBuilder;
 
 
-//MekUpdateProcess process = new("matikkaeditorinaantaja", "Matikkaeditorinaantaja");
+var result = await UpdateBuilder.Create("matikkaeditorinkaantaja", "Matikkaeditorinkaantaja")
+                                .Where(new FolderPath(@"C:\Users\henri\Downloads\updates"))
+                                .Where(new ZipPath(@"C:\Users\henri\Downloads\updates\MekUpdate.zip"))
+                                .RunUpdate()
+                                .IfNotPreview()
+                                .IfVersionBiggerThan(new VersionTag("v3.1.5"))
+                                .StartsSetupIsTrue()
+                                .TidiesUp(true)
+                                .Build()
+                                .RunDefaultUpdaterAsync();
 
-string shit = Environment.GetEnvironmentVariable("USERPROFILE")?.ToString() + @"\Downloads" + Path.DirectorySeparatorChar;
-string shit2 = new FolderPath(Environment.GetEnvironmentVariable("USERPROFILE")?.ToString() + @"\Downloads" + Path.DirectorySeparatorChar).ToString();
-
-Console.WriteLine(shit2);
-Console.WriteLine(new FolderPath(shit).ToString());
-Console.WriteLine();
 
 
-Console.WriteLine(shit);
+Console.WriteLine(result.Success);
+Console.WriteLine(result.Message);
+Console.WriteLine(result.UpdateMsg);
+
+
+
+
+
 
 
 

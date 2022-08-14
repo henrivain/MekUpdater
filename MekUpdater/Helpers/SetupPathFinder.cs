@@ -15,10 +15,10 @@ internal class SetupPathFinder
 
     internal SetupPathFinderResult TryFindPath()
     {
-        var folderFinderResult = GetSetupContainingFolderName(Info.ExtractionFolder);
+        SetupFolderFinderResult folderFinderResult = GetSetupContainingFolderName(Info.ExtractionFolder);
         if (folderFinderResult.Success is false) return folderFinderResult;
 
-        FolderPath setupFolder = new(Path.Combine(Info.ExtractionFolder.ToString(), folderFinderResult + "\\"));
+        FolderPath setupFolder = new(Path.Combine(Info.ExtractionFolder.FullPath, folderFinderResult.SetupFolderName + "\\"));
         return GetSetupFileName(setupFolder);
     }
 
@@ -33,7 +33,7 @@ internal class SetupPathFinder
         try
         {
             folderNames = Directory
-                .EnumerateDirectories(extractPath.ToString())
+                .EnumerateDirectories(extractPath.FullPath)
                 .Select(x => Path.GetFileName(x))                   
                 .ToList();
         }
@@ -76,7 +76,7 @@ internal class SetupPathFinder
         try
         {
             fileNames = Directory
-                .EnumerateFiles(setupFolder.ToString())
+                .EnumerateFiles(setupFolder.FullPath)
                 .Select(x => Path.GetFileName(x))
                 .ToList();
         }
@@ -93,7 +93,7 @@ internal class SetupPathFinder
         {
             try
             {
-                SetupExePath result = new(Path.Combine(setupFolder.ToString(), name));
+                SetupExePath result = new(Path.Combine(setupFolder.FullPath, name));
                 return new(true)
                 {
                     SetupPath = result,
