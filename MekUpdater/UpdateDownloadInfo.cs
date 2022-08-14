@@ -1,8 +1,6 @@
-﻿
-using MekPathLibrary;
-using MekPathLibraryTests.Check;
+﻿using MekUpdater.Check;
 /// Copyright 2021 Henri Vainio 
-namespace MekPathLibraryTests
+namespace MekUpdater
 {
     /// <summary>
     /// ResetDownloadInfo for handling update information during and after update
@@ -22,7 +20,7 @@ namespace MekPathLibraryTests
         /// <param name="extractPath"></param>
         /// <param name="repoInfo"></param>
         /// <exception cref="ArgumentException"></exception>
-        public UpdateDownloadInfo(ZipPath filePath, FolderPath extractPath, RepositoryInfo repoInfo) 
+        public UpdateDownloadInfo(ZipPath filePath, FolderPath extractPath, RepositoryInfo repoInfo)
         {
             ZipFilePath = filePath;
             ExtractPath = extractPath;
@@ -41,7 +39,7 @@ namespace MekPathLibraryTests
             get => _zipFilePath;
             set
             {
-                _zipFilePath = value.HasValue ? 
+                _zipFilePath = value.HasValue ?
                     value : throw new ArgumentException($"Given {nameof(ZipFilePath)} is invalid");
             }
         }
@@ -55,7 +53,7 @@ namespace MekPathLibraryTests
             get => _extractPath;
             set
             {
-                _extractPath = value.HasValue ? 
+                _extractPath = value.HasValue ?
                     value : throw new ArgumentException($"Given {nameof(ZipFilePath)} is invalid");
             }
         }
@@ -95,7 +93,7 @@ namespace MekPathLibraryTests
         {
             Waiting, Downloading, Copying, DownloadCompleted, DownloadFailed,
             Extracting, ExtractionCompleted, ExtractionFailed,
-            Launching, LaunchingCompleted, LaunchingFailed, 
+            Launching, LaunchingCompleted, LaunchingFailed,
             Completed, Failed
         }
 
@@ -111,7 +109,7 @@ namespace MekPathLibraryTests
         {
             get
             {
-                if (Statuses.TryPeek(out CompletionStatus status))
+                if (Statuses.TryPeek(out var status))
                 {
                     return status;
                 }
@@ -138,7 +136,7 @@ namespace MekPathLibraryTests
         public void DownloadFailed()
         {
             Statuses.Push(CompletionStatus.DownloadFailed);
-        }        
+        }
         /// <summary>
         /// Set status CompletionStatus.Completed
         /// </summary>

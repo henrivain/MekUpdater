@@ -1,11 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using System.Diagnostics;
 using System.IO.Compression;
-using MekPathLibrary;
-using MekUpdater.InstallUpdates;
-using static MekPathLibraryTests.UpdateDownloadInfo;
+using static MekUpdater.UpdateDownloadInfo;
 
-namespace MekPathLibraryTests.InstallUpdates
+namespace MekUpdater.InstallUpdates
 {
     internal class ZipExtracter
     {
@@ -45,13 +42,13 @@ namespace MekPathLibraryTests.InstallUpdates
                 await Task.Run(() =>
                 {
                     ZipFile.ExtractToDirectory(Info.ZipFilePath.ToString(), Info.ExtractPath.ToString(), true);
-                }); 
+                });
                 Info.ExtractionCompleted();
                 return new(true);
             }
             catch (Exception ex)
             {
-                ErrorMsg msg = GetExceptionReason(ex);
+                var msg = GetExceptionReason(ex);
 
                 Info.Error = (FailState.Extracting, msg);
                 Info.ExtractionFailed();
@@ -64,7 +61,7 @@ namespace MekPathLibraryTests.InstallUpdates
                     ErrorMsg = msg,
                     StackTrace = ex.StackTrace
                 };
-                
+
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using MekPathLibraryTests.UpdateBuilder;
 
-namespace MekPathLibraryTests.UpdateRunner;
+namespace MekUpdater.UpdateRunner;
 
 public class GetSetupResult : UpdateResult
 {

@@ -1,6 +1,6 @@
-﻿using MekPathLibraryTests.Helpers;
+﻿using MekUpdater.Helpers;
 
-namespace MekPathLibraryTests.Fluent.Interfaces;
+namespace MekUpdater.Fluent.Interfaces;
 
 public interface ICanCheckUpdates
 {
@@ -15,6 +15,4 @@ public interface ICanCheckUpdates
     ICanCheckUpdates UseLogging(int milliSecondsDelay = 1000);
 
     UpdateDownloadInfo Info { get; }
-
-
 }

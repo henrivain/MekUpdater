@@ -1,8 +1,7 @@
-﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibrary;
-using MekPathLibraryTests.Exceptions;
-
-namespace MekPathLibraryTests.InstallUpdates
+﻿
+using MekUpdater.Exceptions;
+/// Copyright 2021 Henri Vainio 
+namespace MekUpdater.InstallUpdates
 {
     /// <summary>
     /// Get path to your applications setup file
@@ -49,12 +48,12 @@ namespace MekPathLibraryTests.InstallUpdates
         /// </summary>
         private void TryGetSetupPath()
         {
-            string? folderName = GetSetupContainingFolderName(ExtractFolder);
+            var folderName = GetSetupContainingFolderName(ExtractFolder);
 
             if (folderName is null) return;
-            
+
             FolderPath setupPath = new(Path.Combine(ExtractFolder.ToString(), folderName + "\\"));
-            string? setupName = GetSetupFileName(setupPath);
+            var setupName = GetSetupFileName(setupPath);
 
             if (setupName is null) return;
 
@@ -80,7 +79,7 @@ namespace MekPathLibraryTests.InstallUpdates
                 return null;
             }
 
-            foreach (string folder in GetFileNames(folders) ?? Enumerable.Empty<string>())
+            foreach (var folder in GetFileNames(folders) ?? Enumerable.Empty<string>())
             {
                 if (IsExtractedFolderMatch(folder)) return folder;
             }
@@ -107,7 +106,7 @@ namespace MekPathLibraryTests.InstallUpdates
                 return null;
             }
 
-            foreach (string file in GetFileNames(files) ?? Enumerable.Empty<string>())
+            foreach (var file in GetFileNames(files) ?? Enumerable.Empty<string>())
             {
                 if (IsSetupFile(file)) return file;
             }
@@ -134,7 +133,7 @@ namespace MekPathLibraryTests.InstallUpdates
         /// <returns>true if is right format, else false</returns>
         private bool IsExtractedFolderMatch(string folderName)
         {
-            bool isTrue = folderName.Trim().StartsWith($"{RepoOwner}-{_repoName}-");
+            var isTrue = folderName.Trim().StartsWith($"{RepoOwner}-{_repoName}-");
             return isTrue;
         }
 
@@ -145,9 +144,9 @@ namespace MekPathLibraryTests.InstallUpdates
         /// <returns>true if contains both, else false</returns>
         private static bool IsSetupFile(string fileName)
         {
-            bool isZip = (Path.GetExtension(fileName) is ".exe");
-            bool isSetup = (fileName.ToLower().Contains("setup"));
-            return (isZip && isSetup);
+            var isZip = Path.GetExtension(fileName) is ".exe";
+            var isSetup = fileName.ToLower().Contains("setup");
+            return isZip && isSetup;
         }
 
     }

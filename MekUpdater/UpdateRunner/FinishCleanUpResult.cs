@@ -1,6 +1,6 @@
-﻿namespace MekPathLibraryTests.UpdateRunner;
+﻿namespace MekUpdater.UpdateRunner;
 
 public class FinishCleanUpResult
 {
-    
+
 }

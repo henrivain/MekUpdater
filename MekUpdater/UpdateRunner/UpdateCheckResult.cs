@@ -1,6 +1,7 @@
-﻿using MekPathLibraryTests.Check;
-using MekPathLibraryTests.UpdateBuilder;
-namespace MekPathLibraryTests.UpdateRunner;
+﻿using MekPathLibraryTests.UpdateBuilder;
+using MekUpdater.Check;
+
+namespace MekUpdater.UpdateRunner;
 
 public class UpdateCheckResult : UpdateResult
 {

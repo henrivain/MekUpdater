@@ -1,6 +1,6 @@
-﻿using MekPathLibraryTests.UpdateRunner;
+﻿using MekUpdater.UpdateRunner;
 
-namespace MekPathLibraryTests.InstallUpdates;
+namespace MekUpdater.InstallUpdates;
 
 public class DownloadUpdateFilesResult : GetSetupResult
 {

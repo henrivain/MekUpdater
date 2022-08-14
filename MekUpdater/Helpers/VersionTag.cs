@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 /// Copyright 2022 Henri Vainio 
-namespace MekPathLibraryTests.Helpers;
+namespace MekUpdater.Helpers;
 
 public class VersionTag
 {

@@ -1,4 +1,4 @@
-﻿using static MekPathLibraryTests.UpdateDownloadInfo;
+﻿using static MekUpdater.UpdateDownloadInfo;
 
 namespace MekPathLibraryTests.UpdateBuilder;
 

@@ -1,10 +1,9 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibraryTests.Exceptions;
-using MekPathLibraryTests.Helpers;
-using static MekPathLibraryTests.UpdateDownloadInfo;
-using MekPathLibrary;
+using MekUpdater.Exceptions;
+using MekUpdater.Helpers;
+using static MekUpdater.UpdateDownloadInfo;
 
-namespace MekPathLibraryTests.InstallUpdates
+namespace MekUpdater.InstallUpdates
 {
 
     /// <summary>
@@ -55,7 +54,7 @@ namespace MekPathLibraryTests.InstallUpdates
             }
             catch (Exception ex)
             {
-                ErrorMsg msg = GetExceptionReason(ex);
+                var msg = GetExceptionReason(ex);
                 Info.Error = (FailState.Download, msg);
                 Info.DownloadFailed();
                 return new(false)
@@ -85,7 +84,7 @@ namespace MekPathLibraryTests.InstallUpdates
             client.DefaultRequestHeaders.Add("User-Agent", "request");
             Info.Downloading();
 
-            using Stream stream = await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
+            using var stream = await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
 
             CreateFolderInNeed();
             using FileStream fileStream = new(Info.ZipFilePath.FullPath, FileMode.OpenOrCreate);
@@ -148,7 +147,7 @@ namespace MekPathLibraryTests.InstallUpdates
         /// </summary>
         private void CreateFolderInNeed()
         {
-            string folder = new FolderPath(Info.ZipFilePath.ToString()).FullPath;
+            var folder = new FolderPath(Info.ZipFilePath.ToString()).FullPath;
             if (folder == string.Empty) return;
             Directory.CreateDirectory(folder);
             Console.WriteLine($"[UpdateStatus] Downloading zip to folder: {folder}");

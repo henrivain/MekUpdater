@@ -1,6 +1,7 @@
-﻿/// Copyright 2022 Henri Vainio 
-
-namespace MekPathLibraryTests;
+﻿using MekUpdater.Exceptions;
+using MekUpdater.Helpers;
+/// Copyright 2022 Henri Vainio 
+namespace MekUpdater;
 
 /// <summary>
 /// Check and run updates on your application
@@ -88,7 +89,7 @@ public class AppUpdater
     private UpdateDownloadInfo Info { get; set; }
     private void LogStatus(int milliSecondsDelay = 1000)
     {
-        string loggerName = "[UpdateStatus]";
+        var loggerName = "[UpdateStatus]";
         Console.WriteLine($"{loggerName} Start Update");
         Task.Run(async () =>
         {
@@ -153,7 +154,7 @@ public class AppUpdater
         Info.RepoInfo.DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
         await RunUpdate();
     }
-    
+
     private async Task RunUpdate()
     {
         Info.IsUpdating = true;

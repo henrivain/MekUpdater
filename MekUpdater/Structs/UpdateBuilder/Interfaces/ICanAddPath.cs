@@ -1,4 +1,4 @@
-﻿namespace MekPathLibraryTests.UpdateBuilder.Interfaces;
+﻿namespace MekUpdater.UpdateBuilder.Interfaces;
 
 public interface ICanAddPath
 {

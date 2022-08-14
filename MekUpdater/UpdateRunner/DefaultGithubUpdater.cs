@@ -1,10 +1,9 @@
-﻿using MekPathLibraryTests.Check;
-using MekPathLibraryTests.InstallUpdates;
-using MekPathLibraryTests.UpdateBuilder;
+﻿using MekPathLibraryTests.UpdateBuilder;
+using MekUpdater.Check;
 using MekUpdater.InstallUpdates;
-using static MekPathLibraryTests.UpdateDownloadInfo;
+using MekUpdater.UpdateBuilder;
 
-namespace MekPathLibraryTests.UpdateRunner;
+namespace MekUpdater.UpdateRunner;
 
 public class DefaultGithubUpdater : IUpdater
 {
@@ -29,7 +28,7 @@ public class DefaultGithubUpdater : IUpdater
             return new(false)
             {
                 Message = "github download url 'zipball_url' is null",
-                ErrorMsg = MekPathLibraryTests.UpdateDownloadInfo.ErrorMsg.BadUrl,
+                ErrorMsg = UpdateDownloadInfo.ErrorMsg.BadUrl,
                 VersionData = null,
                 UsedUrl = Update.RepoInfoUrl
             };

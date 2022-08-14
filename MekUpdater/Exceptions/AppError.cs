@@ -1,8 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using System;
 using System.Diagnostics;
 
-namespace MekPathLibraryTests.Exceptions
+namespace MekUpdater.Exceptions
 {
     public static class AppError
     {
@@ -29,7 +28,7 @@ namespace MekPathLibraryTests.Exceptions
         {
             return GetFormattedText(message, 1);
         }
-        
+
         /// <summary>
         /// Generate exception text in right format
         /// <para/>Format: "[class.method]"
@@ -95,13 +94,13 @@ namespace MekPathLibraryTests.Exceptions
             stackDepth++; // add this function to depth
 
             StackFrame frame = new(stackDepth);
-            string className = frame.GetMethod()?.DeclaringType?.Name ?? $"{nameof(AppError)}";
-            string methodName = frame.GetMethod()?.Name ?? $"{nameof(Text)}";
+            var className = frame.GetMethod()?.DeclaringType?.Name ?? $"{nameof(AppError)}";
+            var methodName = frame.GetMethod()?.Name ?? $"{nameof(Text)}";
 
             variableValue = variableValue is null ?
                 "" : $" ; was given \"{variableValue?.ToString()}\"";
 
-            string error = $"[{className}.{methodName}] {message}{variableValue}";
+            var error = $"[{className}.{methodName}] {message}{variableValue}";
             Console.WriteLine(error);
             return error;
         }

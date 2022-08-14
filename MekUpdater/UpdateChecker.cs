@@ -1,7 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibraryTests.Check;
-using MekPathLibraryTests.Exceptions;
 using MekPathLibraryTests.Helpers;
+using MekUpdater.Check;
+using MekUpdater.Exceptions;
 using System;
 using System.Threading.Tasks;
 

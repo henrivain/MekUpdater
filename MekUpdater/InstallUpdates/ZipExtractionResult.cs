@@ -1,4 +1,4 @@
-﻿using MekPathLibraryTests.UpdateRunner;
+﻿using MekUpdater.UpdateRunner;
 
 namespace MekUpdater.InstallUpdates
 {

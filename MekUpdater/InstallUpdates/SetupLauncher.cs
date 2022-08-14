@@ -1,10 +1,10 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
 using System.Diagnostics;
-using MekPathLibraryTests.Exceptions;
-using static MekPathLibraryTests.UpdateDownloadInfo;
+using MekUpdater.Exceptions;
+using static MekUpdater.UpdateDownloadInfo;
 
-namespace MekPathLibraryTests.InstallUpdates
+namespace MekUpdater.InstallUpdates
 {
     /// <summary>
     /// Tool for starting setup.exe from subfolder of Info.ExtractPath

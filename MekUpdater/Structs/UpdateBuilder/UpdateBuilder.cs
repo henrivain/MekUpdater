@@ -1,4 +1,6 @@
-﻿using MekPathLibraryTests.UpdateBuilder.Interfaces;
+﻿using MekUpdater.Helpers;
+using MekUpdater.UpdateBuilder;
+using MekUpdater.UpdateBuilder.Interfaces;
 
 namespace MekPathLibraryTests.UpdateBuilder;
 

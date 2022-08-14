@@ -1,8 +1,7 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using System;
 
 
-namespace MekPathLibraryTests.Check
+namespace MekUpdater.Check
 {
     // everything on this class must be public
     // otherwise json can't be converted to this type of object

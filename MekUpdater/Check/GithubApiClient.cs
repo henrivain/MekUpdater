@@ -1,9 +1,11 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibraryTests.UpdateRunner;
-using static MekPathLibraryTests.UpdateDownloadInfo;
+using MekUpdater.Exceptions;
+using MekUpdater.Helpers;
+using MekUpdater.UpdateRunner;
+using static MekUpdater.UpdateDownloadInfo;
 
 
-namespace MekPathLibraryTests.Check
+namespace MekUpdater.Check
 {
     /// <summary>
     /// App version data handler for github api
@@ -33,7 +35,7 @@ namespace MekPathLibraryTests.Check
         /// <exception cref="InvalidOperationException"></exception>
         internal async Task<UpdateCheckResult> GetVersionData()
         {
-            string message = string.Empty;
+            var message = string.Empty;
             ParsedVersionData? data = null;
             try
             {
@@ -48,19 +50,19 @@ namespace MekPathLibraryTests.Check
                 UsedUrl = VersionUrl,
                 Message = message,
                 VersionData = data,
-                
+
             };
         }
 
         private async Task<ParsedVersionData?> GetAndParseData()
         {
-            using HttpClient client = new HttpClient(new HttpClientHandler()
+            using var client = new HttpClient(new HttpClientHandler()
             {
                 UseDefaultCredentials = true,
                 UseProxy = false
             });
             client.DefaultRequestHeaders.Add("User-Agent", "request");
-            HttpResponseMessage response = await client.GetAsync(VersionUrl);
+            var response = await client.GetAsync(VersionUrl);
 
             if (response.IsSuccessStatusCode)
             {

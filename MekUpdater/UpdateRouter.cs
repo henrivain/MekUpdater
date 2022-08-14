@@ -1,12 +1,11 @@
 ﻿/// Copyright 2021 Henri Vainio 
 
-using MekPathLibrary;
-using MekPathLibraryTests.Check;
-using MekPathLibraryTests.Exceptions;
-using MekPathLibraryTests.Helpers;
-using MekPathLibraryTests.InstallUpdates;
+using MekUpdater.Check;
+using MekUpdater.Exceptions;
+using MekUpdater.Helpers;
+using MekUpdater.InstallUpdates;
 
-namespace MekPathLibraryTests
+namespace MekUpdater
 {
     /// <summary>
     /// Class to handle update process from github api
@@ -90,9 +89,9 @@ namespace MekPathLibraryTests
         public async Task<UpdateRouter> ExtractZipAsync(bool forceExtract = false)
         {
             ZipExtracter unZipper = new(Info);
-            
+
             // Validate process
-            bool downloadCompleted = Info.IsDownloadCompletedSuccesfully();
+            var downloadCompleted = Info.IsDownloadCompletedSuccesfully();
             if (downloadCompleted is false && forceExtract is false)
             {
                 throw new InvalidOperationException(AppError.Text(

@@ -1,12 +1,7 @@
-﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibraryTests.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-
-namespace MekPathLibraryTests.Helpers
+﻿
+using MekUpdater.Exceptions;
+/// Copyright 2021 Henri Vainio 
+namespace MekUpdater.Helpers
 {
     internal class Validator
     {
@@ -76,7 +71,7 @@ namespace MekPathLibraryTests.Helpers
         /// <exception cref="ArgumentException"></exception>
         internal static string GetCorrectWindowsPath(string path)
         {
-            PathInfo info = ValidateAndGetWindowsPath(path);
+            var info = ValidateAndGetWindowsPath(path);
             if (info.IsPath is false)
             {
                 throw new ArgumentException(AppError.Text(info.Msg, 2, info.Path));
@@ -125,13 +120,13 @@ namespace MekPathLibraryTests.Helpers
             /// <param name="isPath"></param>
             /// <param name="msg"></param>
             /// <param name="path"></param>
-            internal PathInfo(bool isPath, string msg, string path) 
+            internal PathInfo(bool isPath, string msg, string path)
             {
                 IsPath = isPath;
                 Msg = msg;
                 Path = path;
             }
-     
+
             /// <summary>
             /// Bool: is valid path?
             /// </summary>

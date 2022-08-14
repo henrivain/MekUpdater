@@ -1,4 +1,7 @@
-﻿namespace MekPathLibraryTests.UpdateBuilder.Interfaces;
+﻿using MekUpdater.Helpers;
+using MekUpdater.UpdateBuilder.Interfaces;
+
+namespace MekUpdater.UpdateBuilder.Interfaces;
 
 public interface ICanRunUpdate
 {

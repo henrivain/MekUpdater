@@ -1,13 +1,15 @@
-﻿using MekPathLibraryTests.UpdateRunner;
+﻿using MekPathLibraryTests.UpdateBuilder;
+using MekUpdater.Helpers;
+using MekUpdater.UpdateRunner;
 
-namespace MekPathLibraryTests.UpdateBuilder;
+namespace MekUpdater.UpdateBuilder;
 
 public class Update
 {
     internal Update(string repoOwner, string repoName)
     {
         RepoInfoUrl = $"https://api.github.com/repos/{repoOwner}/{repoName}/releases/latest";
-       
+
     }
     internal string RepoInfoUrl { get; }
     internal FolderPath SetupDestinationFolder { get; set; } = Helper.DefaultFluentUpdaterDestinationFolder;
@@ -22,11 +24,15 @@ public class Update
     {
         IUpdater updater = new DefaultGithubUpdater(this);
 
+
+        var updateCheckResult = await updater.CheckForUpdatesAsync();
+        if (updateCheckResult.Success is false) return updateCheckResult;
+        if (IsCurrentVersionSameOrBiggerThan(updateCheckResult?.VersionData?.tag_name))
+        {
+
+        }
+
         UpdateResult result;
-
-        result = await updater.CheckForUpdatesAsync();
-        if (result.Success is false) return result;
-
         result = await updater.DownloadAndExtractAsync();
         if (result.Success is false) return result;
 
@@ -34,5 +40,10 @@ public class Update
 
 
         return updater.Result;
+    }
+
+    private bool IsCurrentVersionSameOrBiggerThan(string? tag_name)
+    {
+        throw new NotImplementedException();
     }
 }

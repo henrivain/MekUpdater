@@ -1,8 +1,8 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibraryTests.Exceptions;
-using MekPathLibraryTests.Helpers;
+using MekUpdater.Exceptions;
+using MekUpdater.Helpers;
 
-namespace MekPathLibraryTests.Check
+namespace MekUpdater.Check
 {
     /// <summary>
     /// RepositoryInfo stores data about your repository 
