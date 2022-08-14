@@ -17,5 +17,6 @@ public enum UpdateMsg
     ObjectDisposed, NoFileName,
     ErrorWhileOpening, NoShellSupport,
     PathNullOrEmpty, UpdateAlreadyInstalled,
-    SetupNotFound, DeleteFileFailed
+    SetupNotFound, DeleteFileFailed,
+    ParseJson, HttpRequestFailed
 }

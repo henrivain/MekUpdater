@@ -1,6 +1,4 @@
-﻿
-using MekUpdater.Exceptions;
-/// Copyright 2021 Henri Vainio 
+﻿/// Copyright 2021 Henri Vainio 
 namespace MekUpdater.Helpers;
 
 internal class UrlValidator
@@ -15,22 +13,16 @@ internal class UrlValidator
     {
         if (string.IsNullOrWhiteSpace(url))
         {
-            throw new ArgumentException(AppError.Text("Repository url can't be null, empty or whitspace", 2));
+            throw new ArgumentException("Repository url can't be null, empty or whitspace");
         }
         if (url.Trim().StartsWith("https://api.github.com/repos") is false)
         {
-            throw new ArgumentException(
-                AppError.Text(
-                    "Bad url path. Url must include \"https://api.github.com/repos\"", 2, url
-                ));
+            throw new ArgumentException($"Bad url path. Url must include 'https://api.github.com/repos', given url was '{url}'");
         }
 
         if (url.Contains("releases/latest") is false)
         {
-            throw new ArgumentException(
-                AppError.Text(
-                    "Bad url path. Must include \"releases/latest\"", 2, url
-                    ));
+            throw new ArgumentException($"Bad url path. Must include 'releases/latest', given url was '{url}'");
         }
         return url;
     }
@@ -46,15 +38,15 @@ internal class UrlValidator
     {
         if (string.IsNullOrWhiteSpace(url))
         {
-            throw new ArgumentException(AppError.Text("Download url can't be null, empty or whitspace", 2));
+            throw new ArgumentException("Download url can't be null, empty or whitspace");
         }
         if (url.Contains("https://api.github.com/repos/") is false)
         {
-            throw new ArgumentException(AppError.Text("Download url must include \"https://api.github.com/repos/\"", 2, url));
+            throw new ArgumentException($"Download url must include 'https://api.github.com/repos/', given url was '{url}'");
         }
         if (url.Contains("zipball") is false)
         {
-            throw new ArgumentException(AppError.Text("Download url must include \"zipball\"", 2, url));
+            throw new ArgumentException($"Download url must include 'zipball', given url was '{url}'");
         }
         return url;
     }

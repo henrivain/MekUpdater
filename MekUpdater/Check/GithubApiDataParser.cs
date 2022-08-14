@@ -1,54 +1,50 @@
 ﻿/// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
+using MekUpdater.UpdateRunner;
 using Newtonsoft.Json;
 
 namespace MekUpdater.Check
 {
     /// <summary>
-    /// Parse version info from github api. Get data with .Data
+    /// Parse version info from github api. Get data with Parse()
     /// </summary>
     internal class GithubApiDataParser
     {
-        /// <summary>
-        /// Parse github "latest version" api response. 
-        /// Throws DataParseException if in debug and bad response json
-        /// </summary>
-        /// <param name="responseJson"></param>
-        /// <exception cref="DataParseException"></exception>
         internal GithubApiDataParser(string responseJson)
         {
-            Parse(responseJson);
+            ResponseJson = responseJson;
         }
 
-        /// <summary>
-        /// Get parsed data, returns null if unsuccesful
-        /// </summary>
-        internal ParsedVersionData? Data { get; private set; } = null;
+        public string ResponseJson { get; }
 
         /// <summary>
         /// Parse json into ParsedVersionData
         /// </summary>
-        /// <param name="responseJson"></param>
-        /// <exception cref="DataParseException"></exception>
-        private void Parse(string responseJson)
+        /// <returns>
+        /// DataParseResult where 'Success' property indicates wheather action was successful or not. 
+        /// Parsed data result is part of DataParseResult
+        /// </returns>
+        internal DataParseResult Parse()
         {
+            ParsedVersionData? data;
             try
             {
-                Data = JsonConvert.DeserializeObject<ParsedVersionData>(responseJson);
+                data = JsonConvert.DeserializeObject<ParsedVersionData>(ResponseJson);
+                if (data is null)
+                {
+                    throw new DataParseException($"Bad {nameof(ResponseJson)}. Can't parse. Json: {ResponseJson}");
+                }
             }
 
             catch (Exception ex)
             {
-                Console.WriteLine(AppError.Text($"Exception was thrown whilst parsing: {ex.Message}"));
+                return new(false)
+                {
+                    Message = $"Failed to parse string into {nameof(ParsedVersionData)} because of exception {ex}: {ex.Message}",
+                    UpdateMsg = UpdateMsg.ParseJson
+                };
             }
-
-            if (Data is null)
-            {
-                Console.WriteLine(AppError.Text($"Parse error => Data is null"));
-#if DEBUG
-                throw new DataParseException(AppError.Text($"Bad {nameof(responseJson)}. Can't parse."));
-#endif
-            }
+            return new(true) { ParsedVersionData = data };
         }
     }
 }

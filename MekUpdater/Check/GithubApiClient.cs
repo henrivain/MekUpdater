@@ -32,27 +32,34 @@ namespace MekUpdater.Check
         /// <exception cref="InvalidOperationException"></exception>
         internal async Task<UpdateCheckResult> GetVersionData()
         {
-            var message = string.Empty;
-            ParsedVersionData? data = null;
+            string message;
+            DataParseResult? result = null;
             try
             {
-                data = await GetAndParseData();
+                result = await GetAndParseData();
+                message = result.Message;
             }
             catch (Exception ex)
             {
                 message = $"Get version data failed because of {ExceptionToErrorMsg(ex)}: {ex.Message}";
             }
-            return new(data is not null)
+
+            VersionTag availableVersion = VersionTag.Min;
+            if (result?.ParsedVersionData?.tag_name is not null)
+            {
+                availableVersion = new(result.ParsedVersionData.tag_name);
+            }
+
+            return new(result?.ParsedVersionData is not null)
             {
                 UsedUrl = VersionUrl,
                 Message = message,
-                DownloadUrl = data?.zipball_url,
-                AvailableVersion = (data?.tag_name is null) ? VersionTag.Min : new(data!.tag_name)
-
+                DownloadUrl = result?.ParsedVersionData?.zipball_url,
+                AvailableVersion = availableVersion
             };
         }
 
-        private async Task<ParsedVersionData?> GetAndParseData()
+        private async Task<DataParseResult> GetAndParseData()
         {
             using var client = new HttpClient(new HttpClientHandler()
             {
@@ -64,9 +71,15 @@ namespace MekUpdater.Check
 
             if (response.IsSuccessStatusCode)
             {
-                return new GithubApiDataParser(await response.Content.ReadAsStringAsync()).Data;
+                return new GithubApiDataParser(
+                    await response.Content.ReadAsStringAsync()
+                    ).Parse();
             }
-            return null;
+            return new(false)
+            {
+                Message = $"Request failed with status code {response.StatusCode} and message {response.ReasonPhrase}",
+                UpdateMsg = UpdateMsg.HttpRequestFailed
+            };
         }
 
         private static UpdateMsg ExceptionToErrorMsg(Exception ex)
