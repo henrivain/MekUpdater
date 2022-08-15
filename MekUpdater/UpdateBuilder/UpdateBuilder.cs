@@ -1,4 +1,5 @@
 ﻿using MekUpdater.UpdateBuilder.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace MekUpdater.UpdateBuilder;
 
@@ -25,6 +26,12 @@ public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanB
     public ICanAddPath Where(FolderPath setupDestinationFolder)
     {
         Update.ExtractionFolder = setupDestinationFolder;
+        return this;
+    }
+
+    public ICanAddPath AddLogger(ILogger logger)
+    {
+        Update.Logger = logger;
         return this;
     }
 

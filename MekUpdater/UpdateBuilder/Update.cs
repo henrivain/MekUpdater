@@ -1,4 +1,5 @@
 ﻿using MekUpdater.UpdateRunner;
+using Microsoft.Extensions.Logging;
 using static MekUpdater.Helpers.VersionTag.SpecialId;
 
 namespace MekUpdater.UpdateBuilder;
@@ -22,59 +23,91 @@ public class Update
     internal bool CanUpdatePreviewVersion { get; set; } = true;
     internal bool StartSetup { get; set; } = true;
     internal bool TidyUpWhenFinishing { get; set; } = true;
-
+    internal UpdateLogger Logger { get; set; } = new(null);
 
     public virtual async Task<UpdateResult> RunDefaultUpdaterAsync()
     {
+        Logger.LogMessage("Check for updates", LogType.Info);
         IUpdater updater = new DefaultGithubUpdater(this);
         UpdateResult result;
 
         var updateCheckResult = await updater.CheckForUpdatesAsync();
+        Logger.LogResult(updateCheckResult, "Update check");
         if (updateCheckResult.Success is false) return updateCheckResult;
+        
         if (CurrentVersion >= updateCheckResult.AvailableVersion)
         {
-            return new(true)
-            {
-                UpdateMsg = UpdateMsg.UpdateAlreadyInstalled,
-                Message = $"Installed version {CurrentVersion} is newer or same " +
-                $"than available version {updateCheckResult.AvailableVersion}. " +
-                $"Meaning process was successfull!"
-            };
+            return ExitUpdateAlreadyInstalled(updateCheckResult);
         }
         if (CanUpdatePreviewVersion is false && updateCheckResult.AvailableVersion?.VersionId is not Full)
         {
-            return new(true)
-            {
-                Message = $"Success, can't install version '{updateCheckResult.AvailableVersion}' " +
-                $"because preview installation is false.",
-                UpdateMsg = UpdateMsg.Completed,
-            };
+            return ExitOnlyPreviewAvailable(updateCheckResult);
         }
+        Logger.LogMessage("UPDATE: new update available, start update", LogType.Info);
 
         result = await updater.DownloadAndExtractAsync();
+        Logger.LogResult(result, "Download and extract");
         if (result.Success is false) return result;
         
         if (StartSetup is false)
         {
-            return new(true)
-            {
-                Message = $"Doesn't start setup, because {nameof(StartSetup)} is false. " +
-                $"Ending update as successful",
-                UpdateMsg = UpdateMsg.Completed
-            };
+            return ExitNoNeedToStartSetup();
         }
         result = await updater.RunSetupAsync();
+        Logger.LogResult(result, "Setup start");
         if (result.Success is false) return result;
 
         if (TidyUpWhenFinishing is false)
         {
-            return new(true)
-            {
-                Message = $"{nameof(TidyUpWhenFinishing)} is false, end update as successfull",
-                UpdateMsg = UpdateMsg.Completed
-            };
+            return ExitNoNeedForCleanUp();
         }
         result = await updater.TidyUpAsync();
+        Logger.LogResult(result, "Tidy up");
+        return result;
+    }
+
+    private UpdateResult ExitNoNeedForCleanUp()
+    {
+        UpdateResult result = new(true)
+        {
+            Message = $"{nameof(TidyUpWhenFinishing)} is false, end update as successfull",
+            UpdateMsg = UpdateMsg.Completed
+        };
+        Logger.LogResult(result, "Tidy up check");
+        return result;
+    }
+    private UpdateResult ExitNoNeedToStartSetup()
+    {
+        UpdateResult result = new(true)
+        {
+            Message = $"Doesn't start setup, because {nameof(StartSetup)} is false. " +
+            $"Ending update as successful",
+            UpdateMsg = UpdateMsg.Completed
+        };
+        Logger.LogResult(result, "Setup start check");
+        return result;
+    }
+    private UpdateResult ExitOnlyPreviewAvailable(UpdateCheckResult updateCheckResult)
+    {
+        UpdateResult result = new(true)
+        {
+            Message = $"Success, can't install version '{updateCheckResult.AvailableVersion}' " +
+            $"because preview installation is false.",
+            UpdateMsg = UpdateMsg.Completed,
+        };
+        Logger.LogResult(result, "Version check");
+        return result;
+    }
+    private UpdateResult ExitUpdateAlreadyInstalled(UpdateCheckResult updateCheckResult)
+    {
+        UpdateResult result = new(true)
+        {
+            UpdateMsg = UpdateMsg.UpdateAlreadyInstalled,
+            Message = $"Installed version {CurrentVersion} is newer or same " +
+                      $"than available version {updateCheckResult.AvailableVersion}. " +
+                      $"Meaning process was successfull!"
+        };
+        Logger.LogResult(result, "Version check");
         return result;
     }
 }
