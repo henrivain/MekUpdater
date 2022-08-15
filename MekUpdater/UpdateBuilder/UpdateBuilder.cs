@@ -31,7 +31,7 @@ public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanB
 
     public ICanAddPath AddLogger(ILogger logger)
     {
-        Update.Logger = logger;
+        Update.Logger = new(logger);
         return this;
     }
 
