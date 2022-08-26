@@ -15,11 +15,11 @@
     <Authors>Henri Vainio</Authors>
     <Company>Matikkaeditorinkääntäjä</Company>
     <PackageIcon>logo v2.1 128x128.png</PackageIcon>
+    <PackageReadmeFile></PackageReadmeFile>
+    <RepositoryType></RepositoryType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\logo v2.1 128x128.png" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <Resource Include="Resources\logo v2.1 128x128.png">
