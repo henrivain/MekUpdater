@@ -102,7 +102,8 @@ public class DefaultGithubUpdater : IUpdater
             new StartSetupResult(false)
             {
                 Message = setupFindResult.Message,
-                UpdateMsg = UpdateMsg.SetupNotFound
+                UpdateMsg = UpdateMsg.SetupNotFound,
+                SetupExePath = null
             });
         SetupLauncher launcher = new(setupFindResult.SetupPath!);
         return Task.FromResult(launcher.StartSetup());

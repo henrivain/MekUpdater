@@ -14,17 +14,20 @@ namespace MekUpdater.InstallUpdates
         internal SetupLauncher(SetupExePath setupPath)
         {
             if (setupPath.HasValue is false) throw new ArgumentNullException(nameof(setupPath));
-            Info = setupPath;
+            SetupPath = setupPath;
         }
 
-        public SetupExePath Info { get; }
+        public SetupExePath SetupPath { get; }
 
         internal StartSetupResult StartSetup()
         {
             try
             {
-                TryLaunchProcess(Info.FullPath);
-                return new(true);
+                TryLaunchProcess(SetupPath.FullPath);
+                return new(true)
+                {
+                    SetupExePath = SetupPath
+                };
             }
             catch (Exception ex)
             {
@@ -32,7 +35,8 @@ namespace MekUpdater.InstallUpdates
                 return new(false)
                 {
                     UpdateMsg = msg,
-                    Message = $"Launching setup.exe failed because of {msg}: {ex.Message}"
+                    Message = $"Launching setup.exe failed because of {msg}: {ex.Message}",
+                    SetupExePath = SetupPath
                 };
             }
         }
