@@ -17,13 +17,15 @@ public class Update
     public string RepoOwner { get; }
     public string RepoName { get; }
     internal string RepoInfoUrl => $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
-    internal FolderPath ExtractionFolder { get; set; } = Helper.DefaultUpdaterDestinationFolder;
-    internal ZipPath ZipPath { get; set; } = Helper.DefaultUpdaterZipFolder;
-    internal VersionTag CurrentVersion { get; set; } = VersionTag.Min;
-    internal bool CanUpdatePreviewVersion { get; set; } = true;
-    internal bool StartSetup { get; set; } = true;
-    internal bool TidyUpWhenFinishing { get; set; } = true;
+    public FolderPath ExtractionFolder { get; internal set; } = Helper.DefaultUpdaterDestinationFolder;
+    public ZipPath ZipPath { get; internal set; } = Helper.DefaultUpdaterZipFolder;
+    public VersionTag CurrentVersion { get; internal set; } = VersionTag.Min;
+    public bool CanUpdatePreviewVersion { get; internal set; } = true;
+    public bool StartSetup { get; internal set; } = true;
+    public bool TidyUpWhenFinishing { get; internal set; } = true;
     internal UpdateLogger Logger { get; set; } = new(null);
+    public SetupExePath? SetupExePath { get; internal set; }
+
 
     public virtual async Task<UpdateResult> RunDefaultUpdaterAsync()
     {
@@ -53,17 +55,18 @@ public class Update
         {
             return ExitNoNeedToStartSetup();
         }
-        result = await updater.RunSetupAsync();
-        Logger.LogResult(result, "Setup start");
-        if (result.Success is false) return result;
+        StartSetupResult setupResult = await updater.RunSetupAsync();
+        Logger.LogResult(setupResult, "Setup start");
+        SetupExePath = setupResult.SetupExePath;
+        if (setupResult.Success is false) return setupResult;
 
         if (TidyUpWhenFinishing is false)
         {
             return ExitNoNeedForCleanUp();
         }
-        result = await updater.TidyUpAsync();
-        Logger.LogResult(result, "Tidy up");
-        return result;
+        var finishResult = await updater.TidyUpAsync();
+        Logger.LogResult(finishResult, "Tidy up");
+        return finishResult;
     }
 
     private UpdateResult ExitNoNeedForCleanUp()
