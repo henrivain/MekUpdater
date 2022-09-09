@@ -1,13 +1,15 @@
-﻿using MekPathLibrary;
+﻿using Matikkaeditorinkaantaja.Logging;
+using MekPathLibrary;
 using MekUpdater.Helpers;
 using MekUpdater.UpdateBuilder;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+
+var logger = UpdateLogger.GetDefault();
 
 var result = await UpdateBuilder.Create("matikkaeditorinkaantaja", "Matikkaeditorinkaantaja")
                                 .Where(new FolderPath(@"C:\Users\henri\Downloads\updates"))
                                 .Where(new ZipPath(@"C:\Users\henri\Downloads\updates\MekUpdate.zip"))
-                                .AddLogger(NullLogger.Instance)
+                                .AddLogger(logger)
                                 .RunUpdate()
                                 .IfNotPreview()
                                 .IfVersionBiggerThan(new VersionTag("v3.1.5"))
@@ -16,17 +18,8 @@ var result = await UpdateBuilder.Create("matikkaeditorinkaantaja", "Matikkaedito
                                 .Build()
                                 .RunDefaultUpdaterAsync();
 
-
-
-Console.WriteLine(result.Success);
-Console.WriteLine(result.Message);
-Console.WriteLine(result.UpdateMsg);
-
-
-
-
-
-
-
+logger.LogInformation($"Success: '{result.Success}'");
+logger.LogInformation($"Message: '{result.Message}'");
+logger.LogInformation($"UpdateMsg: '{result.UpdateMsg}'");
 
 Console.ReadKey();
