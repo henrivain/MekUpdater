@@ -1,9 +1,15 @@
 ﻿using System.Reflection;
-/// Copyright 2022 Henri Vainio 
+// Copyright 2022 Henri Vainio 
 namespace MekUpdater.Helpers;
 
+/// <summary>
+/// Github style version tag using string format vX.X.X, where X is number
+/// </summary>
 public class VersionTag
 {
+    /// <summary>
+    /// Initialize new empty version tag 
+    /// </summary>
     public VersionTag() { }
 
     /// <summary>
@@ -56,11 +62,14 @@ public class VersionTag
     public SpecialId VersionId { get; private set; } = SpecialId.Full;
 
     /// <summary>
-    /// Defines version type
+    /// Defines version type, like Full, Preview, Beta and Alpha
     /// </summary>
     public enum SpecialId
     {
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         Full, Preview, Beta, Alpha
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 
     /// <summary>
@@ -98,8 +107,12 @@ public class VersionTag
         return new($"v{version}");
     }
 
+    /// <summary>
+    /// Minimum value for version tag 'v0.0.0-alpha'
+    /// </summary>
     public static VersionTag Min => new("v0.0.0-alpha");
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
         return obj is VersionTag tag &&
@@ -107,22 +120,30 @@ public class VersionTag
                Minor == tag.Minor &&
                Build == tag.Build;
     }
-
+    
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
         return HashCode.Combine(Major, Minor, Build);
     }
 
+    /// <summary>
+    /// Get current version object in format vX.X.X, where X is any number 
+    /// <para/>Can also include preview tags like -beta, -alpha or -preview
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
         return Version.ToString();
     }
 
+    /// <inheritdoc/>
     public static bool operator ==(VersionTag? left, VersionTag? right)
     {
         return EqualityComparer<VersionTag>.Default.Equals(left, right);
     }
 
+    /// <inheritdoc/>
     public static bool operator !=(VersionTag? left, VersionTag? right)
     {
         return !(left == right);
@@ -264,7 +285,8 @@ public class VersionTag
     /// <summary>
     /// Compare two version tags if tag bigger than reference
     /// </summary>
-    /// <param name="data"></param>
+    /// <param name="tag"></param>
+    /// <param name="reference"></param>
     /// <returns>Is tag version bigger than reference</returns>
     private static bool IsVersionBigger(VersionTag tag, VersionTag reference)
     {
@@ -273,13 +295,5 @@ public class VersionTag
         if (tag.Build > reference.Build) return true;
         if (tag.VersionId is SpecialId.Full && reference.VersionId != SpecialId.Full) return true;
         return false;
-    }
-
-    private static bool AreVersionsSame(VersionTag tag, VersionTag reference)
-    {
-        var MajorsSame = tag.Major == reference.Major;
-        var MinorSame = tag.Minor == reference.Minor;
-        var BuildSame = tag.Build == reference.Build;
-        return MajorsSame && MinorSame && BuildSame;
     }
 }

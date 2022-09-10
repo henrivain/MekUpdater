@@ -1,4 +1,4 @@
-﻿/// Copyright 2021 Henri Vainio 
+﻿// Copyright 2021 Henri Vainio 
 using MekUpdater.Exceptions;
 using MekUpdater.UpdateRunner;
 

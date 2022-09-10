@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.0.6.3</Version>
+    <Version>1.0.6.7</Version>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -15,6 +15,7 @@
     <PackageIcon>logo_128x128_black_white.png</PackageIcon>
     <Authors>Henri Vainio</Authors>
     <Company>Matikkaeditorinkääntäjä</Company>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

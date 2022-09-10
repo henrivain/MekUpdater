@@ -1,5 +1,5 @@
 ﻿using MekUpdater.UpdateRunner;
-/// Copyright 2021 Henri Vainio 
+// Copyright 2021 Henri Vainio 
 namespace MekUpdater.InstallUpdates
 {
 
@@ -10,11 +10,10 @@ namespace MekUpdater.InstallUpdates
     {
         /// <summary>
         /// Initialize new GithubZipDownloader with url to download from and file path to copy zip to
-        /// <para/>File path must include file name with .zip extension or update.zip will be added
         /// </summary>
         /// <param name="downloadUrl"></param>
-        /// <param name="filePath"></param>
-        /// <exception cref="ArgumentException"></exception>
+        /// <param name="zipPath"></param>
+        /// <exception cref="ArgumentException">thrown if url is not valid</exception>
         internal GithubZipDownloader(string downloadUrl, ZipPath zipPath)
         {
             DownloadUrl = UrlValidator.IsDownloadUrlValid(downloadUrl);

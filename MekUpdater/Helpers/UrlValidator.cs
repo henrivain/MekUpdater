@@ -1,4 +1,4 @@
-﻿/// Copyright 2021 Henri Vainio 
+﻿// Copyright 2021 Henri Vainio 
 namespace MekUpdater.Helpers;
 
 internal class UrlValidator

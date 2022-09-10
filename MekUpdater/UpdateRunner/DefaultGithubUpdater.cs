@@ -4,6 +4,9 @@ using MekUpdater.UpdateBuilder;
 
 namespace MekUpdater.UpdateRunner;
 
+/// <summary>
+/// Default updater used to run update process
+/// </summary>
 public class DefaultGithubUpdater : IUpdater
 {
     /// <summary>
@@ -25,17 +28,21 @@ public class DefaultGithubUpdater : IUpdater
     /// you can skip check for updates part if you know you will download update anyway.
     /// </summary>
     /// <param name="update"></param>
+    /// <param name="downloadUrl"></param>
+    /// <exception cref="ArgumentException"></exception>
     public DefaultGithubUpdater(Update update, string downloadUrl) : this(update)
     {
+        if (string.IsNullOrWhiteSpace(downloadUrl))
+        {
+            throw new ArgumentException($"'{nameof(downloadUrl)}' cannot be null or whitespace.", nameof(downloadUrl));
+        }
         DownloadUrl = downloadUrl;
     }
 
-
+    /// <summary>
+    /// Result from the update process, defines reasons for certain actions like fails
+    /// </summary>
     public UpdateResult Result { get; private set; }
-    private Update Update { get; }
-    private string DownloadUrl { get; set; } = string.Empty;
-    public SetupExePath? SetupExePath { get; private set; }
-
 
     /// <summary>
     /// Send api request into github api to check weather new version is available
@@ -130,6 +137,9 @@ public class DefaultGithubUpdater : IUpdater
         }
         return new(true);
     }
+
+    private Update Update { get; }
+    private string DownloadUrl { get; set; } = string.Empty;
 
     /// <summary>
     /// Delete file if it exist in filesystem using Task.Run

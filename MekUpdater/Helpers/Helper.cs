@@ -1,8 +1,12 @@
-﻿/// Copyright 2021 Henri Vainio 
+﻿// Copyright 2022 Henri Vainio 
+
 using System.Reflection;
 
 namespace MekUpdater.Helpers
 {
+    /// <summary>
+    /// Information about application assemblies
+    /// </summary>
     public static class AppInfo
     {
         /// <summary>
