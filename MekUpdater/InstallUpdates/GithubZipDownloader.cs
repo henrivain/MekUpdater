@@ -1,9 +1,5 @@
-﻿/// Copyright 2021 Henri Vainio 
-using MekUpdater.Exceptions;
-using MekUpdater.Helpers;
-using static MekUpdater.UpdateDownloadInfo;
-using MekPathLibrary;
-
+﻿using MekUpdater.UpdateRunner;
+// Copyright 2021 Henri Vainio 
 namespace MekUpdater.InstallUpdates
 {
 
@@ -14,48 +10,38 @@ namespace MekUpdater.InstallUpdates
     {
         /// <summary>
         /// Initialize new GithubZipDownloader with url to download from and file path to copy zip to
-        /// <para/>File path must include file name with .zip extension or update.zip will be added
         /// </summary>
         /// <param name="downloadUrl"></param>
-        /// <param name="filePath"></param>
-        /// <exception cref="ArgumentException"></exception>
-        internal GithubZipDownloader(string downloadUrl, string zipPath)
+        /// <param name="zipPath"></param>
+        /// <exception cref="ArgumentException">thrown if url is not valid</exception>
+        internal GithubZipDownloader(string downloadUrl, ZipPath zipPath)
         {
-            Info.RepoInfo.DownloadUrl = Validator.IsDownloadUrlValid(downloadUrl);
-            Info.ZipFilePath = new(zipPath);
+            DownloadUrl = UrlValidator.IsDownloadUrlValid(downloadUrl);
+            ZipPath = zipPath;
         }
 
-        /// <summary>
-        /// Initialize new GithubZipDownloader with UpdateDownloadInfo already formed. 
-        /// Ref<> will make update Info updateable during process
-        /// </summary>
-        /// <param name="info"></param>
-        internal GithubZipDownloader(UpdateDownloadInfo info)
-        {
-            Info = info;
-        }
+        string DownloadUrl { get; }
+        ZipPath ZipPath { get; }
 
         /// <summary>
-        /// Information about update progression
-        /// </summary>
-        internal UpdateDownloadInfo Info = new();
-
-        /// <summary>
-        /// Download zip file from given url to github api and bring it to given path 
+        /// Download zip file from given github api using given url and bring it to given path 
         /// </summary>
         /// <returns>awaitable Task</returns>
-        internal async Task DownloadAsync()
+        internal async Task<DownloadUpdateFilesResult> DownloadAsync()
         {
             try
             {
                 await RunDownloadAsync();
-                Info.DownloadCompleted();
+                return new(true);
             }
             catch (Exception ex)
             {
-                ErrorMsg msg = GetExceptionReason(ex);
-                Info.Error = (FailState.Download, msg);
-                Info.DownloadFailed();
+                var msg = GetExceptionReason(ex);
+                return new(false)
+                {
+                    UpdateMsg = msg,
+                    Message = $"Downloading zip file from github failed, because of {msg}: {ex.Message}"
+                };
             }
         }
 
@@ -74,120 +60,38 @@ namespace MekUpdater.InstallUpdates
         /// <exception cref="IOException"></exception>
         private async Task RunDownloadAsync()
         {
-
-
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("User-Agent", "request");
-            Info.Downloading();
 
-            
+            using Stream stream = await client.GetStreamAsync(DownloadUrl);
 
-            //using Stream stream = await DownloadZip(client);
-            using Stream stream = await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
+            Directory.CreateDirectory(ZipPath.FolderPath.FullPath);
 
-            CreateFolderInNeed();
-            using FileStream fileStream = new(Info.ZipFilePath.FullPath, FileMode.OpenOrCreate);
-            Info.Copying();
+            using FileStream fileStream = new(ZipPath.FullPath, FileMode.OpenOrCreate);
             await stream.CopyToAsync(fileStream);
-
-
-            //Info.Copying();
-
-
-            //CreateFolderInNeed();
-            //using (FileStream fileStream = new(Info.ZipFilePath.ToString(), FileMode.OpenOrCreate))
-            //{
-            //    Info.Copying();
-            //    await fileStream.CopyToAsync(stream);
-            //}
-
-
-            //await CopyStreamToFolder(stream);
-        }
-
-        /// <summary>
-        /// Copy given stream to folder using path from Info.ZipFilePath
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <returns>awaitable task</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="TaskCanceledException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="NotSupportedException"></exception>
-        /// <exception cref="System.Security.SecurityException"></exception>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="UnauthorizedAccessException"></exception>
-        /// <exception cref="IOException"></exception>
-        private async Task CopyStreamToFolder(Stream stream)
-        {
-            Info.Copying();
-            CreateFolderInNeed();
-            await stream.CopyToAsync(GetZipFileStream());
-        }
-
-        /// <summary>
-        /// Download zip from githup as Stream
-        /// </summary>
-        /// <param name="client"></param>
-        /// <returns>Stream zip</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="TaskCanceledException"></exception>
-        private async Task<Stream> DownloadZip(HttpClient client)
-        {
-            Info.Downloading();
-            return await client.GetStreamAsync(Info.RepoInfo.DownloadUrl);
-        }
-
-        /// <summary>
-        /// Open or create FileStream with ".zip" extension for zip file
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="NotSupportedException"></exception>
-        /// <exception cref="System.Security.SecurityException"></exception>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="UnauthorizedAccessException"></exception>
-        /// <exception cref="IOException"></exception>
-        private FileStream GetZipFileStream()
-        {
-            return new(Info.ZipFilePath.ToString(), FileMode.OpenOrCreate);
-        }
-
-        /// <summary>
-        /// Check that directory exist and create if not
-        /// </summary>
-        private void CreateFolderInNeed()
-        {
-            string folder = new FolderPath(Info.ZipFilePath.ToString()).FullPath;
-            if (folder == string.Empty) return;
-            Directory.CreateDirectory(folder);
-            Console.WriteLine($"[UpdateStatus] Downloading zip to folder: {folder}");
         }
 
         /// <summary>
         /// Gets reason for exception thrown in RunDownloadAsync
         /// </summary>
         /// <param name="ex"></param>
-        /// <returns>fitting ErrorMsg for ex or ErrorMsg.Other if ex is not defined in switch</returns>
-        private static ErrorMsg GetExceptionReason(Exception ex)
+        /// <returns>fitting UpdateMsg or UpdateMsg.Unknown if ex is not defined in switch</returns>
+        private static UpdateMsg GetExceptionReason(Exception ex)
         {
-            AppError.Text(ex.Message, 3);
             return ex switch
             {
-                InvalidOperationException => ErrorMsg.BadUrl,
-                HttpRequestException => ErrorMsg.NetworkError,
-                TaskCanceledException => ErrorMsg.ServerTimeout,
-                NotSupportedException => ErrorMsg.OutsideMachine,
-                System.Security.SecurityException => ErrorMsg.NoPermission,
-                DirectoryNotFoundException => ErrorMsg.NoPermission,
-                PathTooLongException => ErrorMsg.PathTooLong,
-                FileNotFoundException => ErrorMsg.FileNotFound,
-                UnauthorizedAccessException => ErrorMsg.FileReadOnly,
-                IOException => ErrorMsg.PathNotOpen,
-                ArgumentException => ErrorMsg.PathNullOrEmpty,
-                _ => ErrorMsg.Other
+                InvalidOperationException => UpdateMsg.BadUrl,
+                HttpRequestException => UpdateMsg.NetworkError,
+                TaskCanceledException => UpdateMsg.ServerTimeout,
+                NotSupportedException => UpdateMsg.OutsideMachine,
+                System.Security.SecurityException => UpdateMsg.NoPermission,
+                DirectoryNotFoundException => UpdateMsg.NoPermission,
+                PathTooLongException => UpdateMsg.PathTooLong,
+                FileNotFoundException => UpdateMsg.FileNotFound,
+                UnauthorizedAccessException => UpdateMsg.FileReadOnly,
+                IOException => UpdateMsg.PathNotOpen,
+                ArgumentException => UpdateMsg.PathNullOrEmpty,
+                _ => UpdateMsg.Unknown
             };
         }
     }

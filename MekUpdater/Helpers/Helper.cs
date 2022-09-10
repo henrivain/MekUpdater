@@ -1,33 +1,21 @@
-﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibrary;
+﻿// Copyright 2022 Henri Vainio 
+
+using System.Reflection;
 
 namespace MekUpdater.Helpers
 {
-    public static class Helper
+    /// <summary>
+    /// Information about application assemblies
+    /// </summary>
+    public static class AppInfo
     {
-        private static readonly FolderPath _downloadsFolder = new(
-            Environment.GetEnvironmentVariable("USERPROFILE")?.ToString() + @"\Downloads" + Path.DirectorySeparatorChar);
-
-        private static readonly FolderPath _appDataFolder = new (
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                Path.DirectorySeparatorChar);
-        
-        private static readonly FolderPath _userTempFolder = new (Path.GetTempPath());
-
-
         /// <summary>
-        /// Path to user's appdata folder (ending in path separator char)
+        /// Gets entry assembly name
         /// </summary>
-        public static FolderPath AppDataFolder { get => _appDataFolder; }
-
-        /// <summary>
-        /// Path to user's downloads folder (ending in path separator char)
-        /// </summary>
-        public static FolderPath DownloadsFolder { get => _downloadsFolder; }
-        
-        /// <summary>
-        /// Path to user's appdata/temp (ending in path separator char)
-        /// </summary>
-        public static FolderPath UserTempFolder { get => _userTempFolder; }
+        /// <returns>entry assembly name or "MekUpdater" if entry assembly name null</returns>
+        public static string GetHostAppName()
+        {
+            return Assembly.GetEntryAssembly()?.GetName()?.Name ?? "MekUpdater";
+        }
     }
 }

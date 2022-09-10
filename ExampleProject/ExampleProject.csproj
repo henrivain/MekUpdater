@@ -11,12 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MekPathLibrary" Version="1.0.0" />
-    <PackageReference Include="MekUpdater" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MekUpdaterStandard\MekUpdaterStandard.csproj" />
+    <PackageReference Include="MekPathLibrary" Version="1.0.1" />
+    <PackageReference Include="MekUpdater" Version="1.0.6.8" />
+    <PackageReference Include="Serilog" Version="2.11.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
   </ItemGroup>
 
 </Project>

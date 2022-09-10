@@ -23,10 +23,11 @@ namespace MekPathLibrary
         /// Validated full ".zip" path OR givenPath\file.zip if givenPath ends in directory separator
         /// OR if not valid throws ArgumentException
         /// </summary>
-        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="System.ArgumentException"></exception>
         public override string FullPath
         {
-            get => base.FullPath; protected set => base.FullPath = value;
+            get => base.FullPath; 
+            protected set => base.FullPath = value;
         }
     }
 }

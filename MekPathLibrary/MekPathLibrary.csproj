@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
 
-    <Version>1.0.0.0</Version>
+    <Version>1.0.1</Version>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>MekPathLibrary</PackageId>
@@ -15,11 +15,11 @@
     <Authors>Henri Vainio</Authors>
     <Company>Matikkaeditorinkääntäjä</Company>
     <PackageIcon>logo v2.1 128x128.png</PackageIcon>
+    <PackageReadmeFile></PackageReadmeFile>
+    <RepositoryType></RepositoryType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\logo v2.1 128x128.png" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <Resource Include="Resources\logo v2.1 128x128.png">
