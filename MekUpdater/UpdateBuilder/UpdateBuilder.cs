@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MekUpdater.UpdateBuilder;
 
-public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanBuild
+public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanBuild, IStartSetupMode
 {
     private Update Update { get; }
 
@@ -17,13 +17,13 @@ public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanB
         return new UpdateBuilder(repoOwner, repoName);
     }
 
-    public ICanAddPath Where(ZipPath zipPath)
+    public ICanAddPath DownloadZipTo(ZipPath zipPath)
     {
         Update.ZipPath = zipPath;
         return this;
     }
 
-    public ICanAddPath Where(FolderPath setupDestinationFolder)
+    public ICanAddPath UsingExtractionFolder(FolderPath setupDestinationFolder)
     {
         Update.ExtractionFolder = setupDestinationFolder;
         return this;
@@ -49,17 +49,24 @@ public class UpdateBuilder : ICanAddPath, ICanRunUpdate, ICanFinishUpdate, ICanB
         return this;
     }
 
-    public ICanFinishUpdate StartsSetupIsTrue()
+    public IStartSetupMode StartsSetup()
+    {
+        return this;
+    }
+
+    public ICanFinishUpdate IsTrue()
     {
         Update.StartSetup = true;
         return this;
     }
 
-    public ICanBuild StartsSetupIsFalse()
+    public ICanFinishUpdate IsFalse()
     {
         Update.StartSetup = false;
         return this;
     }
+
+  
 
     public ICanBuild TidiesUp(bool runTidyUp = true)
     {
