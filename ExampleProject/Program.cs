@@ -27,7 +27,7 @@ var update = UpdateBuilder.Create("matikkaeditorinkaantaja", "Matikkaeditorinkaa
                           .IfVersionBiggerThan(new VersionTag("v3.1.5"))                // run if update version tag is bigger than (must be format vX.X.X) othervise you must check version some other way
                           .StartsSetup()                                                // Start setup argument
                           .IsTrue()                                                     // argument value
-                          .TidiesUp(true)                                               // remove used cache files 
+                          .TidiesUpIsTrue()                                             // remove used cache files 
                           .Build();                                                     // build update
 
 var result = await update.RunDefaultUpdaterAsync();                                     // run update with defined parameters
