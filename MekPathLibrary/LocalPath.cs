@@ -88,6 +88,10 @@ namespace MekPathLibrary
                     Path.GetDirectoryName(FullPath),
                     Path.GetFileNameWithoutExtension(FullPath));
             }
+            if (path.StartsWith(Path.DirectorySeparatorChar) || path.StartsWith(Path.AltDirectorySeparatorChar))
+            {
+                path = path.Remove(0, 1);
+            }
             FullPath = Path.Combine(fullPath, path);
         }
 
@@ -98,6 +102,10 @@ namespace MekPathLibrary
         public virtual void RemoveNameAndAppend(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) return;
+            if (path.StartsWith(Path.DirectorySeparatorChar) || path.StartsWith(Path.AltDirectorySeparatorChar))
+            {
+                path = path.Remove(0, 1);
+            }
             FullPath = Path.Combine(Path.GetDirectoryName(FullPath), path);
         }
 

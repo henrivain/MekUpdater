@@ -100,6 +100,10 @@ namespace MekPathLibrary
         public override void Append(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) return;
+            if (path.StartsWith(Path.DirectorySeparatorChar) || path.StartsWith(Path.AltDirectorySeparatorChar))
+            {
+                path = path.Remove(0, 1);
+            }
             FullPath = Path.Combine(FullPath, path);
         }
 

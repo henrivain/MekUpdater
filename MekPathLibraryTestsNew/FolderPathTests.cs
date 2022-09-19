@@ -50,6 +50,8 @@ public class FolderPathTests
     [Theory]
     [InlineData(@"C:\Users\user\", @"myapp\", @"C:\Users\user\myapp\")]     // file names are removed when folder path is formed, so given path should always end in '\'
     [InlineData(@"C:\Users\user.zip", @"newFolder\myapp.txt", @"C:\Users\newFolder\")]
+    [InlineData(@"C:\Users\user.zip", @"\newFolder\myapp.txt", @"C:\Users\newFolder\")]     // directoryseparator char should be removed from given path start
+    [InlineData(@"C:\Users\user.zip", @"/newFolder\myapp.txt", @"C:\Users\newFolder\")]     // alt directoryseparator char should be removed from given path start
     public void Append_AndRemoveNameAndAppend_ShouldCombine_Paths_AndRemove_FileExtension_FromMiddle(string path, string pathToAppend, string expectedReturn)
     {
         // Arrange

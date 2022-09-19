@@ -24,6 +24,8 @@ public class LocalPathTests
     [Theory]
     [InlineData(@"C:\Users\user", "myapp.txt", @"C:\Users\user\myapp.txt")]
     [InlineData(@"C:\Users\user.zip", "myapp.txt", @"C:\Users\user\myapp.txt")]
+    [InlineData(@"C:\Users\user.zip", @"\myapp.txt", @"C:\Users\user\myapp.txt")]   // directoryseparator char should be removed from given path start
+    [InlineData(@"C:\Users\user.zip", @"/myapp.txt", @"C:\Users\user\myapp.txt")]   // alt directoryseparator char should be removed from given path start
     public void Append_ShouldCombine_Paths_AndRemove_OldFileExtension_FromMiddle(string path, string pathToAppend, string expectedReturn)
     {
         // Arrange
