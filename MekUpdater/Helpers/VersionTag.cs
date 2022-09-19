@@ -5,7 +5,7 @@ namespace MekUpdater.Helpers;
 /// <summary>
 /// Github style version tag using string format vX.X.X, where X is number
 /// </summary>
-public class VersionTag
+public sealed class VersionTag
 {
     /// <summary>
     /// Initialize new empty version tag 
@@ -198,6 +198,26 @@ public class VersionTag
         return !(left <= right);
     }
 
+    /// <summary>
+    /// Try convert string to version tag
+    /// </summary>
+    /// <param name="version">string to parse</param>
+    /// <param name="tag">variable where tag will be parsed</param>
+    /// <returns>true if success, else false</returns>
+    public static bool TryParse(string version, out VersionTag tag)
+    {
+        try
+        {
+            tag = new VersionTag(version);
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            tag = Min;
+            return false;
+        }
+    }
+
 
 
     /// <summary>
@@ -208,7 +228,6 @@ public class VersionTag
     /// <exception cref="ArgumentException"></exception>
     private void ConvertFromString(string versionString)
     {
-
         if (versionString.StartsWith('v'))
         {
             versionString = versionString.Remove(0, 1);

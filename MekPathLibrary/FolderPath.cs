@@ -1,9 +1,12 @@
-﻿using System;
+﻿// Copyright 2022 Henri Vainio 
+using System;
 using System.IO;
 using System.Linq;
-/// Copyright 2021 Henri Vainio 
 namespace MekPathLibrary
 {
+    /// <summary>
+    /// Path to folder that can exist in windows device, all file names are removed automatically
+    /// </summary>
     public class FolderPath : LocalPath
     {
 
@@ -24,7 +27,7 @@ namespace MekPathLibrary
 
 
 
-
+        /// <inheritdoc/>
         public override string FullPath
         {
             get => base.FullPath;
@@ -89,6 +92,5 @@ namespace MekPathLibrary
         /// </summary>
         /// <returns>true if path exist, else false (false also in case that user has no permission regardless of path existence)</returns>
         public override bool PathExist => Directory.Exists(FullPath);
-
     }
 }

@@ -3,15 +3,42 @@ using System.IO;
 
 namespace MekPathLibrary
 {
+    /// <summary>
+    /// Windows path to file with specific name format (like always includes word 'setup')
+    /// </summary>
     public class FilePathWithNameFormat : FilePath
     {
+        
+        /// <inheritdoc/>
         public FilePathWithNameFormat(){ }
+
+        /// <summary>
+        /// Initialize new path that has specific name format
+        /// </summary>
+        /// <param name="path">path to be used</param>
+        /// <exception cref="ArgumentException">thrown if path is invalid</exception>
         public FilePathWithNameFormat(string path) : base(path) { }
+
+        /// <summary>
+        /// Initialize new path that must have requiredName in the file name
+        /// </summary>
+        /// <param name="path">path to be used</param>
+        /// <param name="requiredName">substring that must be found form file name</param>
+        /// <exception cref="ArgumentException">thrown if path is invalid</exception>
         public FilePathWithNameFormat(string path, string requiredName) 
         {
             RequiredFileName = requiredName;
             FullPath = path;
         }
+
+        /// <summary>
+        /// Initialize new path that must have requiredName in the file name
+        /// </summary>
+        /// <param name="path">path to be used</param>
+        /// <param name="requiredName">substring that must be found form file name</param>
+        /// <param name="mustBeFullMatch">should file name be required name or can it be only part of name</param>
+        /// <param name="isCaseSensitive">is matching capital letter with lower letter acceptable</param>
+        /// <exception cref="ArgumentException">thrown if path is invalid</exception>
         public FilePathWithNameFormat(
             string path, 
             string requiredName, 

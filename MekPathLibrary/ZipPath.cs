@@ -1,10 +1,14 @@
-﻿/// Copyright 2021 Henri Vainio 
+﻿// Copyright 2021 Henri Vainio 
+using System;
 namespace MekPathLibrary
 {
+    /// <summary>
+    /// Windows file path to .zip file
+    /// </summary>
     public class ZipPath : FilePath
     {
         /// <summary>
-        /// Initialize new ZipPath 
+        /// Initialize empty windows file path to .zip file 
         /// </summary>
         public ZipPath() { }
 
@@ -17,13 +21,14 @@ namespace MekPathLibrary
         /// <exception cref="ArgumentException"></exception>
         public ZipPath(string path) : base(path) { }
 
+        /// <inheritdoc/>
         public override string FileExtension => ".zip";
 
         /// <summary>
         /// Validated full ".zip" path OR givenPath\file.zip if givenPath ends in directory separator
         /// OR if not valid throws ArgumentException
         /// </summary>
-        /// <exception cref="System.ArgumentException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public override string FullPath
         {
             get => base.FullPath; 

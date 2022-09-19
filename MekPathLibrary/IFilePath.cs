@@ -1,12 +1,10 @@
-﻿/// Copyright 2021 Henri Vainio 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright 2022 Henri Vainio 
 
 namespace MekPathLibrary
 {
+    /// <summary>
+    /// Interface for file path implementations
+    /// </summary>
     public interface IFilePath : ILocalPath
     {
         /// <summary>

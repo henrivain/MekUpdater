@@ -1,4 +1,6 @@
-﻿namespace MekPathLibrary
+﻿// Copyright 2022 Henri Vainio 
+
+namespace MekPathLibrary
 {
     /// <summary>
     /// Interface to define how local path value types should be implemented
@@ -6,7 +8,7 @@
     public interface ILocalPath
     {
         /// <summary>
-        /// Value of the ILocalPath
+        /// Full path to directory or file
         /// </summary>
         string FullPath { get; }
 
@@ -16,7 +18,7 @@
         bool HasValue { get; }
 
         /// <summary>
-        /// Check weather defined path exist or not (file must be also rigth file type: f.zip named folder != f.zip named file)
+        /// Check weather defined path exist or not (file must be also right file type: f.zip named folder != f.zip named file)
         /// </summary>
         /// <returns>true if path exist, else false (false also in case that user has no permission regardless of file existence)</returns>
         bool PathExist { get; }
@@ -27,10 +29,13 @@
         /// <returns>true if valid, else false</returns>
         bool IsValid();
 
+        /// <inheritdoc/>
         int GetHashCode();
 
+        /// <inheritdoc/>
         string ToString();
 
+        /// <inheritdoc/>
         bool Equals(object? obj);
 
     }

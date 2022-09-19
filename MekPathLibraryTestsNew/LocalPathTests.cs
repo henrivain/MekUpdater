@@ -20,7 +20,6 @@ public class LocalPathTests
         Assert.Equal(input, localPath.ToString());
     }
 
-
     [Theory]
     [InlineData(@"./FooterItem")]
     [InlineData(@"./FooterItem/gg.txt")]

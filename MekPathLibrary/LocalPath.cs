@@ -1,24 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-/// Copyright 2021 Henri Vainio 
+using System.Linq;
+// Copyright 2022 Henri Vainio 
+
 namespace MekPathLibrary
 {
+    /// <summary>
+    /// Validated path that can exist in windows device
+    /// </summary>
     public class LocalPath : ILocalPath
     {
         /// <summary>
-        /// Initialize new local path with path currently not identified
+        /// Initialize new local path that is currently empty
         /// </summary>
         public LocalPath() { }
 
         /// <summary>
-        /// Initialize new local path with path given
+        /// Initialize new local path with given path
         /// </summary>
         /// <param name="path"></param>
         /// <exception cref="ArgumentException"></exception>
         public LocalPath(string path)
         {
             FullPath = path;
+        }
+
+        /// <summary>
+        /// Initialize new local path, where paths are firstly combined and then validated
+        /// </summary>
+        /// <param name="paths"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public LocalPath(params string[] paths)
+        {
+            FullPath = Path.Combine(
+                new string[] { FullPath }
+                .Concat(paths)
+                .ToArray());
         }
 
         string _fullPath = string.Empty;
@@ -39,20 +57,56 @@ namespace MekPathLibrary
         }
 
         /// <summary>
-        /// Check if instance of object is valid
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool IsValid()
-        {
-            Path.GetInvalidFileNameChars();
-            return IsValidWindowsPath(this);
-        }
-
-        /// <summary>
         /// Check weather instance of object has path value
         /// </summary>
         /// <returns>true if has value (value not string.Empty), else false</returns>
         public virtual bool HasValue => string.IsNullOrEmpty(FullPath) is false;
+
+        /// <summary>
+        /// Check if path exist as file or directory in user's device 
+        /// </summary>
+        public virtual bool PathExist => File.Exists(FullPath) || Directory.Exists(FullPath);
+
+        /// <summary>
+        /// Check if instance of object is valid
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsValid() => IsValidWindowsPath(this);
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return FullPath.ToString();
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object? obj)
+        {
+            return obj is LocalPath path &&
+                   FullPath == path.FullPath;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(FullPath);
+        }
+
+        /// <inheritdoc/>
+        public static bool operator ==(LocalPath? left, LocalPath? right)
+        {
+            if (left is null || right is null) return false;
+            return EqualityComparer<LocalPath>.Default.Equals(left, right);
+        }
+        
+        /// <inheritdoc/>
+        public static bool operator !=(LocalPath? left, LocalPath? right)
+        {
+            return !(left == right);
+        }
+
+
+
 
         /// <summary>
         /// Check weather path.FullPath is valid in windows
@@ -120,37 +174,6 @@ namespace MekPathLibrary
                 Console.WriteLine($"{ex.Message}\n{path}");
                 return string.Empty;
             }
-        }
-
-        public virtual bool PathExist => File.Exists(FullPath);
-
-
-        public override string ToString()
-        {
-            return FullPath.ToString();
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is LocalPath path &&
-                   FullPath == path.FullPath;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(FullPath);
-        }
-
-
-        public static bool operator ==(LocalPath? left, LocalPath? right)
-        {
-            if (left is null || right is null) return false;
-            return EqualityComparer<LocalPath>.Default.Equals(left, right);
-        }
-
-        public static bool operator !=(LocalPath? left, LocalPath? right)
-        {
-            return !(left == right);
         }
     }
 }

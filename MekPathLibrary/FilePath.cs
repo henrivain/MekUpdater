@@ -1,21 +1,39 @@
-﻿using System;
+﻿// Copyright 2022 Henri Vainio 
+using System;
 using System.IO;
-/// Copyright 2021 Henri Vainio 
+
 namespace MekPathLibrary
 {
+    /// <summary>
+    /// Path to file that can exist in windows device
+    /// </summary>
     public class FilePath : LocalPath, IFilePath
     {
+        /// <summary>
+        /// Initilize new path to file that can exist in windows device, will be initialized as empty
+        /// </summary>
         public FilePath() { }
 
+        /// <summary>
+        /// Initilize new path to file that can exist in windows device using given path
+        /// </summary>
+        /// <param name="path"></param>
         public FilePath(string path)
         {
             FullPath = path;
         }
 
+        /// <summary>
+        /// Name of the file without extension
+        /// </summary>
         public string FileName { get; protected set; } = string.Empty;
 
+        /// <summary>
+        /// Path to folder where file is situated
+        /// </summary>
         public FolderPath FolderPath { get; protected set; } = new FolderPath();
 
+        /// <inheritdoc/>
         public override string FullPath
         {
             get => base.FullPath;
@@ -40,6 +58,9 @@ namespace MekPathLibrary
         /// File name that is used, if path ends in directory
         /// </summary>
         public string DefaultFileName => $"file{FileExtension}";
+
+        /// <inheritdoc/>
+        public override bool PathExist => File.Exists(FullPath);
 
         /// <summary>
         /// Checks weather current inctance is valid folder path
