@@ -34,7 +34,7 @@ namespace MekPathLibrary
         public override string FullPath
         {
             get => base.FullPath;
-            set => base.FullPath = value;
+            protected internal set => base.FullPath = value;
         }
     }
 }

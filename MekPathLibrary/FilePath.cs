@@ -37,7 +37,7 @@ namespace MekPathLibrary
         public override string FullPath
         {
             get => base.FullPath;
-            set
+            protected internal set
             {
                 var path = FromString(value);
                 if (string.IsNullOrWhiteSpace(path))

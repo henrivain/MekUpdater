@@ -77,7 +77,7 @@ namespace MekPathLibrary
         public override string FullPath
         {
             get => base.FullPath;
-            set
+            protected internal set
             {
                 FilePath validated = new FilePath(value);
                 if (HasRequiredName(validated))

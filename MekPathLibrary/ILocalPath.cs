@@ -10,7 +10,7 @@ namespace MekPathLibrary
         /// <summary>
         /// Full path to directory or file
         /// </summary>
-        string FullPath { get; set; }
+        string FullPath { get; }
 
         /// <summary>
         /// Check weather ILocalPath instance has FullPath value or not

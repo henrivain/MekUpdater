@@ -31,8 +31,8 @@ namespace MekPathLibrary
         /// <exception cref="ArgumentException"></exception>
         public override string FullPath
         {
-            get => base.FullPath; 
-            set => base.FullPath = value;
+            get => base.FullPath;
+            protected internal set => base.FullPath = value;
         }
     }
 }

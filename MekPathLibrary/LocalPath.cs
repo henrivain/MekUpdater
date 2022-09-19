@@ -48,7 +48,7 @@ namespace MekPathLibrary
         public virtual string FullPath
         {
             get => _fullPath;
-            set
+            protected internal set
             {
                 _fullPath = GetFullPath(value);
                 if (IsValidWindowsPath(this) is false)
