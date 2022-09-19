@@ -2,6 +2,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+
 namespace MekPathLibrary
 {
     /// <summary>
@@ -31,7 +33,7 @@ namespace MekPathLibrary
         public override string FullPath
         {
             get => base.FullPath;
-            protected set
+            set
             {
                 var path = FromString(value);
                 if (string.IsNullOrWhiteSpace(path))
@@ -52,7 +54,8 @@ namespace MekPathLibrary
 
 
         /// <summary>
-        /// Convert string to right format
+        /// Convert string to right format 
+        /// by removing file names and add AltDirectorySeparatorChar at end
         /// </summary>
         /// <param name="path"></param>
         /// <returns>full path to folder if path valid, else string.Empty</returns>
@@ -92,5 +95,34 @@ namespace MekPathLibrary
         /// </summary>
         /// <returns>true if path exist, else false (false also in case that user has no permission regardless of path existence)</returns>
         public override bool PathExist => Directory.Exists(FullPath);
+
+        /// <inheritdoc/>
+        public override void Append(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return;
+            FullPath = Path.Combine(FullPath, path);
+        }
+
+        /// <summary>
+        /// Combine FullPath with given path
+        /// </summary>
+        /// <param name="path"></param>
+        public override void RemoveNameAndAppend(string path) => Append(path);
+
+        /// <summary>
+        /// Use this folder path to create new filepath with pathWithFileName combined.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="pathWithFileName"></param>
+        /// <exception cref="ArgumentException">thrown if given path with file name does not meet requirements of constructing file path</exception>
+        /// <returns>T type file path with full folder path combined with given path</returns>
+        public virtual T ToFilePath<T>(string pathWithFileName) where T : FilePath, new()
+        {
+            string path = Path.Combine(FullPath, pathWithFileName);
+            return new T()
+            {
+                FullPath = path
+            };
+        }
     }
 }

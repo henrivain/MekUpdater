@@ -20,6 +20,23 @@ public class LocalPathTests
         Assert.Equal(input, localPath.ToString());
     }
 
+
+    [Theory]
+    [InlineData(@"C:\Users\user", "myapp.txt", @"C:\Users\user\myapp.txt")]
+    [InlineData(@"C:\Users\user.zip", "myapp.txt", @"C:\Users\user\myapp.txt")]
+    public void Append_ShouldCombine_Paths_AndRemove_OldFileExtension_FromMiddle(string path, string pathToAppend, string expectedReturn)
+    {
+        // Arrange
+        LocalPath localPath = new(path);
+
+        // Act
+        localPath.Append(pathToAppend);
+
+        // Assert
+        Assert.Equal(expectedReturn, localPath.FullPath);
+    }
+
+
     [Theory]
     [InlineData(@"./FooterItem")]
     [InlineData(@"./FooterItem/gg.txt")]

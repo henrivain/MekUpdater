@@ -46,5 +46,23 @@ public class FilePathTests
         // Assert
         Assert.Equal(shouldMatch, filePath.FileExtension);
     }
-    
+
+
+
+
+    [Theory]
+    [InlineData(@"C:\Users\user.gg", @"myapp\gg.txt", @"C:\Users\user\myapp\gg.gg")]    // File extension should not be changed when combining, but removed from middle
+    [InlineData(@"C:\Users\user.zip", @"newFolder\myapp.txt", @"C:\Users\user\newFolder\myapp.zip")]
+    public void Append_ShouldCombine_Paths_AndConserve_OldExtension(string path, string pathToAppend, string expectedReturn)
+    {
+        // Arrange
+        FilePath localPath = new(path);
+
+        // Act
+        localPath.Append(pathToAppend);
+
+        // Assert
+        Assert.Equal(expectedReturn, localPath.FullPath);
+    }
+
 }

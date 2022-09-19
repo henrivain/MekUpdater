@@ -48,7 +48,7 @@ namespace MekPathLibrary
         public virtual string FullPath
         {
             get => _fullPath;
-            protected set
+            set
             {
                 _fullPath = GetFullPath(value);
                 if (IsValidWindowsPath(this) is false)
@@ -72,6 +72,34 @@ namespace MekPathLibrary
         /// </summary>
         /// <returns></returns>
         public virtual bool IsValid() => IsValidWindowsPath(this);
+
+        /// <summary>
+        /// Append given path to FullPath, removes file extension from old FullPath if has one
+        /// </summary>
+        /// <param name="path"></param>
+        /// <exception cref="ArgumentException">thrown if combined path is invalid</exception>
+        public virtual void Append(string path)
+        {
+            string fullPath = FullPath;
+            if (string.IsNullOrWhiteSpace(path)) return;
+            if (string.IsNullOrWhiteSpace(Path.GetExtension(FullPath)) is false)
+            {
+                fullPath = Path.Combine(
+                    Path.GetDirectoryName(FullPath),
+                    Path.GetFileNameWithoutExtension(FullPath));
+            }
+            FullPath = Path.Combine(fullPath, path);
+        }
+
+        /// <summary>
+        /// Append given path to FullPath, removes file extension and file name from old FullPath if has one
+        /// </summary>
+        /// <param name="path"></param>
+        public virtual void RemoveNameAndAppend(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return;
+            FullPath = Path.Combine(Path.GetDirectoryName(FullPath), path);
+        }
 
         /// <inheritdoc/>
         public override string ToString()

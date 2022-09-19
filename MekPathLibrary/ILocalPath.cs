@@ -10,7 +10,7 @@ namespace MekPathLibrary
         /// <summary>
         /// Full path to directory or file
         /// </summary>
-        string FullPath { get; }
+        string FullPath { get; set; }
 
         /// <summary>
         /// Check weather ILocalPath instance has FullPath value or not
@@ -37,6 +37,21 @@ namespace MekPathLibrary
 
         /// <inheritdoc/>
         bool Equals(object? obj);
+
+        /// <summary>
+        /// Combine FullPath with given path. 
+        /// Remove file extension from full path if has one.
+        /// File name remains as a path's directory
+        /// </summary>
+        /// <param name="path"></param>
+        void Append(string path);
+
+        /// <summary>
+        /// Combine FullPath with given path. 
+        /// Remove file extension and file name from full path if has one.
+        /// </summary>
+        /// <param name="path"></param>
+        void RemoveNameAndAppend(string path);
 
     }
 }

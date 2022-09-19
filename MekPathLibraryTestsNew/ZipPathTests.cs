@@ -72,4 +72,19 @@ public class ZipPathTests
         Assert.NotEqual(input, zipPath.FullPath);
         Assert.NotEqual(input, zipPath.ToString());
     }
+
+    [Theory]
+    [InlineData(@"C:\users\user.zip", @"folder\myfile.zip", @"C:\users\user\folder\myfile.zip")]
+    [InlineData(@"C:\users\user.gg", @"folder\myfile.gg", @"C:\users\user\folder\myfile.zip")]  // wrong extension is switched to right one
+    public void Append_ShouldCombine_Paths_AndFixExtensions(string path1, string path2, string expected)
+    {
+        // 
+        ZipPath zipPath = new(path1);
+
+        // Arrange & Act
+        zipPath.Append(path2);
+
+        // Assert
+        Assert.Equal(expected, zipPath.FullPath);
+    }
 }

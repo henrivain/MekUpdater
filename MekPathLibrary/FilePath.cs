@@ -37,7 +37,7 @@ namespace MekPathLibrary
         public override string FullPath
         {
             get => base.FullPath;
-            protected set
+            set
             {
                 var path = FromString(value);
                 if (string.IsNullOrWhiteSpace(path))
@@ -111,5 +111,7 @@ namespace MekPathLibrary
                 throw new ArgumentException($"{nameof(FilePath)} must end in file extension ; was given {path}");
             FileExtension = fileExtension;
         }
+
+
     }
 }
