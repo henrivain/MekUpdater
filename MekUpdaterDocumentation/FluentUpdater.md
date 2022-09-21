@@ -1,18 +1,16 @@
 # Fluent Updater - Api documentation
 
 Namespace: <span style="color:#75B6E7"> MekUpdater.UpdateBuilder</span>  
-Assembly: <span style="color:#75B6E7"> MekUpdater.dll</span>
+Assembly: <span style="color:#75B6E7"> MekUpdater.dll</span>  
+Released 21/9/2022
 
-- This part of the updater uses fluent api style where you can chain commands nicely.
-- Build update fist with update builder and then run it.
+<hr/>  
+<br/>
+
+Main updater uses fluent api style where you can chain commands nicely.
+Build update first with update builder and then run it.
 
 ## Examples
-
-- Start building you update by initializing new Update builder
-- Update builder is situated in "MekUpdater.UpdateBuilder" namespace
-- You may also need to use MekPathLibrary nuget package
-
-<br/>
 
 ### Run default update
 

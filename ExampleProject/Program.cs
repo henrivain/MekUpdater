@@ -20,16 +20,6 @@ var zipPath = new ZipPath(Path.Combine(WindowsPath.UserTempFolder.FullPath, @"Me
 // Path where setup.exe will end up with other extracted files, this is the folder where setup will be launched
 var extractionPath = new FolderPath(Path.Combine(WindowsPath.DownloadsFolder.FullPath, "updates"));
 
-var update2 = UpdateBuilder.Create("", "")
-    .AddLogger(logger)
-    .RunUpdate()
-    .IfNotPreview()
-    .IfVersionBiggerThan(new VersionTag("v1.0.0"))
-    .StartsSetup()
-    .IsTrue()
-    .TidiesUpIsTrue()
-    
-    .Build();
 
 
 
