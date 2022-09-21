@@ -1,4 +1,4 @@
-﻿using Matikkaeditorinkaantaja.Logging;
+﻿using ExampleProject;
 using MekPathLibrary;
 using MekUpdater;
 using MekUpdater.Helpers;

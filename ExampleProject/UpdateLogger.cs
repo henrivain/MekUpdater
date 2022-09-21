@@ -6,7 +6,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using ISerilogger = Serilog.ILogger;
 
 
-namespace Matikkaeditorinkaantaja.Logging;
+namespace ExampleProject;
 
 internal class UpdateLogger : ILogger
 {
