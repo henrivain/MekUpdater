@@ -2,7 +2,7 @@
 using MekUpdater.Exceptions;
 using MekUpdater.UpdateRunner;
 
-namespace MekUpdater.Check
+namespace MekUpdater.CheckUpdates
 {
     /// <summary>
     /// App version data handler for github api
@@ -28,7 +28,7 @@ namespace MekUpdater.Check
         /// Get repository version data from github using api route
         /// <para/>For example: "https://api.github.com/repos/matikkaeditorinkaantaja/Matikkaeditorinkaantaja/releases/latest"
         /// </summary>
-        /// <returns>awaitable async Task</returns>
+        /// <returns>result that represents success and data gotten from api</returns>
         /// <exception cref="InvalidOperationException"></exception>
         internal async Task<UpdateCheckResult> GetVersionData()
         {

@@ -1,4 +1,6 @@
-﻿namespace MekUpdater.Check;
+﻿using MekUpdater.CheckUpdates;
+
+namespace MekUpdater.ActionResults;
 
 /// <summary>
 /// Result returned after data from github api is parsed

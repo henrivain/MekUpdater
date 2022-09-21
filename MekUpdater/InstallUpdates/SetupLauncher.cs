@@ -11,19 +11,37 @@ namespace MekUpdater.InstallUpdates
     /// </summary>
     internal class SetupLauncher
     {
+        /// <summary>
+        /// Initialize new Setup launcher with given path
+        /// </summary>
+        /// <param name="setupPath"></param>
+        /// <exception cref="ArgumentNullException">thrown if path does not have value </exception>
         internal SetupLauncher(SetupExePath setupPath)
         {
             if (setupPath.HasValue is false) throw new ArgumentNullException(nameof(setupPath));
             SetupPath = setupPath;
         }
 
+        /// <summary>
+        /// Initialize new Setup launcher with given path and boolean value representing if running as Admin is required
+        /// </summary>
+        /// <param name="setupPath"></param>
+        /// <param name="requireAdmin"></param>
+        /// <exception cref="ArgumentNullException">thrown if path does not have value </exception>
+        internal SetupLauncher(SetupExePath setupPath, bool requireAdmin) : this(setupPath)
+        {
+            RequireAdmin = requireAdmin;
+        }
+
         public SetupExePath SetupPath { get; }
+
+        public bool RequireAdmin { get; } = false;
 
         internal StartSetupResult StartSetup()
         {
             try
             {
-                TryLaunchProcess(SetupPath.FullPath);
+                TryLaunchProcess();
                 return new(true)
                 {
                     SetupExePath = SetupPath
@@ -61,20 +79,19 @@ namespace MekUpdater.InstallUpdates
         /// <summary>
         /// Try launch application from specified path
         /// </summary>
-        /// <param name="setupPath"></param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="System.ComponentModel.Win32Exception"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="PlatformNotSupportedException"></exception>
-        private static void TryLaunchProcess(string setupPath)
+        private void TryLaunchProcess()
         {
             Process process = new()
             {
                 StartInfo = new()
                 {
-                    FileName = setupPath,
+                    FileName = SetupPath.FullPath,
                     UseShellExecute = false,
-                    Verb = "runas"
+                    Verb = RequireAdmin ? "runas" : string.Empty
                 }
             };
             process.Start();

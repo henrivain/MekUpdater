@@ -1,4 +1,5 @@
-﻿using MekUpdater.UpdateRunner;
+﻿using MekUpdater.UpdateBuilder.Interfaces;
+using MekUpdater.UpdateRunner;
 using static MekUpdater.Helpers.VersionTag.SpecialId;
 
 namespace MekUpdater.UpdateBuilder;
@@ -71,10 +72,9 @@ public class Update
     internal UpdateLogger Logger { get; set; } = new(null);
 
     /// <summary>
-    /// Path that is defined after update if success and setup.exe is found from extraction folder.
-    /// Will not be 
+    /// Information about will be updated during the update, like where setup.exe path is stored
     /// </summary>
-    public SetupExePath? SetupExePath { get; internal set; }
+    public IUpdateCompletionInfo CompletionInfo { get; } = new UpdateCompletionInfo();
 
     /// <summary>
     /// Run update instance using DefaultGithubUpdater asynchronously
@@ -89,7 +89,8 @@ public class Update
         var updateCheckResult = await updater.CheckForUpdatesAsync();
         Logger.LogResult(updateCheckResult, "Update check");
         if (updateCheckResult.Success is false) return updateCheckResult;
-        
+
+        CompletionInfo.AvailableVersion = updateCheckResult.AvailableVersion;
         if (CurrentVersion >= updateCheckResult.AvailableVersion)
         {
             return ExitUpdateAlreadyInstalled(updateCheckResult);
@@ -103,14 +104,14 @@ public class Update
         result = await updater.DownloadAndExtractAsync();
         Logger.LogResult(result, "Download and extract");
         if (result.Success is false) return result;
-        
+
         if (StartSetup is false)
         {
             return ExitNoNeedToStartSetup();
         }
         StartSetupResult setupResult = await updater.RunSetupAsync();
         Logger.LogResult(setupResult, "Setup start");
-        SetupExePath = setupResult.SetupExePath;
+        CompletionInfo.SetupExePath = setupResult.SetupExePath;
         if (setupResult.Success is false) return setupResult;
 
         if (TidyUpWhenFinishing is false)
@@ -137,7 +138,7 @@ public class Update
         var setupPath = TryFindSetupPath();
         if (setupPath is not null)
         {
-            SetupExePath = setupPath;
+            CompletionInfo.SetupExePath = setupPath;
         }
 
         UpdateResult result = new(true)

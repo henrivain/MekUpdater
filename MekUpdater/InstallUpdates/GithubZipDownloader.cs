@@ -1,4 +1,5 @@
-﻿using MekUpdater.UpdateRunner;
+﻿using System.Runtime.CompilerServices;
+using MekUpdater.UpdateRunner;
 // Copyright 2021 Henri Vainio 
 namespace MekUpdater.InstallUpdates
 {
@@ -13,10 +14,11 @@ namespace MekUpdater.InstallUpdates
         /// </summary>
         /// <param name="downloadUrl"></param>
         /// <param name="zipPath"></param>
-        /// <exception cref="ArgumentException">thrown if url is not valid</exception>
+        /// <exception cref="ArgumentException">thrown if url is not valid or zip path does not have value</exception>
         internal GithubZipDownloader(string downloadUrl, ZipPath zipPath)
         {
             DownloadUrl = UrlValidator.IsDownloadUrlValid(downloadUrl);
+            if (zipPath.HasValue is false) throw new ArgumentException($"{nameof(zipPath)} does not have value");
             ZipPath = zipPath;
         }
 

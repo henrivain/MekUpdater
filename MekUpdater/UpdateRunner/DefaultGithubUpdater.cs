@@ -1,4 +1,4 @@
-﻿using MekUpdater.Check;
+﻿using MekUpdater.CheckUpdates;
 using MekUpdater.InstallUpdates;
 using MekUpdater.UpdateBuilder;
 

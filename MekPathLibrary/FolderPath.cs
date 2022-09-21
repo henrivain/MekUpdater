@@ -70,6 +70,7 @@ namespace MekPathLibrary
             return string.IsNullOrWhiteSpace(full) ? string.Empty : full;
         }
 
+
         /// <summary>
         /// Get path to last directory from given path (remove filename if needed).
         /// Writes all exceptions to console.
@@ -100,11 +101,22 @@ namespace MekPathLibrary
         public override void Append(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) return;
+            
+            FullPath = Path.Combine(FullPath, GetStringNotStarttingWithSeparatorChar(path));
+        }
+
+        /// <summary>
+        /// Remove path separator or alt path separator chars from the start of a path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>path with first char removed, if starts with (alt) path separator char, otherwise path</returns>
+        private static string GetStringNotStarttingWithSeparatorChar(string path)
+        {
             if (path.StartsWith(Path.DirectorySeparatorChar) || path.StartsWith(Path.AltDirectorySeparatorChar))
             {
-                path = path.Remove(0, 1);
+                return path.Remove(0, 1);
             }
-            FullPath = Path.Combine(FullPath, path);
+            return path;
         }
 
         /// <summary>
@@ -122,7 +134,7 @@ namespace MekPathLibrary
         /// <returns>T type file path with full folder path combined with given path</returns>
         public virtual T ToFilePath<T>(string pathWithFileName) where T : FilePath, new()
         {
-            string path = Path.Combine(FullPath, pathWithFileName);
+            string path = Path.Combine(FullPath, GetStringNotStarttingWithSeparatorChar(pathWithFileName));
             return new T()
             {
                 FullPath = path

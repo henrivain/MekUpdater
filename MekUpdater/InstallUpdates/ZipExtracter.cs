@@ -2,64 +2,67 @@
 using System.IO.Compression;
 using MekUpdater.UpdateRunner;
 
-namespace MekUpdater.InstallUpdates
+namespace MekUpdater.InstallUpdates;
+
+internal class ZipExtracter
 {
-    internal class ZipExtracter
+    internal ZipExtracter(ZipPath zipPath, FolderPath extractPath)
     {
-        internal ZipExtracter(ZipPath zipPath, FolderPath extractPath)
-        {
-            ZipPath = zipPath;
-            ExtractPath = extractPath;
-        }
-        ZipPath ZipPath { get; }
-        FolderPath ExtractPath { get; }
+        ZipPath = zipPath;
+        ExtractPath = extractPath;
+    }
+    ZipPath ZipPath { get; }
+    FolderPath ExtractPath { get; }
 
-        internal async Task<ZipExtractionResult> ExtractAsync()
+    internal async Task<ZipExtractionResult> ExtractAsync()
+    {
+        try
         {
-            try
+            if (Directory.Exists(ExtractPath.FullPath) is false)
             {
-                await Task.Run(() =>
-                {
-                    ZipFile.ExtractToDirectory(ZipPath.FullPath, ExtractPath.FullPath, true);
-                });
-                return new(true);
+                Directory.CreateDirectory(ExtractPath.FullPath);
             }
-            catch (Exception ex)
+            await Task.Run(() =>
             {
-                var msg = GetExceptionReason(ex);
-
-                return new(false)
-                {
-                    Message = "Extracting zip" +
-                              $"\n\tfrom {ZipPath}" +
-                              $"\n\tto {ExtractPath}" +
-                              $"\n\tfailed because of {msg}: {ex.Message}",
-                    UpdateMsg = msg,
-                    StackTrace = ex.StackTrace
-                };
-
-            }
+                ZipFile.ExtractToDirectory(ZipPath.FullPath, ExtractPath.FullPath, true);
+            });
+            return new(true);
         }
-
-        /// <summary>
-        /// Get matching error code for ZipFile.ExtractToDirectory()
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <returns>ErroMsg with case matching error code or ErroMsg.Other if Exception not found</returns>
-        private static UpdateMsg GetExceptionReason(Exception ex)
+        catch (Exception ex)
         {
-            return ex switch
+            var msg = GetExceptionReason(ex);
+
+            return new(false)
             {
-                ArgumentException => UpdateMsg.InvalidPathChars,
-                PathTooLongException => UpdateMsg.PathTooLong,
-                DirectoryNotFoundException => UpdateMsg.FileNotFound,
-                FileNotFoundException => UpdateMsg.FileNotFound,
-                IOException => UpdateMsg.FileAlreadyExistOrBadName,
-                UnauthorizedAccessException => UpdateMsg.NoPermission,
-                NotSupportedException => UpdateMsg.BadPathFormat,
-                InvalidDataException => UpdateMsg.UnSupportedDataType,
-                _ => UpdateMsg.Unknown
+                Message = "Extracting zip" +
+                          $"\n\tfrom {ZipPath}" +
+                          $"\n\tto {ExtractPath}" +
+                          $"\n\tfailed because of {msg}: {ex.Message}",
+                UpdateMsg = msg,
+                StackTrace = ex.StackTrace
             };
+
         }
+    }
+
+    /// <summary>
+    /// Get matching error code for ZipFile.ExtractToDirectory()
+    /// </summary>
+    /// <param name="ex"></param>
+    /// <returns>ErroMsg with case matching error code or ErroMsg.Other if Exception not found</returns>
+    private static UpdateMsg GetExceptionReason(Exception ex)
+    {
+        return ex switch
+        {
+            ArgumentException => UpdateMsg.InvalidPathChars,
+            PathTooLongException => UpdateMsg.PathTooLong,
+            DirectoryNotFoundException => UpdateMsg.FileNotFound,
+            FileNotFoundException => UpdateMsg.FileNotFound,
+            IOException => UpdateMsg.FileAlreadyExistOrBadName,
+            UnauthorizedAccessException => UpdateMsg.NoPermission,
+            NotSupportedException => UpdateMsg.BadPathFormat,
+            InvalidDataException => UpdateMsg.UnSupportedDataType,
+            _ => UpdateMsg.Unknown
+        };
     }
 }

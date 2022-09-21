@@ -284,7 +284,7 @@ public sealed class VersionTag
     }
 
     /// <summary>
-    /// Check if any SpecialIds are present in version string
+    /// CheckUpdates if any SpecialIds are present in version string
     /// </summary>
     /// <param name="versionString"></param>
     /// <param name="ids"></param>

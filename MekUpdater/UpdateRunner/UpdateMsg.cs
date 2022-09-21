@@ -20,5 +20,6 @@ public enum UpdateMsg
     ErrorWhileOpening, NoShellSupport,
     PathNullOrEmpty, UpdateAlreadyInstalled,
     SetupNotFound, DeleteFileFailed,
-    ParseJson, HttpRequestFailed
+    ParseJson, HttpRequestFailed,
+    ParameterNullOrEmpty
 }

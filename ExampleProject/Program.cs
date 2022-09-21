@@ -1,4 +1,5 @@
-﻿using Matikkaeditorinkaantaja.Logging;
+﻿using System.Diagnostics;
+using Matikkaeditorinkaantaja.Logging;
 using MekPathLibrary;
 using MekUpdater;
 using MekUpdater.Helpers;
@@ -7,6 +8,9 @@ using Microsoft.Extensions.Logging;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable CA2254 // Template should be a static expression
+
+
+
 
 // get logger
 var logger = UpdateLogger.GetDefault();

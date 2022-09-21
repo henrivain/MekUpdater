@@ -1,9 +1,9 @@
-﻿// Copyright 2021 Henri Vainio 
+﻿// Copyright 2022 Henri Vainio 
 using MekUpdater.Exceptions;
 using MekUpdater.UpdateRunner;
 using Newtonsoft.Json;
 
-namespace MekUpdater.Check;
+namespace MekUpdater.CheckUpdates;
 
 /// <summary>
 /// Parse version info from github api. Get data with Parse()
