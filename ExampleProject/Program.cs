@@ -40,6 +40,6 @@ var result = await update.RunDefaultUpdaterAsync();                             
 logger.LogInformation($"Success: '{result.Success}'");                                  // info from result
 logger.LogInformation($"Message: '{result.Message}'");
 logger.LogInformation($"UpdateMsg: '{result.UpdateMsg}'");
-logger.LogInformation($"Setup file at: '{update.SetupExePath}'");
+logger.LogInformation($"Setup file at: '{update.CompletionInfo.SetupExePath}'");
 
 Console.ReadKey();
