@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Matikkaeditorinkaantaja.Logging;
+﻿using Matikkaeditorinkaantaja.Logging;
 using MekPathLibrary;
 using MekUpdater;
 using MekUpdater.Helpers;
@@ -19,7 +18,20 @@ var logger = UpdateLogger.GetDefault();
 var zipPath = new ZipPath(Path.Combine(WindowsPath.UserTempFolder.FullPath, @"MekUpdater\MekUpdater.zip"));
 
 // Path where setup.exe will end up with other extracted files, this is the folder where setup will be launched
-var extractionPath = new FolderPath(Path.Combine(WindowsPath.DownloadsFolder.FullPath, "updates"));  
+var extractionPath = new FolderPath(Path.Combine(WindowsPath.DownloadsFolder.FullPath, "updates"));
+
+var update2 = UpdateBuilder.Create("", "")
+    .AddLogger(logger)
+    .RunUpdate()
+    .IfNotPreview()
+    .IfVersionBiggerThan(new VersionTag("v1.0.0"))
+    .StartsSetup()
+    .IsTrue()
+    .TidiesUpIsTrue()
+    
+    .Build();
+
+
 
 // Start update configuration using fluent api 
 var update = UpdateBuilder.Create("matikkaeditorinkaantaja", "Matikkaeditorinkaantaja") // create using repository info (repository owner github username and repository name)
