@@ -26,17 +26,18 @@ extractionPath.Append("updates");
 
 
 // Start update configuration using fluent api 
-var update = UpdateBuilder.Create("matikkaeditorinkaantaja", "MekUpdater") // create using repository info (repository owner github username and repository name)
-                          .DownloadZipTo(zipPath)                          // define where update zip file from github will be downloaded
-                          .UsingExtractionFolder(extractionPath)           // define where files above will be extracted
-                          //.AddLogger(logger)                             // add logger to follow update progression
-                          .RunUpdate()                                     // Run update if conditions
-                          .IfNotPreview()                                  // run if newest available update is not preview
-                          .IfVersionBiggerThan(new VersionTag("v1.0.7"))   // run if update version tag is bigger than (must be format vX.X.X) othervise you must check version some other way
-                          .StartsSetup()                                   // Start setup argument
-                          .IsTrue()                                        // argument value
-                          .TidiesUpIsTrue()                                // remove used cache files 
-                          .Build();                                        // build update
+var update = UpdateBuilder
+   .Create("matikkaeditorinkaantaja", "MekUpdater") // create using repository info (repository owner github username and repository name)
+   .DownloadZipTo(zipPath)                          // define where update zip file from github will be downloaded
+   .UsingExtractionFolder(extractionPath)           // define where files above will be extracted
+   //.AddLogger(logger)                             // add logger to follow update progression
+   .RunUpdate()                                     // Run update if conditions
+   .IfNotPreview()                                  // run if newest available update is not preview
+   .IfVersionBiggerThan(new VersionTag("v1.0.7"))   // run if update version tag is bigger than (must be format vX.X.X) othervise you must check version some other way
+   .StartsSetup()                                   // Start setup argument
+   .IsTrue()                                        // argument value
+   .TidiesUpIsTrue()                                // remove used cache files 
+   .Build();                                        // build update
 
 var result = await update.RunDefaultUpdaterAsync();                        // run update with defined parameters
 
