@@ -8,5 +8,5 @@ internal interface IGithubClient
 
     Task<RepositoryApiResponseResult> GetFullApiResponse();
 
-    Task<ReleasesApiResponseResult> MakeRequestToReleases();
+    //Task<ReleasesApiResponseResult> MakeRequestToReleases();
 }
