@@ -1,4 +1,6 @@
-﻿namespace MekUpdater.GithubClient.ApiResults;
+﻿#if NET7_0_OR_GREATER
+
+namespace MekUpdater.GithubClient.ApiResults;
 
 /// <summary>
 /// Result from request to github releases api
@@ -20,3 +22,5 @@ public class RepositoryApiResponseResult
     /// </summary>
     public ResultData? Data { get; set; }
 }
+
+#endif

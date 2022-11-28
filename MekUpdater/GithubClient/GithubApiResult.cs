@@ -1,4 +1,5 @@
-﻿using MekUpdater.GithubClient.ApiResults;
+﻿#if NET7_0_OR_GREATER
+using MekUpdater.GithubClient.ApiResults;
 
 namespace MekUpdater.GithubClient;
 
@@ -17,3 +18,4 @@ internal class GithubApiResult
 
 
 }
+#endif

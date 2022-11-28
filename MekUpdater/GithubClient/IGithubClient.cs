@@ -1,4 +1,6 @@
-﻿using MekUpdater.GithubClient.ApiResults;
+﻿#if NET7_0_OR_GREATER
+
+using MekUpdater.GithubClient.ApiResults;
 
 namespace MekUpdater.GithubClient;
 
@@ -8,5 +10,5 @@ internal interface IGithubClient
 
     Task<RepositoryApiResponseResult> GetFullApiResponse();
 
-    //Task<ReleasesApiResponseResult> MakeRequestToReleases();
 }
+#endif

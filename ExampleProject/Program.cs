@@ -24,7 +24,7 @@ var extractionPath = new FolderPath(Path.Combine(WindowsPath.DownloadsFolder.Ful
 
 
 // Start update configuration using fluent api 
-var update = UpdateBuilder.Create("matikkaeditorinkaantaja", "Matikkaeditorinkaantaja") // create using repository info (repository owner github username and repository name)
+var update = UpdateBuilder.Create("henrivain", "Matikkaeditorinkaantaja")               // create using repository info (repository owner github username and repository name)
                           .DownloadZipTo(zipPath)                                       // define where update zip file from github will be downloaded
                           .UsingExtractionFolder(extractionPath)                        // define where files above will be extracted
                           .AddLogger(logger)                                            // add logger to follow update progression
