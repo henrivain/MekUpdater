@@ -1,11 +1,11 @@
-﻿using System.Reflection;
-// Copyright 2022 Henri Vainio 
+﻿// Copyright 2022 Henri Vainio 
+using System.Reflection;
 namespace MekUpdater.Helpers;
 
 /// <summary>
 /// Github style version tag using string format vX.X.X, where X is number
 /// </summary>
-public sealed class VersionTag
+public sealed class VersionTag : IEquatable<VersionTag>
 {
     /// <summary>
     /// Initialize new empty version tag 
@@ -39,7 +39,7 @@ public sealed class VersionTag
     /// <summary>
     /// Version as string using format "v.X.X.X" where X is positive number
     /// </summary>
-    public string Version { get => $"v{Major}.{Minor}.{Build}"; }
+    public string Version => $"v{Major}.{Minor}.{Build}";
 
     /// <summary>
     /// First number in version string
@@ -60,17 +60,6 @@ public sealed class VersionTag
     /// If version is beta, preview or alpha it will show here. Default is SpecialId.Full (full release)
     /// </summary>
     public SpecialId VersionId { get; private set; } = SpecialId.Full;
-
-    /// <summary>
-    /// Defines version type, like Full, Preview, Beta and Alpha
-    /// </summary>
-    public enum SpecialId
-    {
-
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        Full, Preview, Beta, Alpha
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-    }
 
     /// <summary>
     /// Set VersionId manually
@@ -112,91 +101,11 @@ public sealed class VersionTag
     /// </summary>
     public static VersionTag Min => new("v0.0.0-alpha");
 
-    /// <inheritdoc/>
-    public override bool Equals(object? obj)
-    {
-        return obj is VersionTag tag &&
-               Major == tag.Major &&
-               Minor == tag.Minor &&
-               Build == tag.Build;
-    }
-    
-    /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Major, Minor, Build);
-    }
 
-    /// <summary>
-    /// Get current version object in format vX.X.X, where X is any number 
-    /// <para/>Can also include preview tags like -beta, -alpha or -preview
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        return Version.ToString();
-    }
 
-    /// <inheritdoc/>
-    public static bool operator ==(VersionTag? left, VersionTag? right)
-    {
-        return EqualityComparer<VersionTag>.Default.Equals(left, right);
-    }
 
-    /// <inheritdoc/>
-    public static bool operator !=(VersionTag? left, VersionTag? right)
-    {
-        return !(left == right);
-    }
 
-    /// <summary>
-    /// Checks if left side version is bigger than right side. Compare order: Major > Minor > Build
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if left side is bigger or right null, else false</returns>
-    public static bool operator >(VersionTag? left, VersionTag? right)
-    {
-        if (left is null) return false;
-        if (right is null) return true;
-        return IsVersionBigger(left, right);
-    }
 
-    /// <summary>
-    /// Checks if right side version is bigger than right side. Compare order: Major > Minor > Build
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if right side is bigger or left null, else false</returns>
-    public static bool operator <(VersionTag? left, VersionTag? right)
-    {
-        return !(left > right);
-    }
-
-    /// <summary>
-    /// Checks if right side version is bigger than left side or same. Compare order: Major > Minor > Build
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if right side is bigger or left null or both are same, else false</returns>
-    public static bool operator <=(VersionTag? left, VersionTag? right)
-    {
-        if (right is null && left is null) return true;
-        if (left is null) return false;
-        if (right is null) return true;
-        return IsVersionBigger(right, left);
-    }
-
-    /// <summary>
-    /// Checks if left side version is bigger than right side or same. Compare order: Major > Minor > Build
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if left side is bigger or right null or both are same, else false</returns>
-    public static bool operator >=(VersionTag? left, VersionTag? right)
-    {
-        return !(left <= right);
-    }
 
     /// <summary>
     /// Try convert string to version tag
@@ -218,8 +127,6 @@ public sealed class VersionTag
         }
     }
 
-
-
     /// <summary>
     /// Parse version to int[3] array (default {0,0,0})
     /// </summary>
@@ -238,17 +145,30 @@ public sealed class VersionTag
         var versionNumbers = versionString.Split(".");
         var result = new uint[] { 0, 0, 0 };
 
-        for (var i = 0; i <= 2; i++)
+        for (var i = 0; i < result.Length; i++)
         {
             try
             {
                 result[i] = uint.Parse(versionNumbers[i]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                if (i < 1)
+                {
+                    throw new ArgumentException($"{nameof(versionString)} does not have any version numbers (it is not format \"vX.X.X\")");
+                }
+                while (i < result.Length - 1)
+                {
+                    result[i] = 0;
+                    i++;
+                }
             }
             catch
             {
                 throw new ArgumentException(
                     $"version string is not right format \"vX.X.X\"; was given {versionString}");
             }
+            
         }
         Major = result[0];
         Minor = result[1];
@@ -301,18 +221,126 @@ public sealed class VersionTag
         return SpecialId.Full;
     }
 
+
+
+
+
+
     /// <summary>
-    /// Compare two version tags if tag bigger than reference
+    /// Check weather this weather tag value matches another instance
     /// </summary>
-    /// <param name="tag"></param>
-    /// <param name="reference"></param>
-    /// <returns>Is tag version bigger than reference</returns>
-    private static bool IsVersionBigger(VersionTag tag, VersionTag reference)
+    /// <param name="other"></param>
+    /// <returns>True if has same values. False otherwise. Returns false if any of the values are null</returns>
+    public bool Equals(VersionTag? other)
     {
-        if (tag.Major > reference.Major) return true;
-        if (tag.Minor > reference.Minor) return true;
-        if (tag.Build > reference.Build) return true;
-        if (tag.VersionId is SpecialId.Full && reference.VersionId != SpecialId.Full) return true;
+        return other is not null &&
+               this is not null &&
+               Major == other.Major &&
+               Minor == other.Minor &&
+               Build == other.Build &&
+               VersionId == other.VersionId;
+    }
+
+    /// <summary>
+    /// Check weather this weather tag value matches given object
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns>True if has same values. False otherwise. Returns false if any of the values are null.</returns>
+    public override bool Equals(object? obj)
+    {
+        return obj is VersionTag tag && Equals(tag);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Major, Minor, Build, VersionId);
+    }
+
+    /// <summary>
+    /// Get current version object in format vX.X.X, where X is any number 
+    /// <para/>Can also include preview tags like -beta, -alpha or -preview
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        return Version.ToString();
+    }
+
+
+    // Relational operators
+
+    /// <summary>
+    /// Check weather tag values are the same
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if all field values are the same, otherwise false. Returns false if any of the arguments are null</returns>
+    public static bool operator ==(VersionTag? left, VersionTag? right)
+    {
+        return left is VersionTag tag && tag.Equals(right);
+    }
+
+    /// <summary>
+    /// Check weather tag values are the different 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>True if any of the values between tags are different or any of the tags are null. Otherwise false.</returns>
+    public static bool operator !=(VersionTag? left, VersionTag? right)
+    {
+        return left is null
+            || right is null
+            || !(left == right);
+    }
+
+    /// <summary>
+    /// Checks weather left side version is bigger than right side. Compare order: Major > Minor > Build > VersionId
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if left side is bigger or right side is null, otherwise false</returns>
+    public static bool operator >(VersionTag? left, VersionTag? right)
+    {
+        if (left is null) return false;
+        if (right is null) return true;
+        if (left.Major > right.Major) return true;
+        if (left.Minor > right.Major) return true;
+        if (left.Build > right.Major) return true;
+        if (left.VersionId < right.VersionId) return true;
         return false;
+    }
+
+    /// <summary>
+    /// Checks if right side version is bigger than right side. Compare order: Major > Minor > Build
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if right side is bigger or left null, else false</returns>
+    public static bool operator <(VersionTag? left, VersionTag? right)
+    {
+        return !(left > right);
+    }
+
+    /// <summary>
+    /// Checks if right side version is bigger than left side or same. Compare order: Major > Minor > Build
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if right side is bigger or left null or both are same, else false</returns>
+    public static bool operator <=(VersionTag? left, VersionTag? right)
+    {
+        return left == right || left < right;
+    }
+
+    /// <summary>
+    /// Checks if left side version is bigger than right side or same. Compare order: Major > Minor > Build
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if left side is bigger or right null or both are same, else false</returns>
+    public static bool operator >=(VersionTag? left, VersionTag? right)
+    {
+        return left == right || left > right;
     }
 }

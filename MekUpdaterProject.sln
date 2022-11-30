@@ -14,7 +14,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject", "ExamplePr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MekPathLibrary", "MekPathLibrary\MekPathLibrary.csproj", "{BEFC6C7D-5AA2-4ABE-8482-7C766ADCDE1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MekPathLibraryTests", "MekPathLibraryTestsNew\MekPathLibraryTests.csproj", "{4CE00F48-EB9D-4F5E-B01D-DA2CE0F93E66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MekPathLibraryTests", "MekPathLibraryTestsNew\MekPathLibraryTests.csproj", "{4CE00F48-EB9D-4F5E-B01D-DA2CE0F93E66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{820A3208-E8B2-4F73-AAF4-8B282DB39ABA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MekUpdaterTests", "MekUpdaterTests\MekUpdaterTests.csproj", "{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +42,10 @@ Global
 		{4CE00F48-EB9D-4F5E-B01D-DA2CE0F93E66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CE00F48-EB9D-4F5E-B01D-DA2CE0F93E66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CE00F48-EB9D-4F5E-B01D-DA2CE0F93E66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,5 @@
 ﻿using MekUpdater.UpdateBuilder.Interfaces;
 using MekUpdater.UpdateRunner;
-using static MekUpdater.Helpers.VersionTag.SpecialId;
 
 namespace MekUpdater.UpdateBuilder;
 
@@ -95,7 +94,7 @@ public class Update
         {
             return ExitUpdateAlreadyInstalled(updateCheckResult);
         }
-        if (CanUpdatePreviewVersion is false && updateCheckResult.AvailableVersion?.VersionId is not Full)
+        if (CanUpdatePreviewVersion is false && updateCheckResult.AvailableVersion?.VersionId is not SpecialId.Full)
         {
             return ExitOnlyPreviewAvailable(updateCheckResult);
         }

@@ -1,5 +1,4 @@
 ﻿/// Copyright 2021 Henri Vainio 
-using MekPathLibrary;
 
 namespace MekPathLibraryTests;
 
