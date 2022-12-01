@@ -2,9 +2,9 @@
 
 /// <summary>
 /// Defines version type, like Full, Preview, Beta and Alpha.
-/// Smaller number means more "fuller" version (Full value is bigger than Preview)
+/// Smaller number means more "fuller" version ("Full" (0) numerical value is smaller than "Preview" (1))
 /// </summary>
-public enum SpecialId : uint
+public enum VersionId : uint
 {
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

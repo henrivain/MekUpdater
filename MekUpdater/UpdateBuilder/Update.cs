@@ -94,7 +94,7 @@ public class Update
         {
             return ExitUpdateAlreadyInstalled(updateCheckResult);
         }
-        if (CanUpdatePreviewVersion is false && updateCheckResult.AvailableVersion?.VersionId is not SpecialId.Full)
+        if (CanUpdatePreviewVersion is false && updateCheckResult.AvailableVersion?.VersionId is not VersionId.Full)
         {
             return ExitOnlyPreviewAvailable(updateCheckResult);
         }

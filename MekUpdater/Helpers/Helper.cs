@@ -2,20 +2,19 @@
 
 using System.Reflection;
 
-namespace MekUpdater.Helpers
+namespace MekUpdater.Helpers;
+
+/// <summary>
+/// Information about application assemblies
+/// </summary>
+public static class AppInfo
 {
     /// <summary>
-    /// Information about application assemblies
+    /// Gets entry assembly name
     /// </summary>
-    public static class AppInfo
+    /// <returns>entry assembly name or "MekUpdater" if entry assembly name null</returns>
+    public static string GetHostAppName()
     {
-        /// <summary>
-        /// Gets entry assembly name
-        /// </summary>
-        /// <returns>entry assembly name or "MekUpdater" if entry assembly name null</returns>
-        public static string GetHostAppName()
-        {
-            return Assembly.GetEntryAssembly()?.GetName()?.Name ?? "MekUpdater";
-        }
+        return Assembly.GetEntryAssembly()?.GetName()?.Name ?? "MekUpdater";
     }
 }

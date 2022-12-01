@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 
 
 
-
 // get logger
 var logger = UpdateLogger.GetDefault();
 
