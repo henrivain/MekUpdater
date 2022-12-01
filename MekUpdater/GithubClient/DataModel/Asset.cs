@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace MekUpdater.GithubClient.ApiResults;
+namespace MekUpdater.GithubClient.DataModel;
 
 /// <summary>
 /// Information about Github version release asset, e.g. binary

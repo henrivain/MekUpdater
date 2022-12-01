@@ -117,18 +117,6 @@ public sealed class VersionTag : IEquatable<VersionTag>
     /// </summary>
     public static VersionTag Min => new("v0.0.0-alpha");
 
-
-
-
-
-
-
-
-
-
-
-
-
     /// <summary>
     /// Try convert string to version tag
     /// </summary>

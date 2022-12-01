@@ -1,12 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace MekUpdater.GithubClient.ApiResults;
+namespace MekUpdater.GithubClient.DataModel;
 
 /// <summary>
 /// Paresed result from github api request
 /// </summary>
-public class ResultData
+public class Release
 {
     /// <summary>
     /// Url to release
