@@ -14,6 +14,11 @@ public class GithubApiResult
         ResponseMessage = responseMessage;
     }
 
+    internal GithubApiResult(ResponseMessage responseMessage, string message) : this(responseMessage)
+    {
+        Message = message;
+    }
+
     /// <summary>
     /// Api request status like "success" or "error"
     /// </summary>

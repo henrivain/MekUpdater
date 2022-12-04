@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MekPathLibraryTests", "MekP
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{820A3208-E8B2-4F73-AAF4-8B282DB39ABA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MekUpdaterTests", "MekUpdaterTests\MekUpdaterTests.csproj", "{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MekUpdaterTests", "MekUpdaterTests\MekUpdaterTests.csproj", "{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingUI", "TestingUI\TestingUI.csproj", "{905E4B4A-6B5B-4BE4-8E72-16595B18EAF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +48,10 @@ Global
 		{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{905E4B4A-6B5B-4BE4-8E72-16595B18EAF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{905E4B4A-6B5B-4BE4-8E72-16595B18EAF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{905E4B4A-6B5B-4BE4-8E72-16595B18EAF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{905E4B4A-6B5B-4BE4-8E72-16595B18EAF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

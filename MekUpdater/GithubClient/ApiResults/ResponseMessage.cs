@@ -8,6 +8,18 @@ public enum ResponseMessage
     Success,
     Error,
     ServerError,
-    None
+    None,
+    UnknownHttpRequestException,
+    ServerTimedOut,
+    UriNotAbsolute,
+    NetworkError,
+    BadUri,
+    JsonStringNull,
+    UnknownJsonParseException,
+    NoValidJsonConverter,
+    InvalidJson,
+    ResponseJsonNull,
+    UnsuccessfulRequest,
+    ResponseObjectNull
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

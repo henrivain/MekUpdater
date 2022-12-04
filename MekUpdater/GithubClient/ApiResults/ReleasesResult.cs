@@ -13,7 +13,14 @@ public class ReleasesResult : GithubApiResult
     internal ReleasesResult(ResponseMessage responseMessage) : base(responseMessage) { }
 
     /// <summary>
-    /// Init new ReleasesResult, with given respponse message and array of releases
+    /// Init new ReleasesResult with given response message and more thorough explanation about status
+    /// </summary>
+    /// <param name="responseMessage"></param>
+    /// <param name="message"></param>
+    internal ReleasesResult(ResponseMessage responseMessage, string message) : base(responseMessage, message) { }
+
+    /// <summary>
+    /// Init new ReleasesResult with given respponse message and array of releases
     /// </summary>
     /// <exception cref="ArgumentNullException">if releases array is null</exception>
     internal ReleasesResult(ResponseMessage responseMessage, Release[]? releases) : this(responseMessage)

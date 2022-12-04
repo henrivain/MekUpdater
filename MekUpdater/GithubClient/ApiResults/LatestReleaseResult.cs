@@ -9,7 +9,7 @@ namespace MekUpdater.GithubClient.ApiResults;
 public class LatestReleaseResult : GithubApiResult
 {
     /// <summary>
-    /// Init new LatestReleaseResult, with given respponse message
+    /// Init new LatestReleaseResult, with given response message
     /// </summary>
     internal LatestReleaseResult(ResponseMessage responseMessage) : base(responseMessage) { }
 
@@ -18,10 +18,19 @@ public class LatestReleaseResult : GithubApiResult
     /// </summary>
     /// <param name="responseMessage"></param>
     /// <param name="release"></param>
-    internal LatestReleaseResult(ResponseMessage responseMessage, Release? release) : this(responseMessage)
+    internal LatestReleaseResult(ResponseMessage responseMessage, Release? release) 
+        : this(responseMessage)
     {
         Release = release;
     }
+
+    /// <summary>
+    /// Init new ReleasesResult with given response message and more thorough explanation about status
+    /// </summary>
+    /// <param name="responseMessage"></param>
+    /// <param name="message"></param>
+    internal LatestReleaseResult(ResponseMessage responseMessage, string message) 
+        : base(responseMessage, message) { }
 
     /// <summary>
     /// Releases read and parsed from github repository
