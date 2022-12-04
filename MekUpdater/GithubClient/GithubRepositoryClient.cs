@@ -60,7 +60,6 @@ public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
         return new(response.ResponseMessage, response.Message);
     }
 
-
     /// <summary>
     /// Make request to Github repository's "releases/latest" section and get parsed data
     /// </summary>
@@ -97,6 +96,16 @@ public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
             };
         }
         return new(response.ResponseMessage, response.Message);
+    }
+
+    /// <summary>
+    /// Get only release assets from latest github release
+    /// </summary>
+    /// <returns></returns>
+    public async Task<LatestAssetsResult> GetLatestReleaseAssets()
+    {
+        LatestReleaseResult releaseResult = await GetLatestRelease();
+        return (LatestAssetsResult)releaseResult;
     }
 
 
