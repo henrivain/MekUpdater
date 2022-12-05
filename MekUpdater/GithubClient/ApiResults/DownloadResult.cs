@@ -23,13 +23,20 @@ public class DownloadResult : GithubApiResult
     /// <param name="responseMessage"></param>
     /// <param name="message"></param>
     /// <param name="outputLocation"></param>
-    internal DownloadResult(ResponseMessage responseMessage, string message, ILocalPath outputLocation) : base(responseMessage, message)
+    /// <param name="downloadUrl"></param>
+    internal DownloadResult(ResponseMessage responseMessage, string message, ILocalPath outputLocation, string downloadUrl) : base(responseMessage, message)
     {
         OutputLocation = outputLocation;
+        DownloadUrl = downloadUrl;
     }
 
     /// <summary>
     /// Location where file(s) where downloaded
     /// </summary>
     public ILocalPath? OutputLocation { get; init; }
+
+    /// <summary>
+    /// Url address where data was downloaded from
+    /// </summary>
+    public string DownloadUrl { get; init; } = string.Empty;
 }

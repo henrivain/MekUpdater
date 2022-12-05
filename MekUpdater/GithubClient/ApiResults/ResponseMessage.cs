@@ -20,6 +20,12 @@ public enum ResponseMessage
     InvalidJson,
     ResponseJsonNull,
     UnsuccessfulRequest,
-    ResponseObjectNull
+    ResponseObjectNull,
+    CannotCreateFile,
+    CannotReadStream,
+    CannotCopyStream,
+    NoMatchingAssetName,
+    NoProperFileName,
+    NoDownloadUrl
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -9,15 +9,15 @@ internal class HttpRequestResult : GithubApiResult, IDisposable
         ResponseMessage responseMessage, HttpResponseMessage response) 
         : this(responseMessage)
     {
-        Response = response;
+        Content = response;
     }
 
-    public HttpResponseMessage? Response { get; init; }
+    public HttpResponseMessage? Content { get; init; }
 
 
     public void Dispose()
     {
-        Response?.Dispose();
+        Content?.Dispose();
     }
 
 

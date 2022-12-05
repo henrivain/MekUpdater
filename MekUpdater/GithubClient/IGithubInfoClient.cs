@@ -41,4 +41,14 @@ public interface IGithubInfoClient : IDisposable
     /// GithubApiTResult representing release assets in latest release and request status.
     /// </returns>
     Task<GithubApiTResult<Asset[]?>> GetLatestReleaseAssets();
+
+    /// <summary>
+    /// Get release byt given version tag.
+    /// (github release tag must be format "vX.X.X" where X is any uint.)
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns>
+    /// GithubApiTResult representing release assets in latest release and request status
+    /// </returns>
+    Task<GithubApiTResult<Release?>> GetRelease(VersionTag tag);
 }

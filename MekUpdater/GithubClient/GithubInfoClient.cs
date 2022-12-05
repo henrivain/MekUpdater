@@ -60,6 +60,14 @@ public class GithubInfoClient : GithubApiClient, IGithubInfoClient, IDisposable
         };
     }
 
+    /// <inheritdoc/>
+    public async Task<GithubApiTResult<Release?>> GetRelease(VersionTag tag)
+    {
+        string url = $"{BaseAddress}/releases/tags/{tag}";
+        return await GetApiResultAsync<Release>(url);
+    }
+
+
     /// <summary>
     /// Dispose all managed and unmanaged resources from this GithubInfoClient instance
     /// </summary>

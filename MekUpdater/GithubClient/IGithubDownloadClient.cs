@@ -3,6 +3,6 @@
 /// <summary>
 /// Interface to guide implementations for managing github download operations
 /// </summary>
-public interface IGithubDownloadClient
+public interface IGithubDownloadClient : IDisposable
 {
 }

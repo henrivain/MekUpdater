@@ -8,4 +8,17 @@ internal static class Extensions
     {
         return msg is ResponseMessage.Success;
     }
+    internal static bool NotSuccess(this ResponseMessage msg)
+    {
+        return msg.IsSuccess() is false;
+    }
+
+    internal static bool IsSuccess(this HttpResponseMessage? msg)
+    {
+        return msg?.IsSuccessStatusCode is true;
+    }
+    internal static bool NotSuccess(this HttpResponseMessage? msg)
+    {
+        return msg.IsSuccess() is false;
+    }
 }
