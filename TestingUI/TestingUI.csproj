@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MekPathLibrary\MekPathLibrary.csproj" />
     <ProjectReference Include="..\MekUpdater\MekUpdater.csproj" />
   </ItemGroup>
 
