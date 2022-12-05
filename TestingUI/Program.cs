@@ -1,7 +1,15 @@
 ﻿using MekUpdater.GithubClient;
+using Microsoft.Extensions.Logging;
 
-using GithubRepositoryClient client = new("henrivain", "Wordlists");
+using var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+});
+var logger = loggerFactory.CreateLogger<GithubRepositoryClient>();
 
-var result = await client.GetLatestReleaseAssets();
 
-Console.WriteLine("Success");
+using GithubRepositoryClient client = new("henrivain", "Wordlists", logger);
+
+var result = await client.GetReleases();
+
+Console.WriteLine(result.ResponseMessage);

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace MekUpdater.GithubClient.DataModel;
 
 /// <summary>
-/// Data structure for github api response for repository Licence
+/// Content structure for github api response for repository Licence
 /// </summary>
 public class Licence
 {

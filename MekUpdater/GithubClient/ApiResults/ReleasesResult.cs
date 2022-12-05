@@ -25,7 +25,7 @@ public class ReleasesResult : GithubApiResult
     /// <exception cref="ArgumentNullException">if releases array is null</exception>
     internal ReleasesResult(ResponseMessage responseMessage, Release[]? releases) : this(responseMessage)
     {
-        Releases = releases ?? throw new ArgumentNullException(nameof(releases));
+        Releases = releases;
     }
 
     /// <summary>

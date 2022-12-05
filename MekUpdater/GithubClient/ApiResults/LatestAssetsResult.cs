@@ -3,7 +3,7 @@
 namespace MekUpdater.GithubClient.ApiResults;
 
 /// <summary>
-/// Data structure for github api request for getting latest release assets
+/// Content structure for github api request for getting latest release assets
 /// </summary>
 public class LatestAssetsResult : GithubApiResult
 {

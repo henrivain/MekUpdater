@@ -8,7 +8,7 @@ namespace MekUpdater.CheckUpdates;
 // with Newtonsoft.Json.JsonConvert.DeserializeObject<ParsedVersionData>()
 
 /// <summary>
-/// Data structure for github version api. Some of the fields are removed
+/// Content structure for github version api. Some of the fields are removed
 /// </summary>
 public class ParsedVersionData
 {

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace MekUpdater.GithubClient.DataModel;
 
 /// <summary>
-/// Data structure for github repository api response
+/// Content structure for github repository api response
 /// </summary>
 public class RepositoryInfo
 {

@@ -3,7 +3,7 @@
 namespace MekUpdater.GithubClient.ApiResults;
 
 /// <summary>
-/// Data stucrure representing data and request status from github repository api
+/// Content stucrure representing data and request status from github repository api
 /// </summary>
 public class RepositoryInfoResult : GithubApiResult
 {

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace MekUpdater.GithubClient.DataModel;
 
 /// <summary>
-/// Data model for gihtub repository owner
+/// Content model for gihtub repository owner
 /// </summary>
 public class Owner
 {

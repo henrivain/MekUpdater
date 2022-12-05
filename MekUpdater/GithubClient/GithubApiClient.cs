@@ -1,13 +1,15 @@
 ﻿using System.Text.Json;
 using MekUpdater.GithubClient.ApiResults;
 using MekUpdater.GithubClient.DataModel;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MekUpdater.GithubClient;
 
 /// <summary>
 /// New client for handling requests to github api
 /// </summary>
-public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
+public class GithubApiClient : IDisposable
 {
     /// <summary>
     /// Initialize new client to call github api
@@ -15,7 +17,7 @@ public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
     /// <param name="githubUserName"></param>
     /// <param name="githubRepositoryName"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public GithubRepositoryClient(string githubUserName, string githubRepositoryName)
+    public GithubApiClient(string githubUserName, string githubRepositoryName)
     {
         if (string.IsNullOrWhiteSpace(githubUserName))
             throw new ArgumentNullException(nameof(githubUserName));
@@ -36,27 +38,47 @@ public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
     }
 
     /// <summary>
+    /// Initialize new client to call github api. Provided logger will be used.
+    /// </summary>
+    /// <param name="githubUserName"></param>
+    /// <param name="githubRepositoryName"></param>
+    /// <param name="logger"></param>
+    /// <exception cref="ArgumentNullException">If username or repository name is null or whitspace</exception>
+    public GithubApiClient(string githubUserName, string githubRepositoryName, ILogger<GithubApiClient> logger) : this(githubUserName, githubRepositoryName)
+    {
+        Logger = logger;
+        Logger.LogInformation("Initialize new {className} with user name: '{githubUserName}' and repository name: '{githubRepositoryName}'", 
+            nameof(GithubApiClient), githubUserName, githubRepositoryName);
+    }
+
+    /// <summary>
     /// Base url address to api (includes repo owner name and repo name)
     /// </summary>
     public string BaseAddress { get; }
     private HttpClient Client { get; }
+    private ILogger<GithubApiClient> Logger { get; } = NullLogger<GithubApiClient>.Instance;
 
     /// <summary>
     /// Make request to Github repository's main section and get parsed data about repository
     /// </summary>
     /// <returns>Releases result representing latest release in github repository and request status</returns>
-    public async Task<RepositoryInfoResult> GetRepositoryInfo()
+    public virtual async Task<RepositoryInfoResult> GetRepositoryInfo()
     {
-        using var response = await GetResponse(BaseAddress);
+        string url = BaseAddress;
+        Logger.LogInformation("Make request to '{url}'.", url);
 
+        using var response = await GetResponse(url);
         if (response.ResponseMessage.IsSuccess())
         {
+            Logger.LogInformation("Request to '{url}' successful.", url);
             var parsed = await ParseJsonAsync<RepositoryInfo?>(response.Response);
             return new(parsed.ResponseMessage, parsed.Result)
             {
                 Message = parsed.Message
             };
         }
+        Logger.LogWarning("Request to '{url}' failed because of '{responseMessage}', '{message}'.", 
+            url, response.ResponseMessage, response.Message);
         return new(response.ResponseMessage, response.Message);
     }
 
@@ -64,37 +86,67 @@ public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
     /// Make request to Github repository's "releases/latest" section and get parsed data
     /// </summary>
     /// <returns>Releases result representing latest release in github repository and request status</returns>
-    public async Task<LatestReleaseResult> GetLatestRelease()
+    public virtual async Task<LatestReleaseResult> GetLatestRelease()
     {
-        using var response = await GetResponse($"{BaseAddress}/releases/latest");
+        string url = $"{BaseAddress}/releases/latest";
+        Logger.LogInformation("Make request to '{url}'.", url);
 
+        using var response = await GetResponse(url);
         if (response.ResponseMessage.IsSuccess())
         {
+            Logger.LogInformation("Request to '{url}' successful.", url);
             var parsed = await ParseJsonAsync<Release?>(response.Response);
             return new(parsed.ResponseMessage, parsed.Result)
             {
                 Message = parsed.Message
             };
         }
+        Logger.LogWarning("Request to '{url}' failed because of '{responseMessage}', '{message}'.",
+            url, response.ResponseMessage, response.Message);
         return new(response.ResponseMessage, response.Message);
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    protected virtual async Task<GithubApiTResult<T?>> GetApiResult<T>(string url)
+    {
+        using var response = await GetResponse(url);
+        if (response.ResponseMessage.IsSuccess())
+        {
+            var parsed = await ParseJsonAsync<T>(response.Response);
+            return new GithubApiTResult<T?>(parsed.ResponseMessage, parsed.Result)
+            {
+                Message = parsed.Message
+            };
+        }
+        return new GithubApiTResult<T?>(response.ResponseMessage, response.Message);
     }
 
     /// <summary>
     /// Make request to Github repository's "releases" section and get parsed data
     /// </summary>
     /// <returns>Releases result representing all releases in github repository and request status</returns>
-    public async Task<ReleasesResult> GetReleases()
+    public virtual async Task<GithubApiTResult<Release[]?>> GetReleases()
     {
-        using var response = await GetResponse($"{BaseAddress}/releases");
+        string url = $"{BaseAddress}/releases";
+        Logger.LogInformation("Make request to '{url}'.", url);
 
+        using var response = await GetResponse(url);
         if (response.ResponseMessage.IsSuccess())
         {
+            Logger.LogInformation("Request to '{url}' successful.", url);
             var parsed = await ParseJsonAsync<Release[]?>(response.Response);
             return new(parsed.ResponseMessage, parsed.Result)
             {
                 Message = response.Message,
             };
         }
+        Logger.LogWarning("Request to '{url}' failed because of '{responseMessage}', '{message}'.",
+            url, response.ResponseMessage, response.Message);
         return new(response.ResponseMessage, response.Message);
     }
 
@@ -102,8 +154,9 @@ public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
     /// Get only release assets from latest github release
     /// </summary>
     /// <returns></returns>
-    public async Task<LatestAssetsResult> GetLatestReleaseAssets()
+    public virtual async Task<LatestAssetsResult> GetLatestReleaseAssets()
     {
+        Logger.LogInformation("Try to get release assets from latest release.");
         LatestReleaseResult releaseResult = await GetLatestRelease();
         return (LatestAssetsResult)releaseResult;
     }
@@ -202,9 +255,9 @@ public class GithubRepositoryClient : IGithubRepositoryClient, IDisposable
     }
 
     /// <summary>
-    /// Dispose all managed and unmanaged resources from this GithubRepositoryClient instance
+    /// Dispose all managed and unmanaged resources from this GithubApiClient instance
     /// </summary>
-    public void Dispose()
+    public virtual void Dispose()
     {
         Client?.Dispose();
         GC.SuppressFinalize(this);
