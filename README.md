@@ -1,7 +1,8 @@
 # MekUpdater
- Easy way to download files or updates from github releases!  
+
+## Easy way to download files or updates from github releases!
  
- Documentation in code and [here](https://github.com/matikkaeditorinkaantaja/MekUpdater/tree/main/MekUpdaterDocumentation)
+Documentation in code and [here](https://github.com/matikkaeditorinkaantaja/MekUpdater/tree/main/MekUpdaterDocumentation)
  
  ## Installation
  1) Download ready for use Nuget packages (not yet in Nuget.org) to your local device from releases page. 
