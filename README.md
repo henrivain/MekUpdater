@@ -1,5 +1,5 @@
 # MekUpdater
- Way to download updates from github releases using easy to use fluent interface. 
+ Easy way to download files or updates from github releases. 
  
  Documentation in code and [here](https://github.com/matikkaeditorinkaantaja/MekUpdater/tree/main/MekUpdaterDocumentation)
  
@@ -48,9 +48,9 @@ Console.WriteLine($"UpdateMsg: '{result.UpdateMsg}'");
 Console.WriteLine($"Setup file at: '{update.CompletionInfo.SetupExePath}'");
 ```
 
-## Want to contribute
+## Want to help?
 - Open issue with enchancement tag and tell how you want to help or what kind of feature you want to add 
 
-## Need more help?
+## Need help using?
 - To get more help, open issue with "help wanted" label in GitHub issues page
 - Contact via email matikkaeditorinkaantaja(at)gmail.com
