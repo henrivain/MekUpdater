@@ -8,7 +8,7 @@ namespace MekUpdater.Helpers;
 public sealed class VersionTag : IEquatable<VersionTag>
 {
     /// <summary>
-    /// Initialize new empty version tag 
+    /// Initialize version tag with version "v0.0.0"
     /// </summary>
     public VersionTag() { }
 

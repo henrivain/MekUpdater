@@ -1,4 +1,5 @@
-﻿using MekPathLibrary;
+﻿using System.Runtime.InteropServices;
+using MekPathLibrary;
 using MekUpdater.GithubClient;
 using Microsoft.Extensions.Logging;
 
@@ -9,8 +10,15 @@ using var loggerFactory = LoggerFactory.Create(builder =>
 var logger = loggerFactory.CreateLogger<GithubApiClient>();
 FolderPath path = new(@$"C:\Users\henri\Downloads\api_downloads\");
 
-using GithubDownloadClient client = new("henrivain", "Wordlists", logger);
+// Matikkaeditorinkaantaja
+// Wordlists
+using GithubDownloadClient client = new("henrivain", "Matikkaeditorinkaantaja", logger);
 
-var result = await client.DownloadAsset(new("v1.2.0"), path, "Wordlists_Android-Signed", false);
+var result = await client.DownloadLatestReleaseZip(path);
+
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+{
+    Console.WriteLine("linux");
+}
 
 Console.WriteLine(result.ResponseMessage);

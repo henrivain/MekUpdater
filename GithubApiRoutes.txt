@@ -1,0 +1,10 @@
+
+
+Base route "https://api.github.com/repos/<user>/<repo>"
+
+Info
+
+repository info "https://api.github.com/repos/<user>/<repo>"
+latest release "https://api.github.com/repos/<user>/<repo>/releases/latest"
+all releases "https://api.github.com/repos/<user>/<repo>/releases"
+specific release "https://api.github.com/repos/<user>/<repo>/releases/tags/{tag}"

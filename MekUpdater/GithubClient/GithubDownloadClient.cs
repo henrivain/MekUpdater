@@ -1,4 +1,5 @@
-﻿using MekUpdater.GithubClient.ApiResults;
+﻿using System.Xml.Linq;
+using MekUpdater.GithubClient.ApiResults;
 using MekUpdater.GithubClient.DataModel;
 using Microsoft.Extensions.Logging;
 
@@ -57,25 +58,28 @@ public class GithubDownloadClient : GithubApiClient, IGithubDownloadClient
     {
         string url = $"{BaseAddress}/zipball/{tag.FullVersion}";
         var path = destinationFolder.ToFilePath<ZipPath>($"{tag.FullVersion}.zip");
-        
         Logger.LogInformation("Download file from '{url}' to '{path}'", url, path);
-        
         return await DownloadFileAsync(url, path);
     }
 
     /// <summary>
-    /// 
+    /// Download asset form specific version to given path. 
+    /// Downloads first asset from given releasse that has matching name.
     /// </summary>
-    /// <param name="tag"></param>
-    /// <param name="path"></param>
-    /// <param name="assetName"></param>
-    /// <param name="onlyFullMatch"></param>
-    /// <returns></returns>
-    public async Task<DownloadResult> DownloadAsset(VersionTag tag, FolderPath path, string assetName, bool onlyFullMatch = false)
+    /// <param name="tag">Version tag of the release.</param>
+    /// <param name="path">Path where asset will be downloaded.</param>
+    /// <param name="assetName">Name that will be used to validate that the asset is the right one.</param>
+    /// <param name="onlyFullMatch">Specifies weather asset name should fully match assetName or not.</param>
+    /// <returns>DownloadResult representing download status and information about download.</returns>
+    public async Task<DownloadResult> DownloadAsset(
+        VersionTag tag, FolderPath path, string assetName, bool onlyFullMatch = false)
     {
+        Logger.LogInformation("Download asset from release '{tag}'.", tag);
         var release = await InfoClient.GetRelease(tag);
         if (release.ResponseMessage.NotSuccess())
         {
+            Logger.LogError("Cannot validate assets, because of '{msg}': '{explanation}'.", 
+                release.ResponseMessage, release.Message);
             return new(release.ResponseMessage, release.Message);
         }
 
@@ -84,25 +88,65 @@ public class GithubDownloadClient : GithubApiClient, IGithubDownloadClient
         {
             validationAction = x => x.Name == assetName;
         }
-        
-        var requestedAsset = release.Content?.Assets.FirstOrDefault(validationAction);
-        if (requestedAsset is null) 
-        { 
-            return new(ResponseMessage.NoMatchingAssetName, $"Cannot download asset, because selected release does not have asset with matching name '{assetName}'.");
-        }
-        if (requestedAsset.DownloadUrl is null)
-        {
-            return new(ResponseMessage.NoDownloadUrl, $"Cannot download asset with no download url.");
 
-        }
-        if (string.IsNullOrWhiteSpace(requestedAsset.Name))
+        var asset = release.Content?.Assets.FirstOrDefault(validationAction);
+        if (asset is null) 
         {
+            Logger.LogError("Cannot download asset from selected release with name '{name}'.", assetName);
+            return new(ResponseMessage.NoMatchingAssetName,
+                $"Cannot download asset from selected release with name '{assetName}'.");
+        }
+        if (string.IsNullOrWhiteSpace(asset.DownloadUrl))
+        {
+            Logger.LogError("Asset url cannot be empty");
+            return new(ResponseMessage.NoDownloadUrl, $"Cannot download asset with no download url.");
+        }
+        if (string.IsNullOrWhiteSpace(asset.Name))
+        {
+            Logger.LogError("Cannot download asset with no file name.");
             return new(ResponseMessage.NoProperFileName, $"Cannot download asset with no file name.");
         }
 
-        FilePath downloadPath = path.ToFilePath<FilePath>(requestedAsset.Name);
-        return await DownloadFileAsync(requestedAsset.DownloadUrl, downloadPath);
+        Logger.LogInformation("Asset ready to be downloaded from '{url}'.", asset.DownloadUrl);
+        FilePath downloadPath = path.ToFilePath<FilePath>(asset.Name);
+        return await DownloadFileAsync(asset.DownloadUrl, downloadPath);
     }
 
-
+    /// <summary>
+    /// Download latest release into specified path.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="fileName">
+    /// File name for downloaded zip file. Default file name is in format "release_{releaseVersion}.zip"
+    /// Lacking .zip -extension will be automatically added.
+    /// </param>
+    /// <returns>DownloadResult representing download status and information about download.</returns>
+    public async Task<DownloadResult> DownloadLatestReleaseZip(FolderPath path, string? fileName = null)
+    {
+        var release = await InfoClient.GetLatestRelease();
+        if (release.ResponseMessage.NotSuccess())
+        {
+            Logger.LogError("Failed to load latest release because of '{msg}': '{explanation}'.", 
+                release.ResponseMessage, release.Message);
+            return new(release.ResponseMessage)
+            {
+                Message = release.Message
+            };
+        }
+        if (string.IsNullOrWhiteSpace(release.Content?.ZipUrl))
+        {
+            Logger.LogError("Cannot download release with no download url.");
+            return new(ResponseMessage.NoDownloadUrl)
+            {
+                Message = "Latest release does not have download url."
+            };
+        }
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            string tagName = release.Content.TagName ?? "unknown";
+            fileName = $"release_{tagName}.zip";
+        }
+        ZipPath destination = path.ToFilePath<ZipPath>(fileName);
+        return await DownloadFileAsync(release.Content.ZipUrl, destination);
+    }
 }

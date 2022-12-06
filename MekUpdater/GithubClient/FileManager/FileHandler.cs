@@ -25,10 +25,11 @@ internal class FileHandler
     {
         if (FilePath.PathExist) return (true, string.Empty);
         if (Directory.Exists(FilePath.FolderPath.FullPath)) return (true, string.Empty);
-        Logger.LogInformation("Try to create path '{path}'", FilePath);
+        Logger.LogInformation("Try to create directory '{path}'.", FilePath.FolderPath);
         try
         {
             Directory.CreateDirectory(FilePath.FolderPath.FullPath);
+            Logger.LogInformation("Directory created successfully.");
             return (true, string.Empty);
         }
         catch (Exception ex)
@@ -42,7 +43,7 @@ internal class FileHandler
                 NotSupportedException => $"Path '{FilePath.FolderPath}' has invalid colon (':').",
                 _ => $"Unknown directory creation exception in {nameof(FileHandler)}, ex: '{ex.GetType()}', message: {ex.Message}."
             };
-            Logger.LogError("Cannot create directory '{dirPath}' because of '{ex}': '{failreason}'.", 
+            Logger.LogWarning("Cannot create directory '{dirPath}' because of '{ex}': '{failreason}'.", 
                 FilePath.FolderPath , ex.GetType(), failReason);
             return (false, failReason);
         }
@@ -50,9 +51,10 @@ internal class FileHandler
 
     internal async Task<(bool Valid, string Msg)> CopyStreamAsync(Stream? stream)
     {
+        Logger.LogInformation("Start copying stream into file '{path}'.", FilePath.FullPath);
         if (stream is null)
         {
-
+            Logger.LogWarning("Cannot copy stream that is null.");
             return (false, "Cannot copy stream that is null.");
         }
         try 
@@ -60,10 +62,12 @@ internal class FileHandler
             using var fileStream = new FileStream(FilePath.FullPath, FileMode.OpenOrCreate);
             if (fileStream is null)
             {
+                Logger.LogWarning("Cannot copy stream in the file stream '{path}' that is null.", FilePath.FullPath);
                 return (false, $"Cannot initialize filesteam at path {FilePath}, " +
                     $"stream cannot be copied to destination");
             }
             await stream.CopyToAsync(fileStream);
+            Logger.LogInformation("Copied stream into file successfully.");
             return (true, string.Empty);
         }
         catch (Exception ex)
@@ -79,6 +83,7 @@ internal class FileHandler
                 NotSupportedException => "Current stream does not support reading or destination does not support writing.",
                 _ => $"Unknown stream copy exception in {nameof(FileHandler)}, ex: '{ex.GetType()}', message: '{ex.Message}'."
             };
+            Logger.LogWarning("Copying stream into file threw exception '{exType}': '{exMsg}'", ex.GetType(), ex.Message);
             return (false, failReason);
         }
     }

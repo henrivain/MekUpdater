@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83C5B4A8-FA21-4386-BDF4-EC6C0098F41A}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		GithubApiRoutes.txt = GithubApiRoutes.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject", "ExampleProject\ExampleProject.csproj", "{42BE25F8-06CF-4C00-8B74-121BDB4530D9}"
@@ -16,11 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MekPathLibrary", "MekPathLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MekPathLibraryTests", "MekPathLibraryTestsNew\MekPathLibraryTests.csproj", "{4CE00F48-EB9D-4F5E-B01D-DA2CE0F93E66}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{820A3208-E8B2-4F73-AAF4-8B282DB39ABA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MekUpdaterTests", "MekUpdaterTests\MekUpdaterTests.csproj", "{ABB43586-2E0D-4110-B2B6-D882FFA65C1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingUI", "TestingUI\TestingUI.csproj", "{905E4B4A-6B5B-4BE4-8E72-16595B18EAF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestingUI", "TestingUI\TestingUI.csproj", "{905E4B4A-6B5B-4BE4-8E72-16595B18EAF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

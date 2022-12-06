@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using MekUpdater.GithubClient.ApiResults;
 using MekUpdater.GithubClient.FileManager;
 using Microsoft.Extensions.Logging;
@@ -51,12 +50,12 @@ public class GithubApiClient : IDisposable
         : this(githubUserName, githubRepositoryName)
     {
         Logger = logger;
-        Logger.LogInformation("Initialize new {className} with user name: '{githubUserName}' and repository name: '{githubRepositoryName}'",
+        Logger.LogInformation("New {className} with username: '{githubUserName}' and repo name: '{githubRepositoryName}'",
             nameof(GithubApiClient), githubUserName, githubRepositoryName);
     }
 
     /// <summary>
-    /// Base url address to api (includes repo owner name and repo name)
+    /// Base url apiRoute to api (includes repo owner name and repo name)
     /// </summary>
     public string BaseAddress { get; }
     private HttpClient Client { get; }
@@ -70,7 +69,7 @@ public class GithubApiClient : IDisposable
     /// <returns>DownloadResult representing download status and used data.</returns>
     private protected virtual async Task<DownloadResult> DownloadFileAsync(string url, IFilePath path)
     {
-        Logger.LogInformation("Download file from '{url}' to '{path}'", url, path.FullPath);
+        Logger.LogInformation("Validate path '{path}'.", path.FullPath);
         FileHandler fileHandler = new(path, Logger);
         var (isPathValid, pathCreationMessage) = fileHandler.TryCreateDirectory();
         if (isPathValid is false)
@@ -83,29 +82,16 @@ public class GithubApiClient : IDisposable
             };
         }
 
-        Logger.LogInformation("Starting download from {url}", url);
+        Logger.LogInformation("Path valid.");
         using var response = await GetResponse(url);
-        Logger.LogInformation("Download ready");
         if (response.ResponseMessage.NotSuccess())
         {
-            Logger.LogError("Http request to '{url}' failed, because of '{reason}'", url, response.Message);
+            Logger.LogWarning("Http request to '{url}' failed, because of '{reason}'", url, response.Message);
             return new(response.ResponseMessage)
             {
                 Message = response.Message,
                 DownloadUrl = url
             };
-        }
-        if (response.Content.NotSuccess())
-        {
-            HttpStatusCode? status = response.Content?.StatusCode;
-            HttpRequestMessage? message = response.Content?.RequestMessage;
-            Logger.LogError("Http request to url '{url}' was not successfull or response was null. " +
-                "Status: '{status}', Message: '{msg}'", url, status, message);
-            return new(ResponseMessage.UnsuccessfulRequest)
-            {
-                Message = $"Http request returned empty content with status: '{status}' and message: '{message}'"
-            };
-
         }
 
         using Stream? stream = await response.Content!.Content.ReadAsStreamAsync();
@@ -113,75 +99,87 @@ public class GithubApiClient : IDisposable
 
         if (copySuccess is false)
         {
-            Logger.LogInformation("Failed to copy data from '{url}' into file '{file}' with message '{message}'",
-                url, path.FullPath, copyMessage);
+            Logger.LogWarning("Failed to copy data to file '{file}' with message '{message}'",
+                path.FullPath, copyMessage);
             return new(ResponseMessage.CannotCopyStream, copyMessage, path, url);
         }
-        Logger.LogInformation("Successfully copied data from '{url}' into file '{file}'", url, path.FullPath);
+        Logger.LogInformation("Successfully downloaded data from '{url}' into file '{file}'", url, path.FullPath);
         return new(ResponseMessage.Success, string.Empty, path, url);
     }
 
     /// <summary>
-    /// Make request to github api and parse result into T type
+    /// Make request to github api and parse result into T type.
     /// </summary>
     /// <typeparam name="T">
-    /// Type of response data, 
-    /// it is used when parsing from json
+    /// Type of response data used when parsing object from json.
     /// </typeparam>
     /// <param name="url">
-    /// Full url path to Github api endpoint
+    /// Full url path to Github api apiRoute.
     /// </param>
     /// <returns>
     /// GithubApiTResult of given type.
-    /// This result represents response data and request status
+    /// This result represents response data and request status.
     /// </returns>
     private protected virtual async Task<GithubApiTResult<T?>> GetApiResultAsync<T>(string url)
     {
-        Logger.LogInformation("Sending request to api endpoint at '{url}'.", url);
         using var response = await GetResponse(url);
-        if (response.ResponseMessage.IsSuccess())
+        if (response.ResponseMessage.NotSuccess())
         {
-            var parsed = await ParseJsonAsync<T>(response.Content);
-            if (parsed.ResponseMessage.IsSuccess())
-            {
-                Logger.LogInformation("Request to '{url}' was successful.", url);
-            }
-            else
-            {
-                Logger.LogError("Parsing github api response json into '{type}' failed " +
-                    "because of '{reason}': '{explanation}'.", typeof(T), parsed.ResponseMessage, parsed.Message);
-            }
-            return new GithubApiTResult<T?>(parsed.ResponseMessage, parsed.Result)
-            {
-                Message = parsed.Message
-            };
-        }
-        Logger.LogError("Github api request failed. Reason: '{reason}': '{explanation}'",
+            Logger.LogWarning("Github api request failed. '{reason}': '{explanation}'",
             response.ResponseMessage, response.Message);
-        return new GithubApiTResult<T?>(response.ResponseMessage, response.Message);
+            return new GithubApiTResult<T?>(response.ResponseMessage, response.Message);
+        }
+        var parsed = await ParseJsonAsync<T>(response.Content);
+        if (parsed.ResponseMessage.NotSuccess())
+        {
+            Logger.LogWarning("Parsing github api response json into '{type}' failed " +
+                "because of '{reason}': '{explanation}'.", typeof(T), parsed.ResponseMessage, parsed.Message);
+        }
+        return new GithubApiTResult<T?>(parsed.ResponseMessage, parsed.Result)
+        {
+            Message = parsed.Message
+        };
+
     }
 
     /// <summary>
     /// Get response from given http adress asynchronously. 
-    /// Also handle exceptions and convert them into Content messages and string message
-    /// <para/>!! DOES NOT HANDLE BAD REQUEST 
-    /// (RETURNS SUCCESS EVEN IF STATUS CODE IS FOR EXAMPLE '404', NO EXCEPTIONS WILL BE THROWN) !!
+    /// Also handle exceptions and convert them into Content and messages.
     /// </summary>
-    /// <param name="address">url address where request will be made</param>
-    /// <returns>HttpRequestResult that represents response data and response status</returns>
-    private protected virtual async Task<HttpRequestResult> GetResponse(string address)
+    /// <param name="apiRoute">url apiRoute where request will be made</param>
+    /// <returns>
+    /// HttpRequestResult that represents response data and response status.
+    /// Valid => "ResponseMessage.Success".
+    /// Bad request => "ResponseMessage.HttpRequestUnsuccessful".
+    /// Exception => Response message that represents exception reason.
+    /// </returns>
+    private protected virtual async Task<HttpRequestResult> GetResponse(string apiRoute)
     {
+        Logger.LogInformation("Send request to api route '{apiRoute}'", apiRoute);
         try
         {
+            var response = await Client.GetAsync(apiRoute);
+            if (response.NotSuccess())
+            {
+                int status = (int)response.StatusCode;
+                string? reason = response.ReasonPhrase;
+                Logger.LogWarning("Request to api endpoint '{endpoint}' was unsuccessful with status '{status}': '{msg}'",
+                    apiRoute, status, reason);
+
+                return new(ResponseMessage.HttpRequestUnsuccessful)
+                {
+                    Message = $"Request to api route '{apiRoute}' was unsuccessful with status '{status}': '{reason}'",
+                    Content = response
+                };
+            }
+            Logger.LogInformation("Request successful.");
             return new(ResponseMessage.Success)
             {
-                Content = await Client.GetAsync(address)
+                Content = response
             };
         }
         catch (Exception ex)
         {
-            Logger.LogError("Http request to {url} failed because of '{ex}': '{msg}'",
-                address, ex.GetType(), ex.Message);
             ResponseMessage error = ex switch
             {
                 UriFormatException => ResponseMessage.BadUri,
@@ -190,9 +188,11 @@ public class GithubApiClient : IDisposable
                 HttpRequestException => ResponseMessage.NetworkError,
                 _ => ResponseMessage.UnknownHttpRequestException
             };
+            Logger.LogWarning("Http request to {address} failed because of exception '{ex}': '{msg}'",
+                apiRoute, ex.GetType(), ex.Message);
             return new(error)
             {
-                Message = $"Http request to '{address}' failed because of " +
+                Message = $"Http request to '{apiRoute}' failed because of " +
                     $"{ex.GetType()}: {ex.Message}.",
                 Content = null
             };
@@ -216,18 +216,18 @@ public class GithubApiClient : IDisposable
         {
             return new(default, ResponseMessage.ResponseObjectNull, $"Given HttpResponseMessage is null and cannot be parsed into desired type.");
         }
-        var json = await response.Content.ReadAsStringAsync();
-        var (result, msg) = ParseJson<T>(json);
-        if (msg.IsSuccess())
+        if (response.NotSuccess())
         {
-            return new(result, msg, string.Empty);
-        }
-        if (response.IsSuccessStatusCode is false)
-        {
-            string message = $"Unsuccesful http request. Status code: '{response.StatusCode}' Request message: '{response.RequestMessage}'.";
+            string message = $"Http request made was unsuccessful with message '{response.RequestMessage}'";
             return new(default, ResponseMessage.UnsuccessfulRequest, message);
         }
-        return new(default, msg, "Bad json string.");
+        var json = await response.Content.ReadAsStringAsync();
+        var (result, msg) = ParseJson<T>(json);
+        if (msg.NotSuccess())
+        {
+            return new(default, msg, "Bad json string.");
+        }
+        return new(result, msg, string.Empty);
     }
 
     /// <summary>
