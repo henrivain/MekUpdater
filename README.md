@@ -1,5 +1,5 @@
 # MekUpdater
- Easy way to download files or updates from github releases. 
+ Easy way to download files or updates from github releases!  
  
  Documentation in code and [here](https://github.com/matikkaeditorinkaantaja/MekUpdater/tree/main/MekUpdaterDocumentation)
  
