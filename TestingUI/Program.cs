@@ -16,9 +16,4 @@ using GithubDownloadClient client = new("henrivain", "Matikkaeditorinkaantaja", 
 
 var result = await client.DownloadLatestReleaseZip(path);
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    Console.WriteLine("linux");
-}
-
-Console.WriteLine(result.ResponseMessage);
+logger.LogInformation("status: {status}", result.ResponseMessage);
