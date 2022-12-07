@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using MekUpdater.GithubClient.ApiResults;
-using MekUpdater.GithubClient.FileManager;
+using MekUpdater.GithubClient.FileManagers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -95,7 +95,7 @@ public class GithubApiClient : IDisposable
         }
 
         using Stream? stream = await response.Content!.Content.ReadAsStreamAsync();
-        var (copySuccess, copyMessage) = await fileHandler.CopyStreamAsync(stream);
+        var (copySuccess, copyMessage) = await fileHandler.WriteStreamAsync(stream);
 
         if (copySuccess is false)
         {

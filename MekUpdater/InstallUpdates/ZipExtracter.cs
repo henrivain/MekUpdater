@@ -46,7 +46,7 @@ internal class ZipExtracter
     }
 
     /// <summary>
-    /// Get matching error code for ZipFile.ExtractToDirectory()
+    /// Get matching error code for ZipPath.ExtractToDirectory()
     /// </summary>
     /// <param name="ex"></param>
     /// <returns>ErroMsg with case matching error code or ErroMsg.Other if Exception not found</returns>

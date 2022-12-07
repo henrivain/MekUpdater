@@ -1,55 +1,90 @@
-﻿using System.IO;
-using System.Security;
+﻿using System.Security;
+using MekUpdater.Exceptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace MekUpdater.GithubClient.FileManager;
+namespace MekUpdater.GithubClient.FileManagers;
 
+/// <summary>
+/// Create files and copy data to them.
+/// </summary>
 internal class FileHandler
 {
+    /// <summary>
+    /// New FileHandler to create files and copy data to them. No logging.
+    /// </summary>
+    /// <param name="filePath"></param>
     internal FileHandler(IFilePath filePath)
     {
         FilePath = filePath;
+        FolderHandler = new(filePath.FolderPath);
     }
 
+    /// <summary>
+    /// New FileHandler to create files and copy data to them. Uses given logger.
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="logger"></param>
     internal FileHandler(IFilePath filePath, ILogger logger) : this(filePath)
     {
         Logger = logger;
     }
 
-    internal ILogger Logger { get; } = NullLogger.Instance;
+    /// <summary>
+    /// Folder handler used to manage folders.
+    /// </summary>
+    protected internal virtual FolderHandler FolderHandler { get; }
 
+    /// <summary>
+    /// Logger used if initialized
+    /// </summary>
+    internal virtual ILogger Logger { get; init; } = NullLogger.Instance;
+
+    /// <summary>
+    /// Path to file with class is working with.
+    /// </summary>
     internal IFilePath FilePath { get; }
 
-    internal (bool Valid, string Msg) TryCreateDirectory()
+    /// <summary>
+    /// Create file and full path to it, if doesn't already exit.
+    /// </summary>
+    /// <returns>(true, "") if valid operation or file exist, otherwise (false, errorMessage).</returns>
+    internal virtual (bool Valid, string Msg) TryCreateFile()
     {
         if (FilePath.PathExist) return (true, string.Empty);
-        if (Directory.Exists(FilePath.FolderPath.FullPath)) return (true, string.Empty);
-        Logger.LogInformation("Try to create directory '{path}'.", FilePath.FolderPath);
+        var dirResult = FolderHandler.TryCreateDirectory();
+        if (dirResult.Valid is false) return dirResult;
+        Logger.LogInformation("");
         try
         {
-            Directory.CreateDirectory(FilePath.FolderPath.FullPath);
-            Logger.LogInformation("Directory created successfully.");
+            File.Create(FilePath.FullPath);
+            Logger.LogInformation("File created successfully.");
             return (true, string.Empty);
         }
         catch (Exception ex)
         {
             string failReason = ex switch
             {
-                PathTooLongException => $"Too long path '{FilePath.FolderPath}'.",
-                IOException => $"Specified directory, '{FilePath.FolderPath}', is file, not directory.",
-                UnauthorizedAccessException => $"Cannot create directory '{FilePath.FolderPath}', no required permissions.",
-                ArgumentException => $"Bad direcotry path '{FilePath.FolderPath}'.",
-                NotSupportedException => $"Path '{FilePath.FolderPath}' has invalid colon (':').",
-                _ => $"Unknown directory creation exception in {nameof(FileHandler)}, ex: '{ex.GetType()}', message: {ex.Message}."
+               UnauthorizedAccessException => $"Cannot create directory '{FilePath}', lacking required permissions.",
+               ArgumentException => $"Path '{FilePath}'includes invalid characters.",
+               PathTooLongException => $"Path '{FilePath}' is too long.",
+               DirectoryNotFoundException => throw new UnreachableException("Directory should always be created before this.", ex),
+               IOException => $"I/O error ocurred when creating path '{FilePath}'.",
+               NotSupportedException => $"Path '{FilePath}' has invalid format.",
+                _ => $"Unknown dile creation exception in {nameof(FileHandler)}, ex: '{ex.GetType()}', message: {ex.Message}."
             };
-            Logger.LogWarning("Cannot create directory '{dirPath}' because of '{ex}': '{failreason}'.", 
-                FilePath.FolderPath , ex.GetType(), failReason);
+            Logger.LogWarning("Cannot create file '{dirPath}' because of '{ex}': '{failreason}'.",
+                FilePath.FullPath, ex.GetType(), failReason);
             return (false, failReason);
         }
     }
 
-    internal async Task<(bool Valid, string Msg)> CopyStreamAsync(Stream? stream)
+    /// <summary>
+    /// Copy stream into TargetFolder async.
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns>(true, "") if operation successful, otherwise (false, errorMessage)</returns>
+    internal virtual async Task<(bool Valid, string Msg)> WriteStreamAsync(Stream? stream)
     {
         Logger.LogInformation("Start copying stream into file '{path}'.", FilePath.FullPath);
         if (stream is null)

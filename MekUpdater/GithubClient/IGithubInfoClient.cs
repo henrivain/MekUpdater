@@ -1,5 +1,5 @@
 ﻿using MekUpdater.GithubClient.ApiResults;
-using MekUpdater.GithubClient.DataModel;
+using MekUpdater.GithubClient.DataModels;
 
 namespace MekUpdater.GithubClient;
 

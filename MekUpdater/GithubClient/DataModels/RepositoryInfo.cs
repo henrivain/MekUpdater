@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using MekUpdater.GithubClient.DataModels;
 using Newtonsoft.Json;
 
 namespace MekUpdater.GithubClient.DataModel;

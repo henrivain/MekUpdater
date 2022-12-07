@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace MekUpdater.GithubClient.DataModel;
+namespace MekUpdater.GithubClient.DataModels;
 
 /// <summary>
 /// Content structure for github api response for repository Licence
