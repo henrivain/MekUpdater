@@ -65,10 +65,10 @@ internal class FileHandler
         {
             string failReason = ex switch
             {
-               UnauthorizedAccessException => $"Cannot create directory '{FilePath}', lacking required permissions.",
+               UnauthorizedAccessException => $"Cannot create file '{FilePath}', lacking required permissions.",
                ArgumentException => $"Path '{FilePath}'includes invalid characters.",
                PathTooLongException => $"Path '{FilePath}' is too long.",
-               DirectoryNotFoundException => throw new UnreachableException("Directory should always be created before this.", ex),
+               DirectoryNotFoundException => $"Directory for '{FilePath}' should exit, but it doesn't. Cannot create file.",
                IOException => $"I/O error ocurred when creating path '{FilePath}'.",
                NotSupportedException => $"Path '{FilePath}' has invalid format.",
                 _ => $"Unknown dile creation exception in {nameof(FileHandler)}, ex: '{ex.GetType()}', message: {ex.Message}."

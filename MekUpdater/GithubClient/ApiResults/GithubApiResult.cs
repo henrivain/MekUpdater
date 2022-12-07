@@ -3,18 +3,18 @@
 /// <summary>
 /// Base class for different kind of Github api request results
 /// </summary>
-public class GithubApiResult
+public class UpdaterApiResult
 {
     /// <summary>
-    /// initialize new GithubApiResult with given response message
+    /// initialize new UpdaterApiResult with given response message
     /// </summary>
     /// <param name="responseMessage"></param>
-    internal GithubApiResult(ResponseMessage responseMessage)
+    internal UpdaterApiResult(ResponseMessage responseMessage)
     {
         ResponseMessage = responseMessage;
     }
 
-    internal GithubApiResult(ResponseMessage responseMessage, string message) : this(responseMessage)
+    internal UpdaterApiResult(ResponseMessage responseMessage, string message) : this(responseMessage)
     {
         Message = message;
     }

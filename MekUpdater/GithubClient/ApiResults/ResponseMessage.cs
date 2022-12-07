@@ -27,6 +27,7 @@ public enum ResponseMessage
     NoMatchingAssetName,
     NoProperFileName,
     NoDownloadUrl,
-    HttpRequestUnsuccessful
+    HttpRequestUnsuccessful,
+    ExtractionError
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

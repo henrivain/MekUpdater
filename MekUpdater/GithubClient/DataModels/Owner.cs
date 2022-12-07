@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace MekUpdater.GithubClient.DataModel;
+namespace MekUpdater.GithubClient.DataModels;
 
 /// <summary>
 /// Content model for gihtub repository owner

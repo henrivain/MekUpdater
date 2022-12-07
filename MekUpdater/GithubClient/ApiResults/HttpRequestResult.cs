@@ -1,6 +1,6 @@
 ﻿namespace MekUpdater.GithubClient.ApiResults;
 
-internal class HttpRequestResult : GithubApiResult, IDisposable
+internal class HttpRequestResult : UpdaterApiResult, IDisposable
 {
     internal HttpRequestResult(ResponseMessage responseMessage) 
         : base(responseMessage) { }

@@ -1,4 +1,5 @@
-﻿using MekUpdater.GithubClient.ApiResults;
+﻿using System.Runtime.CompilerServices;
+using MekUpdater.GithubClient.ApiResults;
 
 namespace MekUpdater.Helpers;
 
@@ -20,5 +21,16 @@ internal static class Extensions
     internal static bool NotSuccess(this HttpResponseMessage? msg)
     {
         return msg.IsSuccess() is false;
+    }
+
+    internal static FolderPath AppendSingleFolder(this FolderPath path, string folderName)
+    {
+        if (Path.EndsInDirectorySeparator(folderName) is false)
+        {
+            folderName += Path.DirectorySeparatorChar;
+        }
+        var temp = path;
+        temp.Append(folderName);
+        return temp;
     }
 }

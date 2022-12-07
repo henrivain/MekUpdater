@@ -70,8 +70,8 @@ public class GithubApiClient : IDisposable
     private protected virtual async Task<DownloadResult> DownloadFileAsync(string url, IFilePath path)
     {
         Logger.LogInformation("Validate path '{path}'.", path.FullPath);
-        FileHandler fileHandler = new(path, Logger);
-        var (isPathValid, pathCreationMessage) = fileHandler.TryCreateDirectory();
+        FolderHandler folderHandler = new(path.FolderPath, Logger);
+        var (isPathValid, pathCreationMessage) = folderHandler.TryCreateDirectory();
         if (isPathValid is false)
         {
             Logger.LogError("Cannot create required path '{path}', because of '{reason}'", path.FullPath, pathCreationMessage);
@@ -93,7 +93,7 @@ public class GithubApiClient : IDisposable
                 DownloadUrl = url
             };
         }
-
+        FileHandler fileHandler = new(path, Logger);
         using Stream? stream = await response.Content!.Content.ReadAsStreamAsync();
         var (copySuccess, copyMessage) = await fileHandler.WriteStreamAsync(stream);
 

@@ -1,8 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using MekUpdater.GithubClient.DataModels;
 using Newtonsoft.Json;
 
-namespace MekUpdater.GithubClient.DataModel;
+namespace MekUpdater.GithubClient.DataModels;
 
 /// <summary>
 /// Content structure for github repository api response

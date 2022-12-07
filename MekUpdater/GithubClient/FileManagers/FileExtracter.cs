@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using MekUpdater.GithubClient.ApiResults;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -16,19 +17,26 @@ public class FileExtracter
     public FileExtracter(ZipPath filePath) : this(filePath, filePath.FolderPath, NullLogger.Instance) { }
 
     /// <summary>
+    /// New FileExtracter with given zip path and logging. 
+    /// Destination path is zip path's folder path.
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="logger"></param>
+    public FileExtracter(ZipPath filePath, ILogger logger) : this(filePath, filePath.FolderPath, logger) { }
+
+    /// <summary>
     /// New FileExtracter with given zip path, destination folder and logging.
     /// </summary>
     /// <param name="filePath"></param>
     /// <param name="destinationFolder"></param>
     /// <param name="logger"></param>
-    public FileExtracter(ZipPath filePath, FolderPath destinationFolder, ILogger logger) 
+    public FileExtracter(ZipPath filePath, FolderPath destinationFolder, ILogger logger)
     {
         ZipPath = filePath;
         DestinationFolderHandler = new(destinationFolder, logger);
         Logger = logger;
     }
 
-    
     private FolderHandler DestinationFolderHandler { get; }
     private ILogger Logger { get; }
 
@@ -38,40 +46,59 @@ public class FileExtracter
     public ZipPath ZipPath { get; }
 
     /// <summary>
+    /// Folder where zip file is extracted
+    /// </summary>
+    public FolderPath DestinationFolder => DestinationFolderHandler.TargetFolder;
+
+    /// <summary>
     /// Extract ZipPath into destination folder.
     /// </summary>
     /// <returns>(true, "") if operation successful, otherwise (false; errorMessage)</returns>
-    public async Task<(bool Valid, string Msg)> ExtractAsync()
+    public async Task<ExtractionPathResult> ExtractAsync(bool overwrite = true)
     {
-        var dirCreateResult = DestinationFolderHandler.TryCreateDirectory();
-        if (dirCreateResult.Valid is false)
+        Logger.LogInformation("Extract zip file '{zipPath}' to folder '{folderPath}'.",
+            ZipPath.FullPath, DestinationFolder.FullPath);
+        var (dirCreateValid, dirCreateMsg) = DestinationFolderHandler.TryCreateDirectory();
+        if (dirCreateValid is false)
         {
-            Logger.LogError("Unable to create {path}, cannot extract zip file.", 
-                DestinationFolderHandler.TargetFolder.FullPath);
-            return dirCreateResult;
+            Logger.LogError("Cannot extract zip file, unable to create directory '{path}'.",
+                DestinationFolder.FullPath);
+            return new(ResponseMessage.ExtractionError, dirCreateMsg);
         }
 
         if (ZipPath.PathExist is false)
         {
-            Logger.LogError("Cannot extract zip file '{path}' that does not exist.", ZipPath);
-            return (false, $"Zip file '{ZipPath}' does not exist, cannot extract.");
+            Logger.LogError("Cannot extract zip file '{path}' because it does not exist.", ZipPath);
+            return new(ResponseMessage.ExtractionError, $"Cannot extract zip file '{ZipPath}' because it does not exist.");
         }
         try
         {
             await Task.Run(() =>
             {
-                ZipFile.ExtractToDirectory(ZipPath.FullPath, DestinationFolderHandler.TargetFolder.FullPath);
+                ZipFile.ExtractToDirectory(ZipPath.FullPath, DestinationFolder.FullPath, overwrite);
             });
-            return (true, string.Empty);
+            Logger.LogInformation("Zip file extracted successfully.");
+            return new(ResponseMessage.Success)
+            {
+                ResultFolder = DestinationFolder.AppendSingleFolder(ZipPath.FileName)
+            };
         }
         catch (Exception ex)
         {
             string errorMessage = ex switch
             {
+                ArgumentException => "Zip path or destination was invalid or empty.",
+                PathTooLongException => "Zip or destination path was too long.",
+                DirectoryNotFoundException => "Directory for zip or destination path should exit, but it doesn't.",
+                FileNotFoundException => $"Zip file '{ZipPath}' does not exist.",
+                InvalidDataException => $"Zip file at '{ZipPath}' isn't zip file or it is corrupted.",
+                IOException => "Invalid zip or destination path or I/O error.",
+                UnauthorizedAccessException => "No requires permission",
+                NotSupportedException => "Invalid zip or destination path format.",
                 _ => $"Unknown zip extraction error in {nameof(FileExtracter)}, ex: '{ex.GetType()}', '{ex.Message}'"
             };
-
-            return (false, errorMessage);
+            Logger.LogError("Failed to extract zip file, because of {errorMessage}", errorMessage);
+            return new(ResponseMessage.ExtractionError, $"Cannot extract zip. {errorMessage}.");
         }
     }
 }
