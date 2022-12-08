@@ -1,5 +1,6 @@
-﻿using System.Security;
-using MekUpdater.Exceptions;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Security;
+using MekUpdater.GithubClient.ApiResults;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -41,7 +42,7 @@ internal class FileHandler
     internal virtual ILogger Logger { get; init; } = NullLogger.Instance;
 
     /// <summary>
-    /// Path to file with class is working with.
+    /// ResultPath to file with class is working with.
     /// </summary>
     internal IFilePath FilePath { get; }
 
@@ -49,17 +50,25 @@ internal class FileHandler
     /// Create file and full path to it, if doesn't already exit.
     /// </summary>
     /// <returns>(true, "") if valid operation or file exist, otherwise (false, errorMessage).</returns>
-    internal virtual (bool Valid, string Msg) TryCreateFile()
+    internal virtual FileSystemResult<IFilePath> TryCreateFile()
     {
-        if (FilePath.PathExist) return (true, string.Empty);
+        if (FilePath.PathExist)
+        {
+            return new (ResponseMessage.Success);
+        }
+
         var dirResult = FolderHandler.TryCreateDirectory();
-        if (dirResult.Valid is false) return dirResult;
-        Logger.LogInformation("");
+        if (dirResult.NotSuccess())
+        {
+            return new(dirResult.ResponseMessage, dirResult.Message);
+        }
+
+        Logger.LogInformation("Try create file to path '{path}'", FilePath.FullPath);
         try
         {
             File.Create(FilePath.FullPath);
             Logger.LogInformation("File created successfully.");
-            return (true, string.Empty);
+            return new(ResponseMessage.Success, FilePath);
         }
         catch (Exception ex)
         {
@@ -75,7 +84,7 @@ internal class FileHandler
             };
             Logger.LogWarning("Cannot create file '{dirPath}' because of '{ex}': '{failreason}'.",
                 FilePath.FullPath, ex.GetType(), failReason);
-            return (false, failReason);
+            return new(ResponseMessage.CannotCreateFile, failReason);
         }
     }
 
@@ -84,13 +93,13 @@ internal class FileHandler
     /// </summary>
     /// <param name="stream"></param>
     /// <returns>(true, "") if operation successful, otherwise (false, errorMessage)</returns>
-    internal virtual async Task<(bool Valid, string Msg)> WriteStreamAsync(Stream? stream)
+    internal virtual async Task<FileSystemResult<IFilePath>> WriteStreamAsync(Stream? stream)
     {
         Logger.LogInformation("Start copying stream into file '{path}'.", FilePath.FullPath);
         if (stream is null)
         {
             Logger.LogWarning("Cannot copy stream that is null.");
-            return (false, "Cannot copy stream that is null.");
+            return new(ResponseMessage.CannotCopyStream, "Cannot copy stream that is null.");
         }
         try 
         {
@@ -98,12 +107,11 @@ internal class FileHandler
             if (fileStream is null)
             {
                 Logger.LogWarning("Cannot copy stream in the file stream '{path}' that is null.", FilePath.FullPath);
-                return (false, $"Cannot initialize filesteam at path {FilePath}, " +
-                    $"stream cannot be copied to destination");
+                return new(ResponseMessage.CannotCopyStream, $"Cannot copy stream to filestream null '{FilePath}'.");
             }
             await stream.CopyToAsync(fileStream);
             Logger.LogInformation("Copied stream into file successfully.");
-            return (true, string.Empty);
+            return new(ResponseMessage.Success, FilePath);
         }
         catch (Exception ex)
         {
@@ -119,7 +127,7 @@ internal class FileHandler
                 _ => $"Unknown stream copy exception in {nameof(FileHandler)}, ex: '{ex.GetType()}', message: '{ex.Message}'."
             };
             Logger.LogWarning("Copying stream into file threw exception '{exType}': '{exMsg}'", ex.GetType(), ex.Message);
-            return (false, failReason);
+            return new(ResponseMessage.CannotCopyStream, failReason);
         }
     }
 }

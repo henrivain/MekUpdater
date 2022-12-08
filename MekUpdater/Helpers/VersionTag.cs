@@ -215,9 +215,16 @@ public sealed class VersionTag : IEquatable<VersionTag>
     {
         if (left is null) return false;
         if (right is null) return true;
+
         if (left.Major > right.Major) return true;
+        if (left.Major < right.Major) return false;
         if (left.Minor > right.Minor) return true;
+        if (left.Minor < right.Minor) return false;
         if (left.Build > right.Build) return true;
+        if (left.Build < right.Build) return false;
+
+        // smaller number means bigger release with VersionId
+        if (left.VersionId > right.VersionId) return false;
         if (left.VersionId < right.VersionId) return true;
         return false;
     }

@@ -1,6 +1,4 @@
-﻿
-
-using MekUpdater.CheckUpdates;
+﻿using MekUpdater.CheckUpdates;
 using MekUpdater.UpdateRunner;
 
 namespace MekUpdater;

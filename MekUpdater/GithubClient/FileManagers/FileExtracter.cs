@@ -13,26 +13,27 @@ public class FileExtracter
     /// <summary>
     /// New FileExtracter that extracts files into zip file containing folder by default. No logging.
     /// </summary>
-    /// <param name="filePath"></param>
-    public FileExtracter(ZipPath filePath) : this(filePath, filePath.FolderPath, NullLogger.Instance) { }
+    /// <param name="zipPath"></param>
+    public FileExtracter(ZipPath zipPath) : this(zipPath, NullLogger.Instance) { }
 
     /// <summary>
     /// New FileExtracter with given zip path and logging. 
     /// Destination path is zip path's folder path.
     /// </summary>
-    /// <param name="filePath"></param>
+    /// <param name="zipPath"></param>
     /// <param name="logger"></param>
-    public FileExtracter(ZipPath filePath, ILogger logger) : this(filePath, filePath.FolderPath, logger) { }
+    public FileExtracter(ZipPath zipPath, ILogger logger) 
+        : this(zipPath, zipPath.FolderPath.AppendSingleFolder(zipPath.FileName), logger) { }
 
     /// <summary>
     /// New FileExtracter with given zip path, destination folder and logging.
     /// </summary>
-    /// <param name="filePath"></param>
+    /// <param name="zipPath"></param>
     /// <param name="destinationFolder"></param>
     /// <param name="logger"></param>
-    public FileExtracter(ZipPath filePath, FolderPath destinationFolder, ILogger logger)
+    public FileExtracter(ZipPath zipPath, FolderPath destinationFolder, ILogger logger)
     {
-        ZipPath = filePath;
+        ZipPath = zipPath;
         DestinationFolderHandler = new(destinationFolder, logger);
         Logger = logger;
     }
@@ -54,23 +55,22 @@ public class FileExtracter
     /// Extract ZipPath into destination folder.
     /// </summary>
     /// <returns>(true, "") if operation successful, otherwise (false; errorMessage)</returns>
-    public async Task<ExtractionPathResult> ExtractAsync(bool overwrite = true)
+    public async Task<FileSystemResult<FolderPath>> ExtractAsync(bool overwrite = true)
     {
         Logger.LogInformation("Extract zip file '{zipPath}' to folder '{folderPath}'.",
             ZipPath.FullPath, DestinationFolder.FullPath);
-        var (dirCreateValid, dirCreateMsg) = DestinationFolderHandler.TryCreateDirectory();
-        if (dirCreateValid is false)
+        var dirResult = DestinationFolderHandler.TryCreateDirectory();
+        if (dirResult.NotSuccess())
         {
-            Logger.LogError("Cannot extract zip file, unable to create directory '{path}'.",
-                DestinationFolder.FullPath);
-            return new(ResponseMessage.ExtractionError, dirCreateMsg);
+            Logger.LogError("Cannot extract zip file, '{reason}'", dirResult.Message);
+            return dirResult;
         }
-
         if (ZipPath.PathExist is false)
         {
-            Logger.LogError("Cannot extract zip file '{path}' because it does not exist.", ZipPath);
+            Logger.LogError("Cannot extract zip file '{path}' that does not exist.", ZipPath);
             return new(ResponseMessage.ExtractionError, $"Cannot extract zip file '{ZipPath}' because it does not exist.");
         }
+
         try
         {
             await Task.Run(() =>
@@ -80,12 +80,13 @@ public class FileExtracter
             Logger.LogInformation("Zip file extracted successfully.");
             return new(ResponseMessage.Success)
             {
-                ResultFolder = DestinationFolder.AppendSingleFolder(ZipPath.FileName)
+                ResultPath = DestinationFolder
             };
         }
         catch (Exception ex)
         {
-            string errorMessage = ex switch
+            string errorMessage = "Cannot extract zip. ";
+            errorMessage += ex switch
             {
                 ArgumentException => "Zip path or destination was invalid or empty.",
                 PathTooLongException => "Zip or destination path was too long.",
@@ -97,8 +98,8 @@ public class FileExtracter
                 NotSupportedException => "Invalid zip or destination path format.",
                 _ => $"Unknown zip extraction error in {nameof(FileExtracter)}, ex: '{ex.GetType()}', '{ex.Message}'"
             };
-            Logger.LogError("Failed to extract zip file, because of {errorMessage}", errorMessage);
-            return new(ResponseMessage.ExtractionError, $"Cannot extract zip. {errorMessage}.");
+            Logger.LogError("{msg}", errorMessage);
+            return new(ResponseMessage.ExtractionError, errorMessage);
         }
     }
 }

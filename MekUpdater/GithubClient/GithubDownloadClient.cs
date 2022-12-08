@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using MekUpdater.GithubClient.ApiResults;
+﻿using MekUpdater.GithubClient.ApiResults;
 using MekUpdater.GithubClient.DataModels;
 using Microsoft.Extensions.Logging;
 
@@ -54,7 +53,7 @@ public class GithubDownloadClient : GithubApiClient, IGithubDownloadClient
     /// Download latest release zip source code
     /// </summary>
     /// <returns>DownloadResult representing request data and info</returns>
-    public async Task<DownloadResult> DownloadReleaseZip(VersionTag tag, FolderPath destinationFolder)
+    public async Task<DownloadResult<ZipPath>> DownloadReleaseZip(VersionTag tag, FolderPath destinationFolder)
     {
         string url = $"{BaseAddress}/zipball/{tag.FullVersion}";
         var path = destinationFolder.ToFilePath<ZipPath>($"{tag.FullVersion}.zip");
@@ -67,11 +66,11 @@ public class GithubDownloadClient : GithubApiClient, IGithubDownloadClient
     /// Downloads first asset from given releasse that has matching name.
     /// </summary>
     /// <param name="tag">Version tag of the release.</param>
-    /// <param name="path">Path where asset will be downloaded.</param>
+    /// <param name="path">ResultPath where asset will be downloaded.</param>
     /// <param name="assetName">Name that will be used to validate that the asset is the right one.</param>
     /// <param name="onlyFullMatch">Specifies weather asset name should fully match assetName or not.</param>
     /// <returns>DownloadResult representing download status and information about download.</returns>
-    public async Task<DownloadResult> DownloadAsset(
+    public async Task<DownloadResult<IFilePath>> DownloadAsset(
         VersionTag tag, FolderPath path, string assetName, bool onlyFullMatch = false)
     {
         Logger.LogInformation("Download asset from release '{tag}'.", tag);
@@ -108,7 +107,7 @@ public class GithubDownloadClient : GithubApiClient, IGithubDownloadClient
         }
 
         Logger.LogInformation("Asset ready to be downloaded from '{url}'.", asset.DownloadUrl);
-        FilePath downloadPath = path.ToFilePath<FilePath>(asset.Name);
+        IFilePath downloadPath = path.ToFilePath<FilePath>(asset.Name);
         return await DownloadFileAsync(asset.DownloadUrl, downloadPath);
     }
 
@@ -121,7 +120,7 @@ public class GithubDownloadClient : GithubApiClient, IGithubDownloadClient
     /// Lacking .zip -extension will be automatically added.
     /// </param>
     /// <returns>DownloadResult representing download status and information about download.</returns>
-    public async Task<DownloadResult> DownloadLatestReleaseZip(FolderPath path, string? fileName = null)
+    public async Task<DownloadResult<ZipPath>> DownloadLatestReleaseZip(FolderPath path, string? fileName = null)
     {
         var release = await InfoClient.GetLatestRelease();
         if (release.ResponseMessage.NotSuccess())

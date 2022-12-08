@@ -1,9 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using MekUpdater.GithubClient.ApiResults;
+﻿using MekUpdater.GithubClient.ApiResults;
 
 namespace MekUpdater.Helpers;
 
-internal static class Extensions
+/// <summary>
+/// Extensions for updater results
+/// </summary>
+public static class Extensions
 {
     internal static bool IsSuccess(this ResponseMessage msg)
     {
@@ -12,6 +14,26 @@ internal static class Extensions
     internal static bool NotSuccess(this ResponseMessage msg)
     {
         return msg.IsSuccess() is false;
+    }
+
+    /// <summary>
+    /// Check weather result returnes as successful
+    /// </summary>
+    /// <param name="result"></param>
+    /// <returns>true if ResponseMessage.Success, otherwise false</returns>
+    public static bool IsSuccess(this UpdaterApiResult result)
+    {
+        return result.ResponseMessage.IsSuccess();
+    }
+
+    /// <summary>
+    /// Check weather result returnes as unsuccessful
+    /// </summary>
+    /// <param name="result"></param>
+    /// <returns>false if ResponseMessage.Success, otherwise true</returns>
+    public static bool NotSuccess(this UpdaterApiResult result)
+    {
+        return result.ResponseMessage.NotSuccess();
     }
 
     internal static bool IsSuccess(this HttpResponseMessage? msg)

@@ -219,4 +219,20 @@ public class VersionTagTests
             Assert.Equal($"{version}-{((VersionId)id).ToString().ToLower()}", tag.FullVersion);
         }
     }
+
+
+
+    [Theory]
+    [InlineData("v1.1.1", "v3.1.1")]
+    [InlineData("v3.1.1", "v3.2.1")]
+    public void BiggerThanSign_ShouldReturn_False_IfAnyLeftNumberSmaller(string left, string right)
+    {
+        var leftTag = new VersionTag(left);
+        var rightTag = new VersionTag(right);
+
+        bool result = leftTag > rightTag;
+
+        Assert.False(result);
+    }
+
 }

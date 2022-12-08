@@ -8,7 +8,7 @@ public class StartSetupResult : UpdateResult
     internal StartSetupResult(bool success) : base(success) { }
 
     /// <summary>
-    /// Path to setup.exe
+    /// ResultPath to setup.exe
     /// </summary>
     public SetupExePath? SetupExePath { get; set; }
 }

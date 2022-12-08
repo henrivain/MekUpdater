@@ -16,7 +16,7 @@ public class SetupPathFinderResult
     public bool Success { get; }
 
     /// <summary>
-    /// Path to setup.exe file
+    /// ResultPath to setup.exe file
     /// </summary>
     public virtual SetupExePath? SetupPath { get; init; }
 

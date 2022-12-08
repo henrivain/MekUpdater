@@ -14,17 +14,17 @@ public static class WindowsPath
     private static readonly FolderPath _userTempFolder = new(Path.GetTempPath());
 
     /// <summary>
-    /// Path to user's appdata folder (ending in path separator char)
+    /// ResultPath to user's appdata folder (ending in path separator char)
     /// </summary>
     public static FolderPath AppDataFolder { get => _appDataFolder; }
 
     /// <summary>
-    /// Path to user's downloads folder (ending in path separator char)
+    /// ResultPath to user's downloads folder (ending in path separator char)
     /// </summary>
     public static FolderPath DownloadsFolder { get => _downloadsFolder; }
 
     /// <summary>
-    /// Path to user's appdata/temp (ending in path separator char)
+    /// ResultPath to user's appdata/temp (ending in path separator char)
     /// </summary>
     public static FolderPath UserTempFolder { get => _userTempFolder; }
 

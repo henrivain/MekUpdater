@@ -10,7 +10,7 @@ namespace MekUpdater.CheckUpdates;
 internal class GithubApiClient
 {
     /// <summary>
-    /// Path must be format "https://api.github.com/repos/{author}/{repo}/releases/latest"
+    /// ResultPath must be format "https://api.github.com/repos/{author}/{repo}/releases/latest"
     /// </summary>
     /// <param name="repositoryVersionUrl"></param>
     /// <exception cref="ArgumentException"></exception>

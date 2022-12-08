@@ -8,14 +8,14 @@ namespace MekUpdater.UpdateBuilder.Interfaces;
 public interface ICanAddPath
 {
     /// <summary>
-    /// Path where zip file downloaded from github api will be stored
+    /// ResultPath where zip file downloaded from github api will be stored
     /// </summary>
     /// <param name="zipPath"></param>
     /// <returns>calling instance</returns>
     ICanAddPath DownloadZipTo(ZipPath zipPath);
 
     /// <summary>
-    /// Path to folder where files from downloaded zip file will be stored after extraction
+    /// ResultPath to folder where files from downloaded zip file will be stored after extraction
     /// </summary>
     /// <param name="setupDestinationFolder"></param>
     /// <returns>calling instance</returns>

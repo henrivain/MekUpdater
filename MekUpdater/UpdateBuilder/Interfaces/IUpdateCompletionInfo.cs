@@ -6,7 +6,7 @@
 public interface IUpdateCompletionInfo
 {
     /// <summary>
-    /// Path that is defined after update if success and setup.exe is found from extraction folder.
+    /// ResultPath that is defined after update if success and setup.exe is found from extraction folder.
     /// </summary>
     SetupExePath? SetupExePath { get; set; }
 

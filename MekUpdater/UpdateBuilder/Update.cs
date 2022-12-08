@@ -32,13 +32,13 @@ public class Update
     internal string RepoInfoUrl => $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
 
     /// <summary>
-    /// Path where zip file downloaded from github api will be stored
+    /// ResultPath where zip file downloaded from github api will be stored
     /// <para/>Default: user/Downloads/updates/[hostAppName]Setup.zip
     /// </summary>
     public ZipPath ZipPath { get; internal set; } = WindowsPath.DefaultUpdaterZipFolder;
 
     /// <summary>
-    /// Path to folder where files from downloaded zip file will be stored after extraction
+    /// ResultPath to folder where files from downloaded zip file will be stored after extraction
     /// <para/> Default: user/Downloads/updates
     /// </summary>
     public FolderPath ExtractionFolder { get; internal set; } = WindowsPath.DefaultUpdaterDestinationFolder;

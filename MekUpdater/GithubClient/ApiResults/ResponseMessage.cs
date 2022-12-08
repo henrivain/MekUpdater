@@ -28,6 +28,10 @@ public enum ResponseMessage
     NoProperFileName,
     NoDownloadUrl,
     HttpRequestUnsuccessful,
-    ExtractionError
+    ExtractionError,
+    CannotCreateDirectory,
+    NotImplemented,
+    CannotLaunchProcess,
+    CannotFindSetup
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

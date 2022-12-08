@@ -13,7 +13,7 @@ public class SetupFolderFinderResult : SetupPathFinderResult
     public override SetupExePath? SetupPath => null;
 
     /// <summary>
-    /// Path to folder that contains setup.exe
+    /// ResultPath to folder that contains setup.exe
     /// </summary>
     public virtual string? SetupFolderName { get; init; }
 }

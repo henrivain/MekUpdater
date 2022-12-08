@@ -62,31 +62,30 @@ public class GithubApiClient : IDisposable
     private protected ILogger<GithubApiClient> Logger { get; } = NullLogger<GithubApiClient>.Instance;
 
     /// <summary>
-    /// Download file form given url into given file pat. Path will be created or old data will be overritten.
+    /// Download file form given url into given file pat. ResultPath will be created or old data will be overritten.
     /// </summary>
     /// <param name="url"></param>
     /// <param name="path"></param>
     /// <returns>DownloadResult representing download status and used data.</returns>
-    private protected virtual async Task<DownloadResult> DownloadFileAsync(string url, IFilePath path)
+    private protected virtual async Task<DownloadResult<T>> DownloadFileAsync<T>(string url, T path) where T : IFilePath
     {
-        Logger.LogInformation("Validate path '{path}'.", path.FullPath);
+        Logger.LogInformation("Download file from '{url}' to path '{path}'.", url, path.FullPath);
         FolderHandler folderHandler = new(path.FolderPath, Logger);
-        var (isPathValid, pathCreationMessage) = folderHandler.TryCreateDirectory();
-        if (isPathValid is false)
+        var dirResult = folderHandler.TryCreateDirectory();
+        if (dirResult.NotSuccess())
         {
-            Logger.LogError("Cannot create required path '{path}', because of '{reason}'", path.FullPath, pathCreationMessage);
+            Logger.LogError("Cannot download file, destination path invalid.");
             return new(ResponseMessage.CannotCreateFile)
             {
-                Message = pathCreationMessage,
+                Message = dirResult.Message,
                 DownloadUrl = url
             };
         }
 
-        Logger.LogInformation("Path valid.");
         using var response = await GetResponse(url);
-        if (response.ResponseMessage.NotSuccess())
+        if (response.NotSuccess())
         {
-            Logger.LogWarning("Http request to '{url}' failed, because of '{reason}'", url, response.Message);
+            Logger.LogWarning("Cannot download file, because the http request failed");
             return new(response.ResponseMessage)
             {
                 Message = response.Message,
@@ -95,15 +94,15 @@ public class GithubApiClient : IDisposable
         }
         FileHandler fileHandler = new(path, Logger);
         using Stream? stream = await response.Content!.Content.ReadAsStreamAsync();
-        var (copySuccess, copyMessage) = await fileHandler.WriteStreamAsync(stream);
+        var streamCopyResult = await fileHandler.WriteStreamAsync(stream);
 
-        if (copySuccess is false)
+        if (streamCopyResult.NotSuccess())
         {
-            Logger.LogWarning("Failed to copy data to file '{file}' with message '{message}'",
-                path.FullPath, copyMessage);
-            return new(ResponseMessage.CannotCopyStream, copyMessage, path, url);
+            Logger.LogWarning("Failed to copy data to file '{file}', message: '{message}'",
+                path.FullPath, streamCopyResult.Message);
+            return new(ResponseMessage.CannotCopyStream, streamCopyResult.Message, path, url);
         }
-        Logger.LogInformation("Successfully downloaded data from '{url}' into file '{file}'", url, path.FullPath);
+        Logger.LogInformation("File downloaded successfully.");
         return new(ResponseMessage.Success, string.Empty, path, url);
     }
 
@@ -123,23 +122,19 @@ public class GithubApiClient : IDisposable
     private protected virtual async Task<GithubApiTResult<T?>> GetApiResultAsync<T>(string url)
     {
         using var response = await GetResponse(url);
-        if (response.ResponseMessage.NotSuccess())
+        if (response.NotSuccess())
         {
             Logger.LogWarning("Github api request failed. '{reason}': '{explanation}'",
             response.ResponseMessage, response.Message);
             return new GithubApiTResult<T?>(response.ResponseMessage, response.Message);
         }
         var parsed = await ParseJsonAsync<T>(response.Content);
-        if (parsed.ResponseMessage.NotSuccess())
+        if (parsed.NotSuccess())
         {
             Logger.LogWarning("Parsing github api response json into '{type}' failed " +
                 "because of '{reason}': '{explanation}'.", typeof(T), parsed.ResponseMessage, parsed.Message);
         }
-        return new GithubApiTResult<T?>(parsed.ResponseMessage, parsed.Result)
-        {
-            Message = parsed.Message
-        };
-
+        return parsed;
     }
 
     /// <summary>
@@ -209,25 +204,26 @@ public class GithubApiClient : IDisposable
     /// Success ResponseMessage with Parsed json as T object if response content valid. 
     /// <para/>Otherwise Result null, ResponseMessage different from success and Message explaining reason for error.
     /// </returns>
-    private protected static async Task<(T? Result, ResponseMessage ResponseMessage, string Message)> ParseJsonAsync<T>(
+    private protected static async Task<GithubApiTResult<T?>> ParseJsonAsync<T>(
         HttpResponseMessage? response)
     {
         if (response is null)
         {
-            return new(default, ResponseMessage.ResponseObjectNull, $"Given HttpResponseMessage is null and cannot be parsed into desired type.");
+            return new(ResponseMessage.ResponseObjectNull, 
+                $"Given HttpResponseMessage is null and cannot be parsed into desired type.");
         }
         if (response.NotSuccess())
         {
             string message = $"Http request made was unsuccessful with message '{response.RequestMessage}'";
-            return new(default, ResponseMessage.UnsuccessfulRequest, message);
+            return new(ResponseMessage.UnsuccessfulRequest, message);
         }
         var json = await response.Content.ReadAsStringAsync();
         var (result, msg) = ParseJson<T>(json);
         if (msg.NotSuccess())
         {
-            return new(default, msg, "Bad json string.");
+            return new(msg, "Bad json string.");
         }
-        return new(result, msg, string.Empty);
+        return new(msg, result);
     }
 
     /// <summary>

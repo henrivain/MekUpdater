@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MekUpdater.GithubClient.ApiResults;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MekUpdater.GithubClient.FileManagers;
@@ -12,18 +13,16 @@ internal class FolderHandler
     /// New FolderHandler to manage folder, no logging.
     /// </summary>
     /// <param name="filePath"></param>
-    internal FolderHandler(FolderPath filePath)
-    {
-        TargetFolder = filePath;
-    }
+    internal FolderHandler(FolderPath filePath) : this(filePath, NullLogger.Instance) { }
 
     /// <summary>
     /// New FileHandler to create files and copy data to them. Uses given logger.
     /// </summary>
     /// <param name="filePath"></param>
     /// <param name="logger"></param>
-    internal FolderHandler(FolderPath filePath, ILogger logger) : this(filePath)
+    internal FolderHandler(FolderPath filePath, ILogger logger)
     {
+        TargetFolder = filePath;
         Logger = logger;
     }
 
@@ -33,7 +32,7 @@ internal class FolderHandler
     internal ILogger Logger { get; init; } = NullLogger.Instance;
 
     /// <summary>
-    /// Path to file with class is working with.
+    /// ResultPath to file with class is working with.
     /// </summary>
     internal FolderPath TargetFolder { get; }
 
@@ -41,15 +40,19 @@ internal class FolderHandler
     /// Create full path to folder, if it doesn't already exist.
     /// </summary>
     /// <returns>(true, "") if valid operation or directory exist, (false, errorMessage) if failed.</returns>
-    internal virtual (bool Valid, string Msg) TryCreateDirectory()
+    internal virtual FileSystemResult<FolderPath> TryCreateDirectory()
     {
-        if (TargetFolder.PathExist) return (true, string.Empty);
+        if (TargetFolder.PathExist)
+        {
+            return new(ResponseMessage.Success, TargetFolder);
+        }
+
         Logger.LogInformation("Try to create directory '{path}'.", TargetFolder.FullPath);
         try
         {
             Directory.CreateDirectory(TargetFolder.FullPath);
             Logger.LogInformation("Directory created successfully.");
-            return (true, string.Empty);
+            return new(ResponseMessage.Success, TargetFolder);
         }
         catch (Exception ex)
         {
@@ -64,7 +67,7 @@ internal class FolderHandler
             };
             Logger.LogWarning("Cannot create directory '{dirPath}' because of '{ex}': '{failreason}'.",
                 TargetFolder.FullPath, ex.GetType(), failReason);
-            return (false, failReason);
+            return new(ResponseMessage.CannotCreateDirectory, failReason);
         }
     }
 }
