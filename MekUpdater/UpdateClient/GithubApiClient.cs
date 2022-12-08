@@ -12,7 +12,7 @@ namespace MekUpdater.GithubClient;
 public class GithubApiClient : IDisposable
 {
     /// <summary>
-    /// Initialize new client to call github api
+    /// Initialize new client to call github api. No logging.
     /// </summary>
     /// <param name="githubUserName"></param>
     /// <param name="githubRepositoryName"></param>
@@ -39,7 +39,7 @@ public class GithubApiClient : IDisposable
     }
 
     /// <summary>
-    /// Initialize new client to call github api. Provided logger will be used.
+    /// Initialize new client to call github api. With logging.
     /// </summary>
     /// <param name="githubUserName"></param>
     /// <param name="githubRepositoryName"></param>
@@ -55,14 +55,14 @@ public class GithubApiClient : IDisposable
     }
 
     /// <summary>
-    /// Base url apiRoute to api (includes repo owner name and repo name)
+    /// Base url apiRoute to Github api (includes repo owner name and repo name)
     /// </summary>
     public string BaseAddress { get; }
-    private HttpClient Client { get; }
+    private protected HttpClient Client { get; }
     private protected ILogger<GithubApiClient> Logger { get; } = NullLogger<GithubApiClient>.Instance;
 
     /// <summary>
-    /// Download file form given url into given file pat. ResultPath will be created or old data will be overritten.
+    /// Download file form given url into given file path. ResultPath will be created or old data will be overwritten.
     /// </summary>
     /// <param name="url"></param>
     /// <param name="path"></param>
@@ -82,7 +82,7 @@ public class GithubApiClient : IDisposable
             };
         }
 
-        using var response = await GetResponse(url);
+        using var response = await GetResponseAsync(url);
         if (response.NotSuccess())
         {
             Logger.LogWarning("Cannot download file, because the http request failed");
@@ -121,7 +121,7 @@ public class GithubApiClient : IDisposable
     /// </returns>
     private protected virtual async Task<GithubApiTResult<T?>> GetApiResultAsync<T>(string url)
     {
-        using var response = await GetResponse(url);
+        using var response = await GetResponseAsync(url);
         if (response.NotSuccess())
         {
             Logger.LogWarning("Github api request failed. '{reason}': '{explanation}'",
@@ -144,11 +144,11 @@ public class GithubApiClient : IDisposable
     /// <param name="apiRoute">url apiRoute where request will be made</param>
     /// <returns>
     /// HttpRequestResult that represents response data and response status.
-    /// Valid => "ResponseMessage.Success".
-    /// Bad request => "ResponseMessage.HttpRequestUnsuccessful".
-    /// Exception => Response message that represents exception reason.
+    /// <para/>Valid => "ResponseMessage.Success".
+    /// <para/>Bad request => "ResponseMessage.HttpRequestUnsuccessful".
+    /// <para/>Exception => ResponseMessage that represents exception reason.
     /// </returns>
-    private protected virtual async Task<HttpRequestResult> GetResponse(string apiRoute)
+    private protected virtual async Task<HttpRequestResult> GetResponseAsync(string apiRoute)
     {
         Logger.LogInformation("Send request to api route '{apiRoute}'", apiRoute);
         try
@@ -201,8 +201,8 @@ public class GithubApiClient : IDisposable
     /// <typeparam name="T">Type of wanted result.</typeparam>
     /// <param name="response">HttpResponseMessage object from http request.</param>
     /// <returns>
-    /// Success ResponseMessage with Parsed json as T object if response content valid. 
-    /// <para/>Otherwise Result null, ResponseMessage different from success and Message explaining reason for error.
+    /// Success => ResponseMessage.Success with Parsed json as T object. 
+    /// <para/>Otherwise => Result null, ResponseMessage different from success and Message explaining reason for error.
     /// </returns>
     private protected static async Task<GithubApiTResult<T?>> ParseJsonAsync<T>(
         HttpResponseMessage? response)
@@ -231,7 +231,10 @@ public class GithubApiClient : IDisposable
     /// </summary>
     /// <typeparam name="T">Type of wanted result.</typeparam>
     /// <param name="json">Json string.</param>
-    /// <returns>ResponseMessage "Success" and Result with parsed data if given json string valid, else ResponseMessage not success and Result null</returns>
+    /// <returns>
+    /// Json string valid => ResponseMessage.Success and Result with parsed data.
+    /// <para/>Otherwise => Some other responseMessage and Result is null.
+    /// </returns>
     private protected static (T? Result, ResponseMessage Msg) ParseJson<T>(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))

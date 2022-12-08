@@ -71,19 +71,33 @@ public class FileExtracter
             return new(ResponseMessage.ExtractionError, $"Cannot extract zip file '{ZipPath}' because it does not exist.");
         }
 
+        string? errorMessage = await Task.Run(() => Extract(overwrite));
+        if (errorMessage is not null) 
+        {
+            Logger.LogError("{msg}", errorMessage);
+            return new(ResponseMessage.ExtractionError, errorMessage);
+        }
+
+        Logger.LogInformation("Zip file extracted successfully.");
+        return new(ResponseMessage.Success)
+        {
+            ResultPath = DestinationFolder
+        };
+    }
+    
+    /// <summary>
+    /// Extract file into given path. 
+    /// </summary>
+    /// <param name="overwrite"></param>
+    /// <returns>null if success, otherwise error message.</returns>
+    private protected string? Extract(bool overwrite = false)
+    {
         try
         {
-            await Task.Run(() =>
-            {
-                ZipFile.ExtractToDirectory(ZipPath.FullPath, DestinationFolder.FullPath, overwrite);
-            });
-            Logger.LogInformation("Zip file extracted successfully.");
-            return new(ResponseMessage.Success)
-            {
-                ResultPath = DestinationFolder
-            };
+            ZipFile.ExtractToDirectory(ZipPath.FullPath, DestinationFolder.FullPath, overwrite);
+            return null;
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             string errorMessage = "Cannot extract zip. ";
             errorMessage += ex switch
@@ -93,13 +107,12 @@ public class FileExtracter
                 DirectoryNotFoundException => "Directory for zip or destination path should exit, but it doesn't.",
                 FileNotFoundException => $"Zip file '{ZipPath}' does not exist.",
                 InvalidDataException => $"Zip file at '{ZipPath}' isn't zip file or it is corrupted.",
-                IOException => "Invalid zip or destination path or I/O error.",
+                IOException => "Invalid zip or destination path or I/O error (If overwrite was set to false, file might already exist).",
                 UnauthorizedAccessException => "No requires permission",
                 NotSupportedException => "Invalid zip or destination path format.",
                 _ => $"Unknown zip extraction error in {nameof(FileExtracter)}, ex: '{ex.GetType()}', '{ex.Message}'"
             };
-            Logger.LogError("{msg}", errorMessage);
-            return new(ResponseMessage.ExtractionError, errorMessage);
+            return errorMessage;
         }
     }
 }

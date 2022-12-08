@@ -40,11 +40,11 @@ public class SetupLauncher
     /// </summary>
     public FolderPath BaseFolder { get; }
 
-    string[] _nameParams = { "setup" };
+    string[] _nameParams = { "setup", "exe" };
 
     /// <summary>
     /// Array of substrings that must be found in setup setupFromFolder name. Not case sensitive 
-    /// <para/>By default { "setup" } => (setupFromFolder name must include substring "setup")
+    /// <para/>By default { "setup", "exe" } => (setupFromFolder name must include substring "setup")
     /// </summary>
     public string[] NameParams
     {
