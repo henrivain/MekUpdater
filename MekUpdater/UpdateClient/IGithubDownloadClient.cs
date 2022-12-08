@@ -36,4 +36,9 @@ public interface IGithubDownloadClient : IDisposable
     /// </param>
     /// <returns>DownloadResult of ZipPath representing download status and information about download.</returns>
     Task<DownloadResult<ZipPath>> DownloadLatestReleaseZip(FolderPath path, string? fileName = null);
+
+    /// <summary>
+    /// Client to help getting information about releases.
+    /// </summary>
+    IGithubInfoClient InfoClient { get; }
 }

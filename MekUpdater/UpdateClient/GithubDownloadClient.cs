@@ -36,13 +36,13 @@ public class GithubDownloadClient : GithubApiClient, IGithubDownloadClient
     }
 
     /// <summary>
-    /// Client to help getting information about releases
+    /// Client to help getting information about releases.
     /// </summary>
     /// <exception cref="ArgumentNullException">When value is null</exception>
-    protected internal IGithubInfoClient InfoClient
+    public IGithubInfoClient InfoClient
     {
         get => _infoClient;
-        init
+        protected internal init
         {
             if (value is null) throw new ArgumentNullException(nameof(value));
             _infoClient = value;
