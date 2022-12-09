@@ -1,5 +1,6 @@
 ﻿using MekUpdater.GithubClient.ApiResults;
 using MekUpdater.GithubClient.DataModels;
+using MekUpdater.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace MekUpdater.GithubClient;

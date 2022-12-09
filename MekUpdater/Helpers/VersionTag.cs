@@ -130,8 +130,10 @@ public sealed class VersionTag : IVersion, IEquatable<VersionTag>
     /// <param name="version">string to parse</param>
     /// <param name="tag">variable where tag will be parsed</param>
     /// <returns>true if success, else false</returns>
-    public static bool TryParse(string version, out VersionTag tag)
+    public static bool TryParse(string? version, out VersionTag tag)
     {
+        tag = Min;
+        if (version is null) return false;
         try
         {
             tag = new VersionTag(version);
@@ -139,7 +141,6 @@ public sealed class VersionTag : IVersion, IEquatable<VersionTag>
         }
         catch (ArgumentException)
         {
-            tag = Min;
             return false;
         }
     }

@@ -19,7 +19,7 @@ public class SetupLauncher
     /// New SetupLauncher with given base folder, no logging.
     /// </summary>
     /// <param name="baseFolder"></param>
-    public SetupLauncher(FolderPath baseFolder) : this(baseFolder, NullLogger.Instance)
+    public SetupLauncher(FolderPath? baseFolder) : this(baseFolder, NullLogger.Instance)
     {
         BaseFolder = baseFolder;
     }
@@ -29,7 +29,7 @@ public class SetupLauncher
     /// </summary>
     /// <param name="baseFolder"></param>
     /// <param name="logger"></param>
-    public SetupLauncher(FolderPath baseFolder, ILogger logger)
+    public SetupLauncher(FolderPath? baseFolder, ILogger logger)
     {
         BaseFolder = baseFolder;
         Logger = logger;
@@ -38,7 +38,7 @@ public class SetupLauncher
     /// <summary>
     /// Folder or folder whose subfolders contain setup setupFromFolder
     /// </summary>
-    public FolderPath BaseFolder { get; }
+    public FolderPath? BaseFolder { get; }
 
     string[] _nameParams = { "setup", "exe" };
 
@@ -95,7 +95,7 @@ public class SetupLauncher
     /// <returns>FileSystemResult of SetupExePath that represents used path and action status</returns>
     public FileSystemResult<SetupExePath> TryFindSetup()
     {
-        SetupExePath? result = TryEnumerateFilesAndFolders(BaseFolder.FullPath);
+        SetupExePath? result = TryEnumerateFilesAndFolders(BaseFolder?.FullPath);
         if (result?.PathExist is true)
         {
             return new(ResponseMessage.Success, result);
@@ -103,8 +103,13 @@ public class SetupLauncher
         return new(ResponseMessage.CannotFindSetup);
     }
 
-    private SetupExePath? TryEnumerateFilesAndFolders(string folderPath)
+    private SetupExePath? TryEnumerateFilesAndFolders(string? folderPath)
     {
+        if (folderPath is null)
+        {
+            return null;
+        }
+
         try
         {
             var setupFromFolder = Directory.EnumerateFiles(folderPath)

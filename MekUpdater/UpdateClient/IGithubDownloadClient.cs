@@ -1,4 +1,5 @@
 ﻿using MekUpdater.GithubClient.ApiResults;
+using MekUpdater.Interfaces;
 
 namespace MekUpdater.GithubClient;
 
@@ -15,8 +16,10 @@ public interface IGithubDownloadClient : IDisposable
     /// <returns>DownloadResult of ZipPath representing request data and info</returns>
     Task<DownloadResult<ZipPath>> DownloadReleaseZip(VersionTag tag, FolderPath destinationFolder);
 
+
+
     /// <summary>
-    /// Download asset form specific version to given path. 
+    /// Download asset form specific version to given destination. 
     /// Downloads first asset from given releasse that has matching name.
     /// </summary>
     /// <param name="tag">IVersion tag of the release.</param>
@@ -27,15 +30,16 @@ public interface IGithubDownloadClient : IDisposable
     Task<DownloadResult<IFilePath>> DownloadAsset(VersionTag tag, FolderPath path, string assetName, bool onlyFullMatch = false);
 
     /// <summary>
-    /// Download latest release into specified path.
+    /// Download latest release into specified destination.
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="destination"></param>
     /// <param name="fileName">
     /// File name for downloaded zip file. Default file name is in format "release_{releaseVersion}.zip"
     /// Lacking .zip -extension will be automatically added.
     /// </param>
     /// <returns>DownloadResult of ZipPath representing download status and information about download.</returns>
-    Task<DownloadResult<ZipPath>> DownloadLatestReleaseZip(FolderPath path, string? fileName = null);
+    Task<DownloadResult<ZipPath>> DownloadLatestReleaseZip(FolderPath destination, string? fileName = null);
+
 
     /// <summary>
     /// Client to help getting information about releases.

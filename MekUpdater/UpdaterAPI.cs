@@ -42,115 +42,151 @@ public class UpdaterAPI : IDisposable
     private IGithubDownloadClient DownloadClient { get; }
     private IGithubInfoClient InfoClient => DownloadClient.InfoClient;
     private ILogger Logger { get; }
-    private FolderPath CacheDirectory { get; }
+    private FolderPath CacheDirectory { get; init; }
+
 
 
     /// <summary>
-    /// 
+    /// Download latest released and launch setup.
     /// </summary>
-    /// <param name="currentVersion"></param>
     /// <param name="destination"></param>
-    /// <returns></returns>
-    public async Task<UpdaterApiResult> GetLatest(IVersion currentVersion, FolderPath destination)
+    /// <returns>FileSystemResult of SetupExePath representing action status and information about process.</returns>
+    public async Task<FileSystemResult<SetupExePath>> GetAndLaunchLatestRelease(FolderPath destination)
+    {
+        return await GetAndLaunchLatestRelease(VersionTag.Min, destination);
+    }
+
+
+    /// <summary>
+    /// Download latest released version if it is newer than the current version and launch setup.
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="destination"></param>
+    /// <returns>FileSystemResult of SetupExePath representing action status and information about process.</returns>
+    public async Task<FileSystemResult<SetupExePath>> GetAndLaunchLatestRelease(IVersion current, FolderPath destination)
+    {
+        var downloaded = await DownloadLatestIfNewer(current);
+        if (downloaded.NotSuccess())
+        {
+            Logger.LogError("Failed to download update.");
+            return new(downloaded.ResponseMessage, downloaded.Message);
+        }
+
+        var extracted = await Extract(downloaded.ResultPath, destination);
+        if (extracted.NotSuccess())
+        {
+            Logger.LogError("Failed to extract update.");
+            return new(extracted.ResponseMessage, extracted.Message);
+        }
+
+        var launched = Launch(extracted.ResultPath);
+        if (launched.NotSuccess())
+        {
+            Logger.LogError("Failed to launch setup");
+            return launched;
+        }
+        Logger.LogInformation("Successfully downloaded and launched setup file from latest release.");
+        return launched;
+    }
+
+    /// <summary>
+    /// Download and extract latest release to given folder.
+    /// </summary>
+    /// <param name="destination"></param>
+    /// <returns>FileSystemResult of FolderPath representing action status and information about process</returns>
+    public async Task<FileSystemResult<FolderPath>> GetLatestRelease(FolderPath destination)
+    {
+        return await GetLatestRelease(VersionTag.Min, destination);
+    }
+
+    /// <summary>
+    /// Download and extract latest release to given folder if it is newer than the current version.
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="destination"></param>
+    /// <returns>FileSystemResult of FolderPath representing action status and information about process</returns>
+    public async Task<FileSystemResult<FolderPath>> GetLatestRelease(IVersion current, FolderPath destination)
+    {
+        var downloaded = await DownloadLatestIfNewer(current);
+        if (downloaded.NotSuccess())
+        {
+            return new(downloaded.ResponseMessage)
+            {
+                Message = downloaded.Message,
+                ResultPath = downloaded.ResultPath?.FolderPath
+            };
+        }
+        return await Extract(downloaded.ResultPath, destination);
+    }
+    
+
+    
+    private async Task<DownloadResult<ZipPath>> DownloadLatestIfNewer(IVersion current)
     {
         Logger.LogInformation("Get release info for latest release.");
         var infoResult = await InfoClient.GetLatestRelease();
         if (infoResult.NotSuccess())
         {
             Logger.LogError("Failed to check for updates.");
-            return infoResult;
+            return new(infoResult.ResponseMessage)
+            {
+                Message = infoResult.Message
+            };
         }
-        if (infoResult.Content?.TagName is null)
+        if (VersionTag.TryParse(infoResult.Content?.TagName, out var latest) is false)
         {
-            Logger.LogError("Latest version is not defined in the release.");
-            return new(infoResult.ResponseMessage, infoResult.Message);
-        }
-        bool canParseVersion = VersionTag.TryParse(infoResult.Content.TagName, out VersionTag? latestVersion);
-        if (canParseVersion is false)
-        {
-            Logger.LogInformation("Cannot parse version from string {version}", infoResult.Content.TagName);
+            Logger.LogInformation("Cannot parse version from string '{version}'", infoResult.Content?.TagName);
             return new(ResponseMessage.InvalidVersion)
             {
-                Message = $"Cannot parse version from string '{infoResult.Content.TagName}'."
+                Message = $"Cannot parse version from string '{infoResult.Content?.TagName}'."
             };
         }
-        if (latestVersion.CompareTo(currentVersion) <= 0)
+        if (latest.CompareTo(current) <= 0)
         {
-            Logger.LogInformation("Latest version is not newer or same as current version.");
+            Logger.LogInformation("Current version '{current}' is same or newer than latest {latest}.", 
+                current.ToString(), latest.ToString());
             return new(ResponseMessage.UpdateAlreadyInstalled)
             {
-                Message = $"Current version '{currentVersion}' is same of newer as latest '{latestVersion}'."
+                Message = $"Current version '{current}' is same or newer than latest {latest}."
             };
         }
-
-
-        Logger.LogInformation("Download update.");
-        var downloadResult = await DownloadClient.DownloadReleaseZip(latestVersion, destination);
-        if (downloadResult.NotSuccess())
-        {
-            Logger.LogError("Failed to download update.");
-            return downloadResult;
-        }
-        if (downloadResult.ResultPath?.PathExist is not true)
-        {
-            Logger.LogError("Download path is null.");
-            return new(ResponseMessage.CannotFindFile)
-            {
-      
-                Message = $"Downloaded zip file does not exist at '{downloadResult.ResultPath}'",
-      
-            };
-        }
-
-        Logger.LogInformation("Extract file.");
-        var fileExtracter = new FileExtracter(downloadResult.ResultPath, Logger);
-        var extractionResult = await fileExtracter.ExtractAsync();
-        if (extractionResult.NotSuccess())
-        {
-            Logger.LogError("Failed to extract zip file.");
-            return extractionResult;
-        }
-        if (extractionResult?.ResultPath?.PathExist is not true)
-        {
-            Logger.LogError("Setup file is not defined.");
-            return new(ResponseMessage.CannotFindFile)
-            {
-                Message = $"Setup file does not exist at path '{extractionResult?.ResultPath}'."
-            };
-        }
-
-        Logger.LogInformation("Start process");
-        var setupLauncher = new SetupLauncher(extractionResult.ResultPath, Logger);
-        var setupLaunchResult = setupLauncher.LaunchSetup();
-        if (setupLaunchResult.NotSuccess())
-        {
-            Logger.LogError("Setup launch not successful");
-            return setupLaunchResult;
-        }
-        Logger.LogInformation("Setup launch successful");
-        return new(ResponseMessage.Success)
-        {
-            Message = extractionResult.ResultPath.FullPath,
-        };
+        return await DownloadClient.DownloadLatestReleaseZip(CacheDirectory);
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="destination"></param>
-    /// <returns></returns>
-    public async Task<UpdaterApiResult> GetLatest(FolderPath destination)
+    private async Task<FileSystemResult<FolderPath>> Extract(ZipPath? source, FolderPath destination)
     {
-        return await GetLatest(VersionTag.Min, destination);
+        Logger.LogInformation("Extract file.");
+        if (source is null)
+        {
+            Logger.LogError("Source zip file is null.");
+            return new(ResponseMessage.CannotFindFile)
+            {
+                Message = "Source zip file is null.",
+                ResultPath = destination
+            };
+        }
+        var fileExtracter = new FileExtracter(source, destination, Logger);
+        var result = await fileExtracter.ExtractAsync();
+        if (result.NotSuccess())
+        {
+            Logger.LogError("Failed to extract zip file at '{path}'.", result.ResultPath?.FullPath);
+            return result;
+        }
+        Logger.LogInformation("Extracted file successfully.");
+        return result;
     }
-
-
-
-
-
-
-
-
+    private FileSystemResult<SetupExePath> Launch(FolderPath? setupContainerFolder)
+    {
+        Logger.LogInformation("Launch setup.");
+        var result = new SetupLauncher(setupContainerFolder, Logger).LaunchSetup();
+        if (result.NotSuccess())
+        {
+            Logger.LogError("Setup launch not successful.");
+            return result;
+        }
+        Logger.LogInformation("Setup launch successful.");
+        return result;
+    }
+    
     /// <inheritdoc/>
     public void Dispose()
     {
