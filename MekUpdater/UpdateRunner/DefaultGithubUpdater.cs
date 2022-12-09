@@ -141,7 +141,7 @@ public class DefaultGithubUpdater : IUpdater
     private string DownloadUrl { get; set; } = string.Empty;
 
     /// <summary>
-    /// Delete file if it exist in filesystem using Task.Run
+    /// DeleteAsync file if it exist in filesystem using Task.Run
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns>null if success, else FinishCleanUpResult with info about fail</returns>

@@ -45,6 +45,11 @@ internal class FileHandler
     /// </summary>
     internal IFilePath FilePath { get; }
 
+    internal Task<FileSystemResult<ZipPath>> DeleteAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Create file and full path to it, if doesn't already exit.
     /// </summary>

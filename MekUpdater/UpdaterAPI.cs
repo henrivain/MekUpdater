@@ -15,7 +15,7 @@ public class UpdaterAPI : IDisposable
 {
 
     /// <summary>
-    /// New UpdaterAPI with no logging
+    /// New UpdaterAPI with no logging. Note that this class implements IDisposable.
     /// </summary>
     /// <param name="githubUsername">Github username of the repository owner.</param>
     /// <param name="repositoryName">Name of the github repository.</param>
@@ -23,7 +23,7 @@ public class UpdaterAPI : IDisposable
         : this(githubUsername, repositoryName, NullLogger<GithubApiClient>.Instance) { }
 
     /// <summary>
-    /// New UpdaterAPI with logging
+    /// New UpdaterAPI with logging. Note that this class implements IDisposable.
     /// </summary>
     /// <param name="githubUsername">Github username of the repository owner.</param>
     /// <param name="repositoryName">Name of the github repository.</param>
@@ -55,7 +55,6 @@ public class UpdaterAPI : IDisposable
     {
         return await GetAndLaunchLatestRelease(VersionTag.Min, destination);
     }
-
 
     /// <summary>
     /// Download latest released version if it is newer than the current version and launch setup.
@@ -118,9 +117,15 @@ public class UpdaterAPI : IDisposable
         }
         return await Extract(downloaded.ResultPath, destination);
     }
-    
 
-    
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        DownloadClient?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+
     private async Task<DownloadResult<ZipPath>> DownloadLatestIfNewer(IVersion current)
     {
         Logger.LogInformation("Get release info for latest release.");
@@ -186,11 +191,24 @@ public class UpdaterAPI : IDisposable
         Logger.LogInformation("Setup launch successful.");
         return result;
     }
-    
-    /// <inheritdoc/>
-    public void Dispose()
+
+    private async Task<FileSystemResult<ZipPath>> RemoveUselessZipFileAsync(ZipPath? path)
     {
-        DownloadClient?.Dispose();
-        GC.SuppressFinalize(this);
+        Logger.LogInformation("Delete useless zip file.");
+        if (path?.PathExist is not true)
+        {
+            Logger.LogWarning("File at '{path}' was probably already deleted.", path);
+            return new(ResponseMessage.Success)
+            {
+                Message = "File is probably already deleted.",
+                ResultPath = path
+            };
+        }
+        var handler = new FileHandler(path);
+        return await handler.DeleteAsync();
+        
+        
     }
+    
+
 }
