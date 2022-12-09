@@ -18,7 +18,7 @@ public class ParsedVersionData
     public string? html_url { get; set; }
 
     /// <summary>
-    /// Version string?
+    /// IVersion string?
     /// </summary>
     public string? tag_name { get; set; }
 

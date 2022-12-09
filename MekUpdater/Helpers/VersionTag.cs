@@ -1,11 +1,14 @@
 ﻿// Copyright 2022 Henri Vainio 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using MekUpdater.Interfaces;
+
 namespace MekUpdater.Helpers;
 
 /// <summary>
 /// Github style version tag using string format vX.X.X, where X is number
 /// </summary>
-public sealed class VersionTag : IEquatable<VersionTag>
+public sealed class VersionTag : IVersion, IEquatable<VersionTag>
 {
     /// <summary>
     /// Initialize version tag with version "v0.0.0"
@@ -53,7 +56,7 @@ public sealed class VersionTag : IEquatable<VersionTag>
     }
 
     /// <summary>
-    /// Version as string using format "v.X.X.X" where X is positive number. Does not include versionIds.
+    /// IVersion as string using format "v.X.X.X" where X is positive number. Does not include versionIds.
     /// </summary>
     public string Version => $"v{Major}.{Minor}.{Build}";
 
@@ -77,6 +80,10 @@ public sealed class VersionTag : IEquatable<VersionTag>
     /// </summary>
     public VersionId VersionId { get; private set; } = VersionId.Full;
 
+    /// <inheritdoc/>
+    public uint SpecialId => (uint)VersionId;
+
+
     /// <summary>
     /// Set VersionId manually
     /// </summary>
@@ -88,7 +95,7 @@ public sealed class VersionTag : IEquatable<VersionTag>
 
     /// <summary>
     /// Get version from entry assembly 
-    /// (can be defined in .csproj file using Version tag)
+    /// (can be defined in .csproj file using IVersion tag)
     /// <para/>throws exception if entryassembly or version is null
     /// </summary>
     /// <returns>version tag for entry assembly version</returns>
@@ -115,7 +122,7 @@ public sealed class VersionTag : IEquatable<VersionTag>
     /// <summary>
     /// Minimum value for version tag 'v0.0.0-alpha'
     /// </summary>
-    public static VersionTag Min => new("v0.0.0-alpha");
+    public static VersionTag Min { get; } = new VersionTag("v0.0.0-alpha");
 
     /// <summary>
     /// Try convert string to version tag
@@ -179,98 +186,15 @@ public sealed class VersionTag : IEquatable<VersionTag>
     }
 
 
-    // Relational operators
+    
 
     /// <summary>
-    /// Check weather tag values are the same
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if all field values are the same, otherwise false. Returns false if any of the arguments are null</returns>
-    public static bool operator ==(VersionTag? left, VersionTag? right)
-    {
-        return left is VersionTag tag && tag.Equals(right);
-    }
-
-    /// <summary>
-    /// Check weather tag values are the different 
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>True if any of the values between tags are different or any of the tags are null. Otherwise false.</returns>
-    public static bool operator !=(VersionTag? left, VersionTag? right)
-    {
-        return left is null
-            || right is null
-            || !(left == right);
-    }
-
-    /// <summary>
-    /// Checks weather left side version is bigger than right side. Compare order: Major > Minor > Build > VersionId
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if left side is bigger or right side is null, otherwise false</returns>
-    public static bool operator >(VersionTag? left, VersionTag? right)
-    {
-        if (left is null) return false;
-        if (right is null) return true;
-
-        if (left.Major > right.Major) return true;
-        if (left.Major < right.Major) return false;
-        if (left.Minor > right.Minor) return true;
-        if (left.Minor < right.Minor) return false;
-        if (left.Build > right.Build) return true;
-        if (left.Build < right.Build) return false;
-
-        // smaller number means bigger release with VersionId
-        if (left.VersionId > right.VersionId) return false;
-        if (left.VersionId < right.VersionId) return true;
-        return false;
-    }
-
-    /// <summary>
-    /// Checks if right side version is bigger than right side. Compare order: Major > Minor > Build
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if right side is bigger or left null, else false</returns>
-    public static bool operator <(VersionTag? left, VersionTag? right)
-    {
-        return left != right && right > left;
-    }
-
-    /// <summary>
-    /// Checks if right side version is bigger than left side or same. Compare order: Major > Minor > Build
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if right side is bigger or left null or both are same, else false</returns>
-    public static bool operator <=(VersionTag? left, VersionTag? right)
-    {
-        return left == right || left < right;
-    }
-
-    /// <summary>
-    /// Checks if left side version is bigger than right side or same. Compare order: Major > Minor > Build
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>true if left side is bigger or right null or both are same, else false</returns>
-    public static bool operator >=(VersionTag? left, VersionTag? right)
-    {
-        return left == right || left > right;
-    }
-
-
-
-
-    /// <summary>
-    /// Parse version to int[3] array (default {0,0,0})
+    /// Parse version to int[3] array (default {0,0,0}) 
+    /// Then set Major, Minor and Build numbers to match.
     /// </summary>
     /// <param name="versionString"></param>
     /// <returns>int[3] of version number vX.X.X where X is int</returns>
-    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentException">If has no numbers or wrong string format</exception>
     private void FromString(string versionString)
     {
         if (versionString.StartsWith('v'))
@@ -313,7 +237,7 @@ public sealed class VersionTag : IEquatable<VersionTag>
     /// </summary>
     /// <param name="version"></param>
     /// <returns>trimmed version string and fitting VersionId</returns>
-    private static (string versionString, VersionId id) CheckAndRemoveSpecialIds(string version)
+    private static (string Version, VersionId Id) CheckAndRemoveSpecialIds(string version)
     {
         var ids = Enum.GetNames(typeof(VersionId))
             .Select(s => s.ToLower())
@@ -337,4 +261,106 @@ public sealed class VersionTag : IEquatable<VersionTag>
         }
         return (version, versionId);
     }
+
+
+
+
+
+    /// <summary>
+    /// Checks weather left side version is bigger than right side. 
+    /// Compare order: Major > Minor > Build > SpecialId.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if left side is bigger or right side is null, otherwise false</returns>
+    public static bool operator >(VersionTag? left, VersionTag? right)
+    {
+        if (left is null) return false;
+        return left.CompareTo(right) > 0;
+    }
+
+    /// <summary>
+    /// Checks if right side version is bigger than right side. 
+    /// Compare order: Major > Minor > Build > SpecialId.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if right side is bigger or left null, else false</returns>
+    public static bool operator <(VersionTag? left, VersionTag? right)
+    {
+        if (left is null) return true;
+        return left.CompareTo(right) < 0;
+    }
+
+    /// <summary>
+    /// Checks if right side version is bigger than left side or both the same. 
+    /// Compare order: Major > Minor > Build > SpecialId.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if right side is bigger or left null or both are same, else false</returns>
+    public static bool operator <=(VersionTag? left, VersionTag? right)
+    {
+        if (left is null) return true;
+        return left.CompareTo(right) <= 0;
+    }
+
+    /// <summary>
+    /// Checks if left side version is bigger than right side or same. 
+    /// Compare order: Major > Minor > Build > SpecialId.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>true if left side is bigger or right null or both are same, else false</returns>
+    public static bool operator >=(VersionTag? left, VersionTag? right)
+    {
+        if (left is null) return true;
+        return left.CompareTo(right) >= 0;
+    }
+
+    /// <summary>
+    /// Check weather version values are the same
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>True if all version values are the same, otherwise false. Returns false if any of the arguments are null</returns>
+    public static bool operator ==(VersionTag? left, VersionTag? right)
+    {
+        if (left is null) return false;
+        if (right is null) return false;
+        return left.CompareTo(right) is 0;
+    }
+
+    /// <summary>
+    /// Check weather version values are different 
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>True if any of the values between versions are different or any of the tags are null. Otherwise false.</returns>
+    public static bool operator !=(VersionTag? left, VersionTag? right)
+    {
+        if (left is null) return true;
+        if (right is null) return true;
+        return left.CompareTo(right) is not 0;
+    }
+
+    /// <inheritdoc/>
+    public int CompareTo(IVersion? other)
+    {
+        if (other is null) return 1;
+        if (this is null) return -1;
+
+        if (Major > other.Major) return 1;
+        if (Major < other.Major) return -1;
+        if (Minor > other.Minor) return 1;
+        if (Minor < other.Minor) return -1;
+        if (Build > other.Build) return 1;
+        if (Build < other.Build) return -1;
+
+        // smaller number means bigger release with VersionId
+        if (SpecialId < other.SpecialId) return 1;
+        if (SpecialId > other.SpecialId) return -1;
+        return 0;
+    }
+
 }

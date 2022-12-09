@@ -8,7 +8,7 @@ namespace MekUpdater.GithubClient;
 public interface IGithubDownloadClient : IDisposable
 {
     /// <summary>
-    /// Download latest release zip source code
+    /// Download latest release zip source code to given folder.
     /// </summary>
     /// <param name="tag"></param>
     /// <param name="destinationFolder"></param>
@@ -19,7 +19,7 @@ public interface IGithubDownloadClient : IDisposable
     /// Download asset form specific version to given path. 
     /// Downloads first asset from given releasse that has matching name.
     /// </summary>
-    /// <param name="tag">Version tag of the release.</param>
+    /// <param name="tag">IVersion tag of the release.</param>
     /// <param name="path">ResultPath where asset will be downloaded.</param>
     /// <param name="assetName">Name that will be used to validate that the asset is the right one.</param>
     /// <param name="onlyFullMatch">Specifies weather asset name should fully match assetName or not.</param>
