@@ -111,7 +111,5 @@ namespace MekPathLibrary
                 throw new ArgumentException($"{nameof(FilePath)} must end in file extension ; was given {path}");
             FileExtension = fileExtension;
         }
-
-
     }
 }
